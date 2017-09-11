@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="4.0.0" client="site" method="upgrade">
+	<name>S5 Open Table</name>
+	<author>Shape5.com</author>
+	<creationDate>May 2015</creationDate>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>1.0.0</version>
+	<description>Integrates with opentable.com and provides your users an easy way to reserve a table at your restaurant.</description>
+	<files>
+		<filename module="mod_s5_opentable">mod_s5_opentable.php</filename>
+		<folder>css</folder>
+		<folder>tmpl</folder>
+		<filename>index.html</filename>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">		
+				<field name="moduleclass_sfx" type="text" label="Module Suffix" default="" />
+				<field filter="raw" name="pretext" type="textarea" cols="40" rows="5" default="" label="Pre-Text" description="Enter any pre-text message." />	
+				<field name="" type="spacer" default="Instructions" label="Instructions: Signup for an account on opentable.com, config your restaurant and then enter your restaurant ID code below" description="" />
+				<field name="@spacer" type="spacer" default="" label="" description="" />   
+
+
+				<field name="s5_ot_idcode" type="text" default="" size="5" label="Restaurant ID" description="Once you signup for an account on opentable.com you'll need to get your ID for your restaurant and place here" />
+				
+		
+		
+			</fieldset>
+		</fields>	
+	</config>
+</extension>

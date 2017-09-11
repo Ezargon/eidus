@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Standard PBBooking Layout" hidden="false">
+		<message>
+			A Standard PBBooking Layout
+		</message>
+	</layout>
+	<fields name="params">
+		<fieldset name="COM_PBOOKING_FRONT_END_VIEW_SETTINGS" addfieldpath="administrator/components/com_pbbooking/models/fields">
+			<field name="calendars" type="calendarlist" multiple="true" label="COM_PBBOOKING_FRONT_END_VIEW_SETTINGS_CALENDARS" description="COM_PBBOOKING_FRONT_END_VIEW_SETTINGS_CALENDARS_DESC"/>
+		</fieldset>
+	</fields>
+	<state>
+		<name>PBBooking Layout</name>
+		<description>A Standard PBBooking Layout</description>
+	</state>
+</metadata>

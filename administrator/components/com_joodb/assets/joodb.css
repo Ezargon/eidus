@@ -1,0 +1,41 @@
+/** toolbar icon **/
+.add {  line-height: 16px; background: url(./images/icon-16-add.png) 0 50% no-repeat; padding: 3px 5px 3px 20px; cursor: pointer; }
+.save { line-height: 16px; background: url(./images/icon-16-save.png) 0 2px no-repeat; padding: 3px 5px 3px 20px;  cursor: pointer; }
+.delete { line-height: 16px; background: url(./images/icon-16-delete.png) 0 2px no-repeat; padding: 3px 5px 3px 20px;  cursor: pointer; }
+.info { line-height: 16px; background: url(./images/icon-16-info.png) 0 2px no-repeat; padding: 3px 5px 3px 20px; cursor: pointer; }
+
+.fltlft { display: inline-block; *display: inline;  float: left; }
+.fltrt { display: inline-block; *display: inline;  float: right; }
+
+.noticebox { display: none; padding: 10px; border: 1px solid #ccc; background-color: #FFFFD7; margin: 5px 0; position: absolute; z-index: 100; }
+.elementbox { display: block; padding: 10px; border: 1px solid #ccc; background-color: #EBF4FF; margin: 5px 0;  }
+
+table.paramlist td, table.paramlist th { vertical-align: top; padding: 5px;}
+table.paramlist label { margin-right: 5px; }
+table.paramlist .inputbox  { margin: 0 5px; }
+td.paramlist_key { min-width: 160px; }
+
+hr{ border: 0px; border-top: solid 1px #cccccc; border-bottom: solid 1px #FFFFFF; }
+
+.inline { display: inline-block; *display: inline; width: auto; }
+label.inline { min-width: inherit !important; width: inherit !important; clear: none;}
+
+.block { padding: 10px; display: block; width: auto;}
+iframe { border: 0; }
+
+.input-mini {  width: 60px; }
+.input-mini {  width: 60px; }
+.input-small { width: 90px; }
+.input-medium { width: 150px; }
+.input-large { width: 210px; }
+.input-xlarge { width: 270px; }
+.input-xxlarge {  width: 480px; }
+.text-large { font-size: 1.4em; height: auto; }
+
+/** extend/remap isis icons */
+.icon-import:before { content: "\e022"; }
+.icon-forward:before { content: "\e006"; }
+
+.icon-joodb:before {
+    content: "b";
+}

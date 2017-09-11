@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE extension>
+<extension type="module" client="site" version="2.5.0" method="upgrade">
+<name>Issue Tracker - Latest Issues</name>
+<creationDate>March 2015</creationDate>
+<author>Macrotone Consulting Ltd</author>
+<authorEmail>support@macrotone.co.uk</authorEmail>
+<authorUrl>http://www.macrotoneconsulting.co.uk</authorUrl>
+<copyright>Copyright (C) 2012-2015 Macrotone Consulting Ltd. All rights reserved.</copyright>
+<license>GNU/GPL v3 or later.</license>
+<version>1.6.7</version>
+
+	<description>MOD_LATEST_ISSUES</description>
+	<files>
+		<filename module="mod_latest_issues">mod_latest_issues.php</filename>
+		<filename>index.html</filename>
+      <folder>params</folder>
+      <folder>css</folder>
+		<folder>tmpl</folder>
+	</files>
+   
+   <languages folder="language/en-GB/">
+      <language tag="en-GB">en-GB.mod_latest_issues.sys.ini</language>
+      <language tag="en-GB">en-GB.mod_latest_issues.ini</language>      
+   </languages>
+
+	<config>
+      <fields name="params" addfieldpath="modules/mod_latest_issues/params">
+			<fieldset name="basic">
+				<field name="projects" type="issuetrackerproject" default="0" multiple="multiple" 
+               label="MOD_LATEST_ISSUES_PROJECTS_LABEL" 
+               description="MOD_LATEST_ISSUES_PROJECTS_DESC"/>
+
+            <field name="status" type="issuetrackerstatus" default="0" multiple="multiple"
+               label="MOD_LATEST_ISSUES_STATUS_LABEL" 
+               description="MOD_LATEST_ISSUES_STATUS_DESC"/>
+
+		      <field name="no_issues" type="text" size="5" default="5" 
+               label="MOD_LATEST_ISSUES_NOISSUES_LABEL" 
+               description="MOD_LATEST_ISSUES_NOISSUES_DESC" />
+               
+		      <field name="ordering" type="list" default="actual_resolution_date" 
+               label="MOD_LATEST_ISSUES_ORDERING_LABEL" 
+               description="MOD_LATEST_ISSUES_ORDERING_DESC" >
+               <option value="actual_resolution_date">MOD_LATEST_ISSUES_RESOLUTION_DATE_TEXT</option>
+               <option value="identified_date">MOD_LATEST_ISSUES_IDENTIFIED_DATE_TEXT</option>
+               <option value="priority">MOD_LATEST_ISSUES_PRIORITY_TEXT</option>
+               <option value="issue_type">MOD_LATEST_ISSUES_ISSUE_TYPE_TEXT</option>
+               <option value="alias">MOD_LATEST_ISSUES_ALIAS_TEXT</option>
+               <option value="projects">MOD_LATEST_ISSUES_PROJECTS_TEXT</option>
+		      </field>
+            <field name="direction" type="radio" default="descending" class="btn-group"
+               label="MOD_LATEST_ISSUES_DIRECTION_LABEL"
+               description="MOD_LATEST_ISSUES_DIRECTION_DESC" >
+               <option value="descending">MOD_LATEST_ISSUES_DESCENDING_TEXT</option>
+               <option value="ascending">MOD_LATEST_ISSUES_ASCENDING_TEXT</option>
+            </field>
+		      <!-- field name="itemid" type="text" size="5" default="" 
+               label="MOD_LATEST_ISSUES_ITEMID_LABEL" 
+               description="MOD_LATEST_ISSUES_ITEMID_DESC" / -->
+
+            <field name="length" type="text" size="5" default="25" 
+               label="MOD_LATEST_ISSUES_LENGTH_LABEL" 
+               description="MOD_LATEST_ISSUES_LENGTH_DESC" />
+
+            <field name="show_issueno" type="radio" default="1" class="btn-group"
+                label="MOD_LATEST_ISSUES_SHOW_ISSUENO_LABEL" 
+                description="MOD_LATEST_ISSUES_SHOW_ISSUENO_DESC">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+ 
+            <field name="show_project" type="radio" default="1" class="btn-group"
+                label="MOD_LATEST_ISSUES_SHOW_PROJECT_LABEL" 
+                description="MOD_LATEST_ISSUES_SHOW_PROJECT_DESC">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+ 
+            <field name="show_status" type="radio" default="0" class="btn-group"
+                label="MOD_LATEST_ISSUES_SHOW_STATUS_LABEL" 
+                description="MOD_LATEST_ISSUES_SHOW_STATUS_DESC">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="show_closedate" type="radio" default="1" class="btn-group"
+                label="MOD_LATEST_ISSUES_SHOW_CLOSEDATE_LABEL" 
+                description="MOD_LATEST_ISSUES_SHOW_CLOSEDATE_DESC">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="show_links" type="radio" default="1" class="btn-group"
+               label="MOD_LATEST_ISSUES_SHOW_LINKS_LABEL" 
+               description="MOD_LATEST_ISSUES_SHOW_LINKS_DESC">
+               <option value="0">JNO</option>
+               <option value="1">JYES</option>
+            </field>              
+               
+            <field name="spacer" type="spacer" default="" label="" description="" />
+            
+            <field name="popup" type="radio" default="0" class="btn-group"
+               label="MOD_LATEST_ISSUES_POPUP_LABEL" 
+               description="MOD_LATEST_ISSUES_POPUP_DESC">
+		      	<option value="0">JNO</option>
+		   	   <option value="1">JYES</option>
+		      </field>
+            <field name="popup_width" type="text" default="750" 
+               label="MOD_LATEST_ISSUES_POPUP_WIDTH_LABEL" 
+               description="MOD_LATEST_ISSUES_POPUP_WIDTH_DESC" />
+            <field name="popup_height" type="text" default="550" 
+               label="MOD_LATEST_ISSUES_POPUP_HEIGHT_LABEL" 
+               description="MOD_LATEST_ISSUES_POPUP_HEIGHT_DESC" />
+
+			</fieldset>
+
+			<fieldset name="advanced">
+				<field name="moduleclass_sfx" type="text" default="" 
+               label="MOD_LATEST_ISSUES_MODULECLASS_SFX_LABEL" 
+               description="MOD_LATEST_ISSUES_MODULECLASS_SFX_DESC" />
+   		   <field name="cache" type="list" default="1" 
+               label="MOD_LATEST_ISSUES_CACHE_LABEL" 
+               description="MOD_LATEST_ISSUES_CACHE_DESC">
+      			<option value="1">JGLOBAL_USE_GLOBAL</option>
+               <option value="0">MOD_LATEST_ISSUES_NO_CACHING</option>
+      		</field>
+            <field name="cache_time" type="text" default="900" 
+               label="MOD_LATEST_ISSUES_CACHE_TIME_LABEL" 
+               description="MOD_LATEST_ISSUES_CACHE_TIME_DESC" />
+			</fieldset>
+		</fields>
+	</config>
+   
+<!-- updateservers>
+   <server type="extension" priority="1" name="Macrotone - Latest Issues Module">http://macrotoneconsulting.co.uk/extensions/update_mod_latest_issues.xml</server>
+</updateservers -->
+   
+</extension>

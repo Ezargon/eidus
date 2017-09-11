@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="module" version="1.6.0" client="site" method="upgrade">
+    <name>TopCloud</name>
+    <author>Bob Galway</author>
+    <creationDate>December 2015</creationDate>
+    <copyright>Copyright Bob Galway. All rights reserved.</copyright>
+    <license>GNU General Public License version 3</license>
+    <authorEmail>reply@blackdale.com</authorEmail>
+    <authorUrl>www.blackdale.com</authorUrl>
+    <version>4.0.10</version>
+    <description>TOPCLOUD250</description>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.mod_topcloud250.ini</language>
+        <language tag="fr-FR">language/fr-FR/fr-FR.mod_topcloud250.ini</language>
+        <language tag="de-DE">language/de-DE/de-DE.mod_topcloud250.ini</language>
+        <language tag="ru-RU">language/ru-RU/ru-RU.mod_topcloud250.ini</language>
+    </languages>
+    <files>
+        <filename module="mod_topcloud250">mod_topcloud250.php</filename>
+        <filename>index.html</filename>
+        <filename>gpl3.txt</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="TITLE">
+                <field name="title"  type="text" default="" label="TC250_TITLE" description="TC250_TITLE_DESC" />
+                <field name="titletag" type="list" default="span" label="TC250_TITLE_TAG" description="TC250_TITLE_TAG_DESC">
+                    <option value="p">&lt; p &gt;</option>
+                    <option value="h1">&lt; h1 &gt;</option>
+                    <option value="h2">&lt; h2 &gt;</option>
+                    <option value="h3">&lt; h3 &gt;</option>
+                    <option value="h4">&lt; h4 &gt;</option>
+                    <option value="h5">&lt; h5 &gt;</option>
+                    <option value="h6">&lt; h6 &gt;</option>
+                    <option value="span">&lt; span &gt;</option>
+                </field>
+                <field name="titlealign" type="list" default="center" label="TC250_TITLE_ALIGN" description="TC250_TITLE_ALIGN_DESC">
+                    <option value="center">TC250_TITLE_ALIGN_OPT1</option>
+                    <option value="right">TC250_TITLE_ALIGN_OPT2</option>
+                    <option value="left">TC250_TITLE_ALIGN_OPT3</option>
+                </field>
+                <field name="titlecolour" type="text" default="000000" label="TC250_TITLECOLOUR" />
+                <field name="tfont" type="list" default="arial" label="TC250_TITLE_FONT" description="TC250_TITLE_FONT_DESC">
+                    <option value="arial">Arial</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="trebuchet">Trebuchet</option>
+                    <option value="georgia">Georgia</option>
+                    <option value="times">Times</option>
+                    <option value="courier">Courier</option>
+                    <option value="andale mono">Andale</option>
+                </field>
+                <field name="tfontweight" type="list" default="600" label="TC250_TITLE_FONTWEIGHT" description="TC250_TITLE_FONTWEIGHT_DESC">
+                    <option value="400">400</option>
+                    <option value="600">600</option>
+                    <option value="800">800</option>
+                </field>
+            </fieldset>
+            <fieldset name="LINKS">
+                <field name="sub4" label="TC250_SUB4" type="spacer" />
+                <field name="font" type="list" default="arial" label="TC250_CLOUD_TAGS_FONT" description="TC250_CLOUD_TAGS_FONT_DESC">
+                    <option value="arial">Arial</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="trebuchet">Trebuchet</option>
+                    <option value="georgia">Georgia</option>
+                    <option value="times">Times</option>
+                    <option value="courier">Courier</option>
+                    <option value="andale">Andale</option>
+                </field>
+                <field name="fontweight" type="list" default="400" label="TC250_CLOUD_TAGS_FONTWEIGHT" description="TC250_CLOUD_TAGS_FONTWEIGHT_DESC">
+                    <option value="400">400</option>
+                    <option value="600">600</option>
+                    <option value="800">800</option>
+                </field>
+                <field name="scale" type="list" default="1" label="TC250_CLOUD_TAGS_FONTSCALE" description="TC250_CLOUD_TAGS_FONTSCALE_DESC">
+                    <option value="0.8">TC250_SMALL</option>
+                    <option value="1">TC250_MEDIUM</option>
+                    <option value="1.2">TC250_LARGE</option>
+                </field>
+                <field name="sub20" label="TC250_SUB20" type="spacer" />
+                    <field name="keycolour" type="list" default="grey" label="TC250_MODULE_KEY_COLOUR" description="TC250_MODULE_KEY_COLOUR_DESC">
+                    <option value="grey">TC250_KEYCOLOUR_OPT7</option>
+                    <option value="red">TC250_KEYCOLOUR_OPT1</option>
+                    <option value="orange">TC250_KEYCOLOUR_OPT2</option>
+                    <option value="yellow">TC250_KEYCOLOUR_OPT3</option>
+                    <option value="green">TC250_KEYCOLOUR_OPT4</option>
+                    <option value="blue">TC250_KEYCOLOUR_OPT5</option>
+                    <option value="purple">TC250_KEYCOLOUR_OPT6</option>
+                </field>
+                <field name="customcolour" type="list" default="2" label="TC250_TAG_CUSTOMCOLOUR" description="TC250_TAG_CUSTOMCOLOUR_DESC">
+                    <option value="1">TC250_TAG_CUSTOMCOLOUR_OPT1</option>
+                    <option value="2">TC250_TAG_CUSTOMCOLOUR_OPT2</option>
+                </field>
+                <field name="link" type="text" default="000000" label="TC250_LINK" description="TC250_LINK_DESC" />
+                <field name="visited" type="text" default="000000" label="TC250_VISITED" description="TC250_VISITED_DESC" />
+                <field name="hover" type="text" default="000000" label="TC250_HOVER" description="TC250_HOVER_DESC" />
+                <field name="hoverbg" type="text" default="ffffff" label="TC250_HOVERBG" description="TC250_HOVERBG_DESC" />
+                <field name="active" type="text" default="000000" label="TC250_ACTIVE" description="TC250_ACTIVE_DESC" />
+                <field name="activebg" type="text" default="ffffff" label="TC250_ACTIVEBG" description="TC250_ACTIVEBG_DESC" />
+            </fieldset>
+            <fieldset name="GRAPHICS">
+                <field name="graphics" type="list" default="2" label="TC250_GRAPHICS" description="">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="sub23" label="TC250_SUB23" type="spacer" />
+                
+                <field name="bgpattern" type="imagelist" default="Herring.png" label="TC250_BG_PATTERN" directory="modules/mod_topcloud250/tmpl/images/backgrounds/" tripext="1" />
+                <field name="colour1" type="text" default="9CC0FF" label="TC250_MODULE_INTERIOR_COLOUR_BACKGROUND_LABEL" />
+                <field name="trans1" type="list" default="1" label="TC250_MODULE_COLOUR1_BACKGROUND">
+					<option value="1">TC250_COLOUR</option>
+					<option value="2">TC250_TRANS</option>
+				</field>
+                <field name="sub24" label="TC250_SUB24" type="spacer" />
+                <field name="bordercol" type="text" default="ACB5FF" label="TC250_MODULE_COLOUR_BORDER" />
+                <field name="bordersz" type="list" default="4" label="TC250_BORDERSZ" >
+					<option value="0">0</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+                    <option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+                    <option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+                    <option value="11">11</option>
+					<option value="12">12</option>
+					<option value="13">14</option>
+					<option value="15">15</option>
+					<option value="16">16</option>
+					<option value="17">17</option>
+                    <option value="18">18</option>
+					<option value="19">19</option>
+					<option value="10">20</option>
+				</field>
+                <field name="shadcol" type="text" default="444444" label="TC250_SHAD_COLOUR" />
+                <field name="shadsz" type="list" default="4" label="TC250_SHADSZ" >
+					<option value="0">0</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+                    <option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+                    <option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+                    <option value="11">11</option>
+					<option value="12">12</option>
+					<option value="13">14</option>
+					<option value="15">15</option>
+					<option value="16">16</option>
+					<option value="17">17</option>
+                    <option value="18">18</option>
+					<option value="19">19</option>
+					<option value="10">20</option>
+				</field>
+            </fieldset>
+            <fieldset name="INCLUDE">
+                <field name="sub5" label="TC250_SUB5" type="spacer" />
+                <field name="keywords" type="list" default="1" label="TC250_KEYWORD" description="TC250_KEYWORD_DESC">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="articles" type="list" default="1" label="TC250_ARTICLE" description="TC250_ARTICLE_DESC">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="weblinks" type="list" default="2" label="TC250_WEBLINK" description="TC250_WEBLINK_DESC">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="categories" type="list" default="2" label="TC250_CATEGORIES" description="TC250_CATEGORIES_DESC">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="newsfeeds" type="list" default="2" label="TC250_NEWSFEEDS" description="TC250_NEWSFEEDS_DESC">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="contacts" type="list" default="2" label="TC250_CONTACTS" description="TC250_CONTACTS_DESC">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="tags" type="list" default="2" label="Joomla Tags" >
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="sub6" label="TC250_SUB6" type="spacer" />
+                <field name="exclude" type="textarea" default="" label="TC250_EXCLUDE_LABEL" description="TC250_EXCLUDE_DESC" />
+                <field name="include" type="textarea" default="" label="TC250_INCLUDE_LABEL" description="TC250_INCLUDE_DESC" />
+                <field name="sub7" label="TC250_SUB7" type="spacer" />
+                <field name="start" type="text" default="0" label="TC250_START_LABEL" description="TC250_START_DESC" />
+                <field name="length" type="text" default="100" label="TC250_LENGTH_LABEL" description="TC250_LENGTH_DESC" />
+                <field name="wordmin" type="list" default="4" label="TC250_WORDMIN" description="">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </field>
+                <field name="wordmax" type="list" default="50" label="TC250_WORDMAX" description="">
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="60">60</option>
+                    <option value="70">70</option>
+                    <option value="80">80</option>
+                    <option value="90">90</option>
+                    <option value="100">100</option>
+                </field>
+                <field name="lang" type="language" client="site" default="*" label="TC250_LANG" description="TC250_LANG_DESC">
+                    <option value="*">JALL</option>
+                </field>
+                <field name="all_lang" type="list" default="*" label="TC250_UNC_LANG">
+                    <option value="*">TC250_UNC_LANG_OPT1</option>
+                    <option value="xxx">TC250_UNC_LANG_OPT2</option>
+                </field>
+                <field name="xchars" type="textarea" default="" label="TC250_XCHARS_LABEL" description="TC250_XCHARS_DESC" />
+            </fieldset>
+            <fieldset name="ADMIN">
+                <field name="sub1" label="TC250_SUB1" type="spacer" />
+                <field type="list" default="1" label="TC250_LANDING_LABEL" description="TC250_LANDING_DESC" name="pageselect">
+                    <option value="1">TC250_PAGE_SAME</option>
+                    <option value="2">TC250_PAGE_MENU</option>
+                </field>
+                <field type="menuitem" default="1" label="TC250_LANDING_MENU_LABEL" description="TC250_LANDING_MENU_DESC" name="menuitem" />
+                <field name="modno" type="list" default="0" label="TC250_MODNO_LABEL" description="TC250_MODNO_DESC">
+                    <option value="0">TC250_MODNO_OPT0</option>
+                    <option value="TC1">TC250_MODNO_OPT1</option>
+                    <option value="TC2">TC250_MODNO_OPT2</option>
+                    <option value="TC3">TC250_MODNO_OPT3</option>
+                    <option value="TC4">TC250_MODNO_OPT4</option>
+                    <option value="TC5">TC250_MODNO_OPT5</option>
+                    <option value="TC6">TC250_MODNO_OPT6</option>
+                    <option value="TC7">TC250_MODNO_OPT7</option>
+                    <option value="TC8">TC250_MODNO_OPT8</option>
+                </field>
+                <field type="list" default="1" label="TC250_PHRASE_LABEL" description="TC250_PHRASE_DESC" name="phrase">
+                    <option value="1">OPT_PHRASE</option>
+                    <option value="2">OPT_SINGLE</option>
+                </field>
+                <field type="list" default="1" label="TC250_SHUFFLE_LABEL" description="TC250_SHUFFLE_DESC" name="shuffle">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field type="list" default="1" label="TC250_LOGREQ_LABEL" description="TC250_LOGREQ_DESC" name="logreq">
+                    <option value="1">JYES</option>
+                    <option value="2">JNO</option>
+                </field>
+                <field name="sub2" label="TC250_SUB2" type="spacer" />
+                <field name="margin-leftmodule" type="text" default="" label="TC250_LEFT_MARGIN_LABEL" description="TC250_LEFT_MARGIN_DESC" />
+                <field name="paddingleft" type="text" default="" label="TC250_PADDING_LEFT" description="TC250_PADDING_LEFT_DESC" />
+                <field name="paddingright" type="text" default="" label="TC250_PADDING_RIGHT" description="TC250_PADDING_RIGHT_DESC" />
+                <field name="paddingtop" type="text" default="" label="TC250_PADDING_TOP" description="TC250_PADDING_TOP_DESC" />
+                <field name="paddingbottom" type="text" default="" label="TC250_PADDING_BOTTOM" description="TC250_PADDING_BOTTOM_DESC" />
+                <field name="margin-top" type="text" default="5" label="TC250_TOP_MARGIN" description="TC250_TOP_MARGIN_DESC" />
+                <field name="margin-bottom" type="text" default="5" label="TC250_BOTTOM_MARGIN" description="TC250_BOTTOM_MARGIN_DESC" />
+                <field name="width" type="text" default="100" label="TC250_WIDTH" description="TC250_MODULE_WIDTH" />
+                <field name="widthunit" type="list" default="%" label="TC250_WIDTH_UNIT" description="TC250_WIDTH_UNIT">
+                    <option value="%">TC250_WIDTH_UNIT_OPT2</option>
+                    <option value="px">TC250_WIDTH_UNIT_OPT1</option>
+                </field>
+                <field name="colour2" type="text" default="FFFFFF" label="TC250_MODULE_COLOUR_BACKGROUND" />
+                <field name="trans2" type="list" default="2" label="TC250_MODULE_COLOUR_BACKGROUND">
+                    <option value="1">TC250_COLOUR</option>
+                    <option value="2">TC250_TRANS</option>
+                </field>
+                <field name="ctag" type="textarea" default="" filter="raw" label="TC250_CTAG" description="TC250_CTAG_DESC"/>
+                <field name="moduleclass_sfx" type="text" default="" label="TC250_MODULE_CLASS_SUFFIX_LABEL" description="TC250_MODULE_CLASS_SUFFIX_DESC" />
+            </fieldset>
+        </fields>
+    </config>
+    <updateservers>
+		<server type="extension" name="Blackdale" priority="1"><![CDATA[http://updates.blackdale.com/update/topcloud250/topcloud250.xml]]></server>
+	</updateservers>
+</extension>

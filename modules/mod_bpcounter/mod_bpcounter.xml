@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.4" client="site" method="upgrade">
+	<name>mod_bpcounter</name>
+	<author>Artur Stępień</author>
+	<creationDate>February 2016</creationDate>
+	<copyright>Copyright (C) 2016 Best Project. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<authorEmail>artur.stepien@bestproject.pl</authorEmail>
+	<authorUrl>www.bestproject.pl</authorUrl>
+	<version>1.0.0</version>
+	<description>MOD_BPCOUNTER_XML_DESCRIPTION</description>
+    
+	<files>
+		<folder>assets</folder>
+		<folder>language</folder>
+		<folder>tmpl</folder>
+		<filename module="mod_bpcounter">mod_bpcounter.php</filename>
+	</files>
+    
+	<languages folder="language">
+		<language tag="es-ES">es-ES/es-ES.mod_bpcounter.ini</language>
+		<language tag="es-ES">es-ES/es-ES.mod_bpcounter.sys.ini</language>
+	</languages>
+    
+    <updateservers>
+		<server type="extension" priority="5" name="BP Counter">https://raw.githubusercontent.com/bestproject/mod_bpcounter/updates/list.xml</server>
+	</updateservers>
+    
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field
+					name="label"
+					type="label"
+					default=""
+					label="MOD_BPCOUNTER_FIELD_LABEL_LABEL"
+					description="MOD_BPCOUNTER_FIELD_LABEL_DESC" />
+				<field
+					name="number"
+					type="text"
+					default="300"
+					label="MOD_BPCOUNTER_FIELD_NUMBER_LABEL"
+					description="MOD_BPCOUNTER_FIELD_NUMBER_DESC" />
+				<field
+					name="time"
+					type="number"
+					min="1"
+					default="2000"
+					filter="integer"
+					label="MOD_BPCOUNTER_FIELD_TIME_LABEL"
+					description="MOD_BPCOUNTER_FIELD_TIME_DESC" />
+				<field
+					name="color"
+					type="color"
+					default="#000"	
+					label="MOD_BPCOUNTER_FIELD_COLOR_LABEL"
+					description="MOD_BPCOUNTER_FIELD_COLOR_DESC" />
+				<field
+					name="link"
+					type="text"
+					default=""	
+					label="MOD_BPCOUNTER_FIELD_LINK_LABEL"
+					description="MOD_BPCOUNTER_FIELD_LINK_DESC" />
+			</fieldset>			
+			<fieldset
+				name="advanced">
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					description="JFIELD_ALT_MODULE_LAYOUT_DESC" />
+				<field
+					name="moduleclass_sfx"
+					type="textarea" rows="3"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+				<field
+					name="cache"
+					type="list"
+					default="1"
+					label="COM_MODULES_FIELD_CACHING_LABEL"
+					description="COM_MODULES_FIELD_CACHING_DESC">
+					<option
+						value="1">JGLOBAL_USE_GLOBAL</option>
+					<option
+						value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+				</field>
+				<field
+					name="cache_time"
+					type="text"
+					default="900"
+					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+					description="COM_MODULES_FIELD_CACHE_TIME_DESC" />
+				<field
+					name="cachemode"
+					type="hidden"
+					default="itemid">
+					<option
+						value="itemid"></option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+    
+</extension>

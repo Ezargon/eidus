@@ -1,0 +1,14 @@
+<altauserpoints>
+    <component>com_pbbooking</component>
+    <rules>
+        <rule>
+            <name>PBBooking: Pay with points for Service</name>
+            <description>PBBooking Buy Service with Points</description>
+            <plugin_function>plg_pbbooking_pay_points</plugin_function>
+            <fixed_points>false</fixed_points>
+            <category>sh</category>
+            <display_message>0</display_message>
+            <email_notification>0</email_notification>
+        </rule>
+    </rules>
+</altauserpoints>

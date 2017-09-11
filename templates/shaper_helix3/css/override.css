@@ -1,0 +1,156 @@
+@CHARSET "ISO-8859-1";
+
+.sp-contact-phone a, .sp-contact-email a
+{
+	color:#999;
+}
+.sppb-carousel-caption
+{
+	margin:0 auto;
+}
+.sppb-carousel-pro-text h2
+{
+    color: #ffffff;
+    font-size: 62px;
+    line-height: 62px;
+    margin-bottom: 20px;
+    font-family: Open Sans,sans-serif;
+    font-weight: 800;
+    text-transform:uppercase;
+    text-shadow: 0px 0px 5px #000;    
+}
+.sppb-carousel-pro-text div
+{
+	color:#fff;
+	font-size:36px;
+	line-height:52px;
+/*    text-transform:uppercase;	*/
+    text-shadow: 1px 1px 4px #000;    
+}
+.secretaria-banner
+{
+	box-shadow:0px 0px 40px #222 inset;
+}
+.category-module li
+{
+	padding:6px 6px !important;
+}
+div.noticia-icon i {
+  border: 1px solid #ccc;
+  border-radius:3px;
+  float: left;
+  font-size: 25px;
+  font-weight: 700;
+  height:40px;
+  width:40px;
+  line-height:38px;
+  text-align:center;
+  color:#000;
+  margin-top: 7px;
+  padding: 0 12px 2px;
+ 
+}
+
+.mod-articles-category-date
+{
+	color:#000;
+	font-size:15px;	
+}
+.mod-articles-category-title 
+{
+	font-size:18px;	
+}	
+.sppb-addon-container .titulo
+{text-align:center}
+span.nr
+{
+	font-size: 32px;
+	line-height:32px;
+}
+div.modbpcounter
+{
+	padding:15px;
+	text-align:center;
+}
+div.modbpcounter span.label
+{
+	font-size:18px;
+}
+.sppb-icon-container:hover, .sppb-addon-content > a:hover
+{
+	color:#881435 !important;
+	transition: color 300ms ease 0s, background-color 300ms ease 0s;
+}
+.sp-module ul > li.active > a::before
+{
+	content: "\f104";
+	font-weight:bold;
+}
+.sp-module ul > li.active > a
+{
+	font-weight:600;
+}
+.sp-module ul > li.active
+{
+	background:#f6f6f6;
+}
+.sppb-btn-default
+{
+	background-color:#881435;
+	color:#fff;
+}
+.secretaria-alt .sppb-cta-title, .secretaria-alt .sp-copyright
+{
+	text-shadow: 0px 0px 5px #000;
+}
+.sppb-addon .sp-copyright
+{
+	font-size:18px;
+	/*color:#444;*/
+}
+.accordion-heading h5
+{   font-size:18px;
+	line-height:18px;
+	font-weight:normal;
+}
+#sp-page-builder .sppb-section-title
+{
+	margin-bottom: 40px;
+}
+.sppb-addon-title
+{
+	color:#000;
+}
+.titulo-calendario,.titulo-noticias
+{
+	margin-top:10px;
+	text-align:center;
+}
+.modulo-eventos p
+{
+	margin:0px;
+	color:#000;
+}
+.boton-noticias,.boton-eventos
+{
+	margin:20px;
+}
+.col-icono {
+    text-align: center;
+    padding:10px;
+}
+.col-icono a,.col-icono h3
+{
+	color:#333;
+}
+.icons
+{
+	/*display:none;*/
+}
+.moduletablemod_login_noboton
+{
+	font-size:22px;
+	font-style:italic;
+	text-align:center;
+	margin:25px;
+}

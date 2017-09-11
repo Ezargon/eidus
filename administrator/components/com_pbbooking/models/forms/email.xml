@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields>
+
+        <field type="hidden" name="id"/>
+        <field type="text" name="email_tag" required="true" label="COM_PBBOOKING_EMAIL_EMAIL_TAG" description="COM_PBBOOKING_EMAIL_EMAIL_TAG_DESC" readonly="true"/>
+        <field type="textarea" name="description" required="true" label="COM_PBBOOKING_EMAIL_DESCRIPTION" readonly="true" rows="5" cols="80"/>
+        <field type="text" name="emailsubject" required="true" label="COM_PBBOOKING_EMAIL_EMAILSUBJECT" description="COM_PBBOOKING_EMAIL_EMAILSUBJECT_DESC"/>
+        <field type="editor" name="emailbody" required="true" label="COM_PBBOOKING_EMAIL_EMAILBODY" description="COM_PBBOOKING_EMAIL_EMAILBODY_DESC" filter="safehtml"/>
+    </fields>
+</form>

@@ -1,0 +1,33 @@
+ul.nav-tabs li.pro {
+    background-color: #FEC0C3 !important;
+    border-radius: 4px 4px 0 0;
+}
+ul.nav-tabs li.pro a:after{
+    content: "   \f023";
+    font-family: FontAwesome;
+    color:white;
+}
+ul.nav-tabs li.pro a {
+    color:white;
+}
+ul.nav-tabs li.pro a:hover {
+    background-color: inherit;
+}
+ul.nav-tabs li.pro.active a {
+    background-color: #FEC0C3 !important;
+}
+label.pro:after {
+    content: "     \f023";
+    font-family: FontAwesome;
+}
+label.pro {
+    color: gray;
+}
+.pro-feature {
+    font-size: 0.8em;
+    text-transform: uppercase;
+}
+.pro-feature:before {
+    content: "    \f023       ";
+    font-family: FontAwesome;
+}

@@ -1,0 +1,8 @@
+/** Extend Joomla pre 3.0 Versions **/
+.icon-48-joodb { background-image: url(./images/joodb.png); }
+.icon-32-import { background-image: url(./images/icon-32-import.png); }
+
+#header-box.single { display: block; background: #fbfbfb; min-height: 48px; border: 1px solid #ccc; padding: 5px 8px; background-color: #fbfbfb; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin-bottom: 10px;}
+#header-box.single .header {  padding: 0; margin: 0;  float: left; display: inline; width: auto; }
+#header-box.single #toolbar-box { padding: 0; margin: 0; float: right; }
+#element-box.content-box { clear: both; border: 1px solid #ccc; padding: 8px;  -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin: 10px 0; display: block; }

@@ -1,0 +1,6 @@
+configuration.php
+.htaccess
+tmp/*
+logs/*
+.htaccess
+.*~

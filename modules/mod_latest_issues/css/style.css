@@ -1,0 +1,32 @@
+.Issueslatest {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-bottom: 5px;
+	color: #777777;
+	font-size: 11px;
+	border-bottom: 1px dotted #AAAAAA;
+}
+
+.IssueRecentRow {
+	width: 100%;
+	border-bottom: 1px dotted #AAAAAA;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.IssueSubjectText {
+	color: #777777;
+}
+.IssueClosedDateText {
+	color: #777777;
+	font-size: 9px;
+}
+
+.IssueHeaderText {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-bottom: 5px;
+	color: #777777;
+	font-size: 9px;
+	font-weight: bold;
+	border-bottom: 1px dotted #AAAAAA;	
+}

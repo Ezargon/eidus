@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields>
+
+        <field type="hidden" name="id"/>
+        <field type="text" name="sms_tag" required="true" label="COM_PBBOOKING_SMS_SMS_TAG" readonly="true"/>
+        <field type="textarea" name="sms" required="true" label="COM_PBBOOKING_SMS_SMS" rows="20" cols="80"/>
+    </fields>
+</form>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details" addfieldpath="administrator/components/com_content/models/fields">
+        <field type="hidden" name="id"/>
+        <field type="text" name="name" required="1" label="COM_PBBOOKING_CAL_NAME" labelclass="control-label" class="input-xxlarge"/>
+        <field type="hidden" name="hours" required="1" label="COM_PBBOOKING_CALENDAR_OVERRIDE_TRADING_TIMES" labelclass="control-label"/>
+        <field type="text" name="email" label="COM_PBBOOKING_CAL_OVERRIDE_EMAIL" labelclass="control-label"/>
+        <field name="color" type="color" required="1" default="#000000" label="COM_PBBOOKING_CAL_COLOR_CODING" labelclass="control-label"/>
+        <field name="ordering" type="text" labelclass="control-label" label="COM_PBBOOKING_CAL_ORDERING" default="0" required="1"/>
+        <field name="article_id" type="modal_article" label="COM_PBBOOKING_CAL_SERVICE_ARTICLE_LINK" description="COM_PBBOOKING_CAL_ARTICLE_LINK_DESC"/>
+        <field name="image_url" type="media" label="COM_PBBOOKING_CAL_SERVICE_IMAGE_LINK" description="COM_PBBOOKING_CAL_SERVICE_IMAGE_LINK_DESC"/>
+    </fieldset>
+
+    <fieldset name="integration">
+        <field type="list" name="enable_google_cal" required="1" labelclass="control-label pro" label="COM_PBBOOKING_CALENDAR_CONFIGURATION_ENABLE_GOOGLE_CAL" class="pro">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="gcal_id" type="text" label="COM_PBBOOKING_CAL_GCAL_CALID" labelclass="control-label pro" class="pro"/>
+    </fieldset>
+
+    <fieldset name="group_bookings">
+        <field name="groupbookings" type="list" label="COM_PBBOOKING_RESOURCE_GROUP_CLASS" labelclass="control-label pro" class="pro">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field name="groupclass_max" type="text" class="input-mini pro" label="COM_PBBOOKING_RESOURCE_GROUP_CLASS_MAX" labelclass="control-label pro" default="1"/>
+        <field name="calendar_schedule" type="hidden"/>
+    </fieldset>
+
+
+
+    <!--<fieldset name="tradinghours_modal">
+        <field name="status" type="text" label="Trading Day"/>
+        <field name="open_time" type="text" label="Opening Time"/>
+        <field name="close_time" type="text" label="Closing Time"/>
+    </fieldset>-->
+
+    <fieldset name="languages">
+    </fieldset>
+</form>

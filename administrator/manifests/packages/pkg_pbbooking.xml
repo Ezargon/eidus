@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="package" version="1.6" method="upgrade">
+    <name>Online Service Booking Package</name>
+    <author>Eric Fernance</author>
+    <creationDate>23rd June 2016</creationDate>
+    <packagename>pbbooking</packagename>
+    <version>3.2.6</version>
+    <url>http://hotchilllisoftware.com</url>
+    <packager>Hot Chilli Software</packager>
+    <packagerurl>http://hotchillisoftware.com/</packagerurl>
+    <description>Package installer for Online Service Booking</description>
+    <update>http://www.updateurl.com/update</update>
+    <files folder="packages">
+        <file type="component" id="com_pbbooking" >com_pbbooking.zip</file>
+        <file type="library" id="pbbookinglib">lib_pbbookinglib.zip</file>
+        <file type="library" id="pbfunctions">lib_pbfunctions.zip</file>
+        <!--<file type="library" id="pbfunctions" group="system">plg_sys_helloworld.zip</file>
+        <file type="template" id="helloworld" client="site">tpl_helloworld.zip</file>-->
+    </files>
+</extension>

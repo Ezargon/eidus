@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form >
+    <fields>
+        <fieldset name="details" addfieldpath="administrator/components/com_content/models/fields">
+            <field name="id" type="hidden" />
+            <field name="name" type="text" required="1" class="input-xxlarge" label="COM_PBBOOKING_SERVICE_NAME" labelclass="control-label" />
+            <field name="duration" type="text" required="1" class="input-mini" label="COM_PBBOOKING_SERVICE_DURATION" labelclass="control-label"/>
+            <field name="price" type="text" class="input-mini" label="COM_PBBOOKING_SERVICE_PRICE" labelclass="control-label"/>
+            <field name="article_id" type="modal_article" label="COM_PBBOOKING_CAL_SERVICE_ARTICLE_LINK" description="COM_PBBOOKING_SERVICE_ARTICLE_LINK_DESC"/>
+            <field name="calendar" type="list" required="1" label="COM_PBBOOKING_SERVICE_LINKED_CALENDAR" multiple="true">
+            </field>
+            <field name="require_payment" type="list" required="1" label="COM_PBBOOKING_SERVICE_REQUIRE_PAYMENT" class="pro" labelclass="pro">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="pointscost" type="number" class="input-mini pro" label="COM_PBBOOKING_SERVICE_PRICE_POINTS" labelclass="control-label pro" description="COM_PBBOOKING_SERVICE_PRICE_POINTS_DESC"/>
+
+            <field name="is_variable" type="list" label="COM_PBBOOKING_SERVICE_IS_VARIABLE_DURATION" class="pro" labelclass="pro">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="min_duration" type="text" class="input-mini pro" label="COM_PBBOOKING_SERVICE_MIN_DURATION" labelclass="pro"/>
+
+            <field name="ordering" type="text" class="input-mini" labelclass="control-label" label="COM_PBBOOKING_CAL_ORDERING" default="0" required="1"/>
+        </fieldset>
+    </fields>
+
+
+</form>

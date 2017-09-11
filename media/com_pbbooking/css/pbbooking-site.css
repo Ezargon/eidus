@@ -1,0 +1,370 @@
+/** jpdm-i */
+#pbbooking th{
+	background-color: #881435;
+	 border: 1px solid black;
+}
+/** jpdm-f */
+
+.pbbooking.singlepage table#pbbooking {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	border: 0px;
+	width: 350px
+}
+
+.pbbooking.singlepage #pbbooking th, .pbbooking.singlepage td {
+	height: 32px;
+	width: 50px;
+	text-align: center;
+	border: 0px;
+	padding: 0px
+}
+
+.pbbooking.singlepage #pbbooking th {
+	color: #e6e6e6
+}
+
+.pbbooking.singlepage .calendars_left {
+	float: left;
+	width: 50%
+}
+
+.pbbooking.singlepage .calendars_right {
+	float: left;
+	margin-left: 20px
+}
+
+.pbbooking.singlepage .pbbooking-reservation-field-label {
+	float: left;
+	font-weight: bold
+}
+
+.pbbooking.singlepage .pbbooking-reservation-field {
+	float: left;
+	min-width: 50px;
+	margin-bottom: 5px
+}
+
+.pbbooking.singlepage .service-price {
+	font-weight: bold
+}
+
+.pbbooking.singlepage .slot-label {
+	float: left;
+	font-weight: bold;
+	width: 75px
+}
+
+.pbbooking.singlepage .slot-radio {
+	height: 20px
+}
+
+.pbbooking.singlepage input.error-field {
+	border: 2px solid red
+}
+
+.pbbooking.singlepage .error-message {
+	border: 1px solid red;
+	background-color: #FBE6F2;
+	width: 250px;
+	margin: 5px auto 5px auto;
+	padding: 5px;
+	text-align: center
+}
+
+.pbbooking.singlepage td.selected_day {
+	background-color: yellow
+}
+
+.pbbooking.singlepage .error-label {
+	color: red
+}
+
+.pbbooking.singlepage table.long-cal td {
+	height: 28px
+}
+
+.pbbooking.singlepage #pbbooking-timeslot-listing>table, .pbbooking.singlepage #pbbooking-timeslot-listing>table tbody tr,
+	.pbbooking.singlepage #pbbooking-timeslot-listing>table tbody td {
+	border: 0px solid
+}
+
+.pbbooking.singlepage .pbbooking-notifications-active {
+	background-color: #C9F3C4;
+	border: 1px solid green;
+	padding: 10px;
+	margin: 10px
+}
+
+.pbbooking.singlepage #pbbooking-paypal-form {
+	text-align: center
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-cal-left-body {
+	background: url("../images/calslices/td-content-left.svg") repeat-y;
+	background-position: right;
+	min-width: 59px;
+	border: 0px
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-cal-left-header {
+	background: url("../images/calslices/td-header-left.svg") repeat-y;
+	background-position: right;
+	min-width: 44px;
+	border: 0px
+}
+
+.pbbooking.singlepage td.gap-row {
+	height: 9px;
+	max-height: 9px;
+	border-spacing: 0px
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-gap-row-left {
+	background: url("../images/calslices/td-gap-row-left.svg") no-repeat;
+	background-position: right
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-gap-row-right {
+	background: url("../images/calslices/td-gap-row-right.svg") no-repeat;
+	background-position: left
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-gap-row-center {
+	background: url("../images/calslices/td-gap-row-center.svg")
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-cal-right-header {
+	background: url("../images/calslices/td-header-right.svg") repeat-y;
+	border: 0px;
+	background-position: left
+}
+
+.pbbooking.singlepage #pbbooking th.pbbooking-cal-center-header {
+	background: url("../images/calslices/td-cal-center-header.svg");
+	border-top: 0px;
+	border-bottom: 0px
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-cal-right-body {
+	background: url("../images/calslices/td-cal-right-body.svg") repeat-y;
+	background-position: left;
+	border: 0px;
+	min-width: 71px;
+	width: 71px
+}
+
+.pbbooking.singlepage #pbbooking td.pbbooking-content {
+	background: url("../images/calslices/td-content-fill-slice.svg")
+}
+
+.pbbooking.singlepage td.pbbooking-cal-top-left {
+	background: url("../images/calslices/td-cal-top-left.svg") no-repeat;
+	background-position: bottom right;
+	max-height: 92px;
+	height: 92px;
+	padding: 0px
+}
+
+.pbbooking.singlepage td.pbbooking-cal-top-right {
+	background: url("../images/calslices/td-cal-top-right.svg") no-repeat;
+	background-position: bottom left;
+	max-height: 92px;
+	height: 92px;
+	padding: 0px
+}
+
+.pbbooking.singlepage td.pbbooking-cal-top-rings {
+	text-align: center;
+	height: 92px;
+	min-width: 220px;
+	width: 220px;
+	background: url("../images/calslices/td-cal-top-rings.svg") no-repeat;
+	background-position: bottom;
+	padding: 0px
+}
+
+.pbbooking.singlepage td.pbbooking-cal-bottom-left {
+	background: url("../images/calslices/td-bottom-left.svg") no-repeat;
+	min-height: 86px;
+	height: 86px;
+	padding: 0px;
+	background-position: right
+}
+
+.pbbooking.singlepage td.pbbooking-cal-bottom-center {
+	background: url("../images/calslices/td-bottom-slice.svg") repeat-x
+}
+
+.pbbooking.singlepage td.pbbooking-cal-bottom-right {
+	background: url("../images/calslices/td-bottom-right.svg") no-repeat
+}
+
+.pbbooking.singlepage .month-heading {
+	font-size: 1.7em
+}
+
+.pbbooking.singlepage #pbbooking tr, .pbbooking.singlepage td {
+	border: 0px solid
+}
+
+.pbbooking.singlepage #pbbooking td.fully-booked {
+	background-color: #881435;
+}
+
+.pbbooking.singlepage table#pbbooking-survey-table {
+	border-collapse: collapse;
+	width: 90%;
+	margin: 0px auto
+}
+
+.pbbooking.singlepage table#pbbooking-survey-table td {
+	padding: 5px;
+	text-align: left
+}
+
+.pbbooking.singlepage table#pbbooking-survey-table input {
+	margin: 5px
+}
+
+.pbbooking.singlepage table#pbbooking-survey-table textarea {
+	width: 400px;
+	height: 200px
+}
+
+.pbbooking.singlepage table.pbbooking-appointment-table td, .pbbooking.singlepage table.pbbooking-appointment-table th
+	{
+	padding: 5px
+}
+
+.pbbooking.singlepage table.pbbooking-appointment-table th {
+	text-align: center
+}
+
+.pbbooking.singlepage table.pbbooking-appointment-table {
+	width: 90%
+}
+
+.pbbooking.singlepage table th, .pbbooking.singlepage table td {
+	padding: 0px;
+	border-top: 0px solid #ddd;
+	vertical-align: middle;
+	text-align: center
+}
+
+.pbbooking.singlepage input[type=text].error-field {
+	border: 2px solid red
+}
+
+.pbbooking.multipage table#pbbooking {
+	width: 100%
+}
+
+.pbbooking.multipage table#pbbooking td, .pbbooking.multipage table#pbbooking th
+	{
+	height: 2em;
+	padding: 1em;
+	text-align: center;
+	line-height: 2em
+
+}
+
+.pbbooking.multipage table.pbbooking-data-table {
+	border: 0px
+}
+
+.pbbooking.multipage table.pbbooking-data-table tr, .pbbooking.multipage table.pbbooking-data-table td,
+	.pbbooking.multipage table.pbbooking-data-table th {
+	border: 0px
+}
+
+.pbbooking.multipage table.pbbooking-data-table td, .pbbooking.multipage table.pbbooking-data-table th
+	{
+	padding: 5px
+}
+
+.pbbooking.multipage .error-message {
+	border: 1px solid red;
+	background-color: #FBE6F2;
+	width: 250px;
+	margin: 5px auto 5px auto;
+	padding: 5px;
+	text-align: center
+}
+
+.pbbooking.multipage td.selected_day {
+	background-color: #FAB700;
+}
+
+.pbbooking.multipage .error-label {
+	color: red
+}
+
+.pbbooking.multipage td.fully-booked, .pbbooking.multipage td.pbbooking-busy-cell
+	{
+	background-color: #C0C0C0;
+	color: #808080;
+}
+
+.pbbooking.multipage table.long-cal td {
+	height: 28px
+}
+
+.pbbooking.multipage #pbbooking-timeslot-listing>table, .pbbooking.multipage #pbbooking-timeslot-listing>table tbody tr,
+	.pbbooking.multipage #pbbooking-timeslot-listing>table tbody td {
+	border: 0px solid
+}
+
+.pbbooking.multipage .pbbooking-notifications-active {
+	background-color: #C9F3C4;
+	border: 1px solid green;
+	padding: 10px;
+	margin: 10px
+}
+
+.pbbooking.multipage input.error-field {
+	border: 2px solid red
+}
+
+.pbbooking.multipage input[type=text].error-field {
+	border: 2px solid red
+}
+
+.pbbooking.checkout table {
+	width: 100%
+}
+
+.pbbooking.checkout table tr td:first-of-type {
+	width: 75%
+}
+
+.pbbooking.checkout table th {
+	text-align: left
+}
+
+.pbbooking.checkout input, .pbbooking.checkout label {
+	display: inline
+}
+
+.pbbooking.checkout input[type=submit] {
+	display: block;
+	margin-top: 2em
+}
+
+.pbbooking .box {
+	border: 1px solid #ccc;
+	margin-bottom: 2em
+}
+
+.pbbooking .box .box-heading {
+	background-color: #ccc;
+	margin-top: -12px
+}
+
+.pbbooking .box .box-heading h3 {
+	padding: 10px
+}
+
+.pbbooking .box .body {
+	padding: 10px
+}

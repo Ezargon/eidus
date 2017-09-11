@@ -1,0 +1,163 @@
+#OT_form, .OT_list, .OT_wrapper {
+		width:auto !important;
+		display: table;
+		 position: relative;
+		z-index:1;
+		margin: 0 auto !important;}
+
+	.OTButton, #OTButton, .OT_submit {
+	
+		width:auto !important;}
+		
+		
+.OT_day, .OT_time, .OT_party, .OT_submit, .OT_wrapper {
+	margin-bottom: 13px !important;
+	background:none !important;
+	border:none !important;}
+	
+	.OT_title, .OT_subtitle{
+		display:none;}
+		
+	.OT_searchTimeField, .OT_searchDateField, .OT_searchPartyField 	{
+		-moz-border-radius:inherit !important;
+		-webkit-border-radius:inherit !important;
+		border-radius:inherit !important;}
+	
+	
+.OT_searchTimeField, .OT_searchDateField, .OT_searchPartyField {
+	width:auto !important;}
+	
+.OT_day, .OT_time, .OT_party {
+	padding-left: 0 !important;
+    padding-right: 32px !important;
+	width:230px !important;}
+	
+	
+	.OT_list a.OT_Find_a_Table:link, .OT_list a.OT_Find_a_Table:visited, .OT_list a.OT_Find_a_Table:hover, .OT_list a.OT_Find_a_Table:active {
+		background:#333333;
+		color:#ffffff;
+		font-weight:normal;
+		line-height: 25px;
+		padding: 12px 26px;
+		font-size: 1em;
+		text-shadow:none;
+		border:none;}
+		
+		.OT_list a.OT_Find_a_Table:hover {
+			background:#000000 !important;}
+		
+	.OT_searchTimeField, .OT_searchDateField, .OT_searchPartyField {
+		background:url(../images/arrows.png) no-repeat scroll right 13px !important;
+		padding-right:10px;}	
+		
+	#OT_timeList, #OT_partyList {
+	top: 58px !important;
+	left: 0 !important;
+	border-bottom: 1px solid #efefef !important;
+    border-left: 1px solid #efefef !important;
+    border-right: 1px solid #efefef !important;
+    width: 242px !important;}	
+	
+	#OT_timeList .OT_navListItem, #OT_partyList .OT_navListItem {
+    width: 225px !important;}
+	
+	.ui-widget {
+    padding: 7px !important;
+    width: 228px !important;}
+	
+	.ui-datepicker td span, .ui-datepicker td a {
+    height: 21px !important;
+    line-height: 23px;
+    padding: 4px !important;
+    text-align: center !important;
+    width: 21px !important;}
+	
+	.ui-datepicker td span, .ui-datepicker td a {
+    -moz-border-radius:52px !important;
+	-webkit-border-radius:52px !important;
+	border-radius:52px !important;}
+	
+	.ui-corner-all {
+	-moz-border-radius:0px !important;
+	-webkit-border-radius:0px !important;
+	border-radius:0px !important;}
+	
+	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+		background:#ff0000 !important;}
+	
+	.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+		background:#fff !important;}
+		
+	.ui-widget-content {
+		border-color:#efefef !important;}	
+	
+	.ui-datepicker th {
+    background: none !important;}
+
+	
+	.ui-datepicker th {
+    font-weight: normal !important;}
+	
+	.ui-datepicker .ui-datepicker-header {
+    padding: 9px 0 7px !important;}
+	
+	.ui-datepicker .ui-datepicker-next {
+    right: 7px !important;}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+    top: 9px !important;}
+	 
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    background: none !important;}
+	
+		
+	.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    background: #333333 !important;
+    border: 1px solid #333 !important;
+    color: #fff !important;}
+	
+	.ui-widget-header {
+    background: none !important;
+    border: none !important;}
+	
+	.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	border:none !important;}
+	
+a.OT_navLink:link, a.OT_navLink:visited, a.OT_navLink:hover, a.OT_navLink:active {
+    margin-bottom: 1px !important;
+    padding: 5px 0 !important;
+    text-align: left !important;
+    text-indent: 23px !important;}	
+		
+
+#TB_window	{
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	padding:12px;
+	border-color:#ffffff !important;}
+	
+	
+
+@media screen and (max-width: 950px){
+	
+	.OT_day, .OT_time, .OT_party, .OT_submit {
+		float:none !important;
+		width:100% !important;
+		padding-left:0px !important;
+		display:block !important;
+		margin-bottom:15px !important;
+		padding-right:0px !important;}
+	
+}	
+
+
+
+
+
+
+
+
+
+
