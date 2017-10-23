@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-configuration.php
-.htaccess
-tmp/*
-logs/*
-.htaccess
-.*~
-=======
 /.gitignore
 /.htaccess
 /administrator/cache/*
