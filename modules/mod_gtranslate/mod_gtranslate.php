@@ -19,6 +19,7 @@ $flag_size = $params->get('flag_size');
 $orientation = $params->get('orientation');
 $pro_version = $params->get('pro_version');
 $enterprise_version = $params->get('enterprise_version');
+$native_language_names = $params->get('native_language_names');
 $new_tab = $params->get('new_tab');
 $analytics = $params->get('analytics');
 $language = $params->get('language');

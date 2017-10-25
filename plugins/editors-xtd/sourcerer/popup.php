@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Sourcerer
- * @version         7.1.6
+ * @version         7.1.9
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -18,9 +18,9 @@ use RegularLabs\Library\Parameters as RL_Parameters;
 $user = JFactory::getUser();
 if ($user->get('guest')
 	|| (
-		!$user->authorise('core.edit', 'com_content')
-		&& !$user->authorise('core.edit.own', 'com_content')
-		&& !$user->authorise('core.create', 'com_content')
+		! $user->authorise('core.edit', 'com_content')
+		&& ! $user->authorise('core.edit.own', 'com_content')
+		&& ! $user->authorise('core.create', 'com_content')
 	)
 )
 {
@@ -29,9 +29,9 @@ if ($user->get('guest')
 
 $params = RL_Parameters::getInstance()->getPluginParams('sourcerer');
 
-if (JFactory::getApplication()->isSite())
+if (RL_Document::isClient('site'))
 {
-	if (!$params->enable_frontend)
+	if ( ! $params->enable_frontend)
 	{
 		JError::raiseError(403, JText::_("ALERTNOTAUTH"));
 	}
@@ -59,7 +59,9 @@ class PlgButtonSourcererPopup
 		RL_Language::load('plg_editors-xtd_sourcerer');
 		RL_Language::load('plg_system_sourcerer');
 
+		JHtml::_('jquery.framework');
 		JHtml::_('script', 'system/core.js', false, true);
+
 		RL_Document::script('regularlabs/script.min.js');
 		RL_Document::style('regularlabs/popup.min.css');
 		RL_Document::style('regularlabs/style.min.css');
@@ -79,8 +81,8 @@ class PlgButtonSourcererPopup
 		";
 		RL_Document::scriptDeclaration($script);
 
-		RL_Document::script('sourcerer/script.min.js', '7.1.6');
-		RL_Document::style('sourcerer/popup.min.css', '7.1.6');
+		RL_Document::script('sourcerer/script.min.js', '7.1.9');
+		RL_Document::style('sourcerer/popup.min.css', '7.1.9');
 
 		$this->params->code = '<!-- You can place html anywhere within the source tags --><br><br><br><script language=&quot;javascript&quot; type=&quot;text/javascript&quot;><br>    // You can place JavaScript like this<br>    <br></script><br><?php<br>    // You can place PHP like this<br>    <br>?>';
 		$this->params->code = str_replace(['<br>', '<br />'], "\n", $this->params->code);
@@ -96,7 +98,7 @@ class PlgButtonSourcererPopup
 		{
 			JFactory::getApplication()->enqueueMessage(JText::sprintf('SRC_ERROR_CODEMIRROR_DISABLED', '<a href="index.php?option=com_plugins&filter_folder=editors&filter_search=codemirror" target="_blank">', '</a>'), 'error');
 
-			return;
+			return '';
 		}
 
 		$editor = JEditor::getInstance('codemirror');
@@ -121,13 +123,13 @@ class PlgButtonSourcererPopup
 
 					<div class="btn-group">
 						<button class="btn btn-small hasTip" id="btn-sourcetags" onclick="RegularLabsSourcererPopup.toggleSourceTags();return false;" title="<?php echo JText::_('SRC_TOGGLE_SOURCE_TAGS_DESC'); ?>">
-							<span class="icon-reglab icon-src-sourcetags"></span> <?php echo JText::_('SRC_TOGGLE_SOURCE_TAGS') ?>
+							<span class="icon-reglab icon-src_sourcetags"></span> <?php echo JText::_('SRC_TOGGLE_SOURCE_TAGS') ?>
 						</button>
 					</div>
 
 					<div class="btn-group">
 						<button class="btn btn-small hasTip" id="btn-tagstyle" onclick="RegularLabsSourcererPopup.toggleTagStyle();return false;" title="<?php echo JText::_('SRC_TOGGLE_TAG_STYLE_DESC'); ?>">
-							<span class="icon-reglab icon-src-tagstyle"></span> <?php echo JText::_('SRC_TOGGLE_TAG_STYLE') ?>
+							<span class="icon-reglab icon-src_tagstyle"></span> <?php echo JText::_('SRC_TOGGLE_TAG_STYLE') ?>
 						</button>
 					</div>
 
@@ -137,7 +139,7 @@ class PlgButtonSourcererPopup
 						</button>
 					</div>
 
-					<?php if (JFactory::getApplication()->isAdmin() && JFactory::getUser()->authorise('core.admin', 1)) : ?>
+					<?php if (RL_Document::isClient('administrator') && JFactory::getUser()->authorise('core.admin', 1)) : ?>
 						<div class="btn-wrapper" id="toolbar-options">
 							<button onclick="window.open('index.php?option=com_plugins&filter_folder=system&filter_search=<?php echo JText::_('SOURCERER') ?>');" class="btn btn-small">
 								<span class="icon-options"></span> <?php echo JText::_('JOPTIONS') ?>

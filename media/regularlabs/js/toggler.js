@@ -1,6 +1,6 @@
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -46,40 +46,45 @@ var RegularLabsToggler = null;
 
 			$.each(this.togglers, function(i, toggler) {
 				// init togglers
-				if (toggler.id) {
-					$(toggler).show();
-					$(toggler).removeAttr('height');
-					toggler.height   = $(toggler).height();
-					toggler.elements = {};
-					toggler.nofx     = $(toggler).hasClass('rl_toggler_nofx');
-					toggler.method   = ( $(toggler).hasClass('rl_toggler_and') ) ? 'and' : 'or';
-					toggler.ids      = toggler.id.split('___');
-					for (var i = 1; i < toggler.ids.length; i++) {
-						var keyval = toggler.ids[i].split('.');
+				if (!toggler.id) {
+					return;
+				}
 
-						var key = keyval[0];
-						var val = 1;
-						if (keyval.length > 1) {
-							val = keyval[1];
-						}
+				$(toggler).show();
+				$(toggler).removeAttr('height');
 
-						if (typeof( toggler.elements[key] ) == "undefined") {
-							toggler.elements[key] = [];
-						}
-						toggler.elements[key].push(val);
+				toggler.height   = $(toggler).height();
+				toggler.elements = {};
+				toggler.nofx     = $(toggler).hasClass('rl_toggler_nofx');
+				toggler.method   = ( $(toggler).hasClass('rl_toggler_and') ) ? 'and' : 'or';
+				toggler.ids      = toggler.id.split('___');
 
-						if (typeof( self.elements[key] ) == "undefined") {
-							self.elements[key]          = {};
-							self.elements[key].elements = [];
-							self.elements[key].values   = [];
-							self.elements[key].togglers = [];
-						}
-						self.elements[key].togglers.push(toggler.id);
+				for (var i = 1; i < toggler.ids.length; i++) {
+					var keyval = toggler.ids[i].split('.');
+
+					var key = keyval[0];
+					var val = 1;
+					if (keyval.length > 1) {
+						val = keyval[1];
 					}
 
-					new_togglers[toggler.id] = toggler;
+					if (typeof toggler.elements[key] === 'undefined') {
+						toggler.elements[key] = [];
+					}
+					toggler.elements[key].push(val);
+
+					if (typeof self.elements[key] === 'undefined') {
+						self.elements[key]          = {};
+						self.elements[key].elements = [];
+						self.elements[key].values   = [];
+						self.elements[key].togglers = [];
+					}
+					self.elements[key].togglers.push(toggler.id);
 				}
+
+				new_togglers[toggler.id] = toggler;
 			});
+
 			this.togglers = new_togglers;
 			new_togglers  = null;
 
@@ -100,9 +105,9 @@ var RegularLabsToggler = null;
 					&& !el.hasClass('input')
 					&& !el.hasClass('rl_hr')
 					// GK elements
-					&& el.id.indexOf('gk_') === -1
-					&& el.className.indexOf('gk_') === -1
-					&& el.className.indexOf('switcher-') === -1
+					&& el.id.indexOf('gk_') < 0
+					&& el.className.indexOf('gk_') < 0
+					&& el.className.indexOf('switcher-') < 0
 				) {
 					el.css('height', 'auto');
 				}
@@ -118,7 +123,7 @@ var RegularLabsToggler = null;
 		},
 
 		toggleByID: function(id, nofx) {
-			if (typeof( this.togglers[id] ) == "undefined") {
+			if (typeof this.togglers[id] === 'undefined') {
 				return;
 			}
 
@@ -183,7 +188,7 @@ var RegularLabsToggler = null;
 						}
 						break;
 					default:
-						if (typeof( el.elements ) != "undefined" && el.elements.length > 1) {
+						if (typeof el.elements !== 'undefined' && el.elements.length > 1) {
 							for (var i = 0; i < el.elements.length; i++) {
 								if (el.checked) {
 									values.push(el.value);
@@ -209,7 +214,7 @@ var RegularLabsToggler = null;
 					.trim();
 
 				if (el_name !== '') {
-					if (typeof( self.elements[el_name]) != "undefined") {
+					if (typeof self.elements[el_name] !== 'undefined') {
 						self.elements[el_name].elements.push(el);
 						self.setValues(el_name);
 						self.setElementEvents(el, el_name);
@@ -221,7 +226,7 @@ var RegularLabsToggler = null;
 		setElementEvents: function(el, el_name) {
 			var self = this;
 			var type;
-			if (typeof( el.type ) == "undefined") {
+			if (typeof el.type === 'undefined') {
 				if ($(el).prop("tagName").toLowerCase() == 'select') {
 					type = 'select';
 				}

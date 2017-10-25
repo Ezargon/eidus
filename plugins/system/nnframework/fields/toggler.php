@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -66,14 +66,14 @@ class NNFieldToggler
 		$param = preg_replace('#^\s*(.*?)\s*$#', '\1', $param);
 		$param = preg_replace('#\s*\|\s*#', '|', $param);
 
-		$html = array();
+		$html = [];
 		if ($param != '')
 		{
 			$param      = preg_replace('#[^a-z0-9-\.\|\@]#', '_', $param);
 			$param      = str_replace('@', '_', $param);
 			$set_groups = explode('|', $param);
 			$set_values = explode('|', $value);
-			$ids        = array();
+			$ids        = [];
 			foreach ($set_groups as $i => $group)
 			{
 				$count = $i;
@@ -88,7 +88,7 @@ class NNFieldToggler
 				}
 			}
 
-			if (!$div)
+			if ( ! $div)
 			{
 				$html[] = '</div></div>';
 			}
@@ -104,7 +104,7 @@ class NNFieldToggler
 			}
 			$html[] = '">';
 
-			if (!$div)
+			if ( ! $div)
 			{
 				$html[] = '<div><div>';
 			}
@@ -119,7 +119,7 @@ class NNFieldToggler
 
 	private function get($val, $default = '')
 	{
-		if (!isset($this->params[$val]) || (string) $this->params[$val] == '')
+		if ( ! isset($this->params[$val]) || (string) $this->params[$val] == '')
 		{
 			return $default;
 		}

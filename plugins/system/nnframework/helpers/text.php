@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -17,7 +17,7 @@ class NNText
 {
 	public static function fixDate(&$date)
 	{
-		if (!$date)
+		if ( ! $date)
 		{
 			$date = null;
 
@@ -71,7 +71,7 @@ class NNText
 
 	public static function dateToDateFormat($dateFormat)
 	{
-		$caracs = array(
+		$caracs = [
 			// Day
 			'%d'  => 'd',
 			'%a'  => 'D',
@@ -103,14 +103,14 @@ class NNText
 			'%Z'  => 'T',
 			// Full Date / Time
 			'%s'  => 'U',
-		);
+		];
 
 		return strtr((string) $dateFormat, $caracs);
 	}
 
 	public static function dateToStrftimeFormat($dateFormat)
 	{
-		$caracs = array(
+		$caracs = [
 			// Day - no strf eq : S
 			'd'  => '%d',
 			'D'  => '%a',
@@ -143,7 +143,7 @@ class NNText
 			'T'  => '%Z',
 			// Full Date / Time - no strf eq : c, r; no date eq : %c, %D, %F, %x
 			'U'  => '%s',
-		);
+		];
 
 		return strtr((string) $dateFormat, $caracs);
 	}
@@ -177,7 +177,7 @@ class NNText
 
 		if ($separator == '')
 		{
-			return array($string);
+			return [$string];
 		}
 
 		return explode($separator, $string);
@@ -207,7 +207,7 @@ class NNText
 		if ($strip_spaces)
 		{
 			// Replace html spaces
-			$string = str_replace(array('&nbsp;', '&#160;'), ' ', $string);
+			$string = str_replace(['&nbsp;', '&#160;'], ' ', $string);
 
 			// Remove duplicate whitespace
 			$string = preg_replace('#[ \n\r\t]+#', ' ', $string);
@@ -223,7 +223,7 @@ class NNText
 			return '';
 		}
 
-		$string = str_replace(array('&nbsp;', '&#160;'), ' ', $string);
+		$string = str_replace(['&nbsp;', '&#160;'], ' ', $string);
 		$string = preg_replace('#- #', '  ', $string);
 
 		for ($i = 0; $remove_first > $i; $i++)
@@ -248,7 +248,7 @@ class NNText
 				$string = '[[:font-weight:normal;font-style:italic;color:grey;:]]' . $string;
 				break;
 
-			case (!$published):
+			case ( ! $published):
 				$string = '[[:font-style:italic;color:grey;:]]' . $string . ' [' . JText::_('JUNPUBLISHED') . ']';
 				break;
 
@@ -389,7 +389,7 @@ class NNText
 
 		$p_start_tag = '<p(?: [^>]*)?>';
 
-		if (strpos($string, '</p>') === false || !preg_match('#^\s*' . $p_start_tag . '#si', $string))
+		if (strpos($string, '</p>') === false || ! preg_match('#^\s*' . $p_start_tag . '#si', $string))
 		{
 			return;
 		}
@@ -412,7 +412,7 @@ class NNText
 
 		$p_end_tag = '</p>';
 
-		if (!preg_match('#' . $p_end_tag . '\s*$#si', $string))
+		if ( ! preg_match('#' . $p_end_tag . '\s*$#si', $string))
 		{
 			return;
 		}
@@ -437,14 +437,14 @@ class NNText
 			return $tag1;
 		}
 
-		if (!preg_match('#<([a-z][a-z0-9]*)#si', $tag1, $tag_type))
+		if ( ! preg_match('#<([a-z][a-z0-9]*)#si', $tag1, $tag_type))
 		{
 			return $tag2;
 		}
 
 		$tag_type = $tag_type[1];
 
-		if (!$attribs = NNText::combineAttributes($tag1, $tag2))
+		if ( ! $attribs = NNText::combineAttributes($tag1, $tag2))
 		{
 			return '<' . $tag_type . '>';
 		}
@@ -473,17 +473,17 @@ class NNText
 	{
 		if (empty($string))
 		{
-			return array();
+			return [];
 		}
 
 		preg_match_all('#([a-z0-9-_]+)="([^"]*)"#si', $string, $matches, PREG_SET_ORDER);
 
 		if (empty($matches))
 		{
-			return array();
+			return [];
 		}
 
-		$attribs = array();
+		$attribs = [];
 
 		foreach ($matches as $match)
 		{
@@ -507,7 +507,7 @@ class NNText
 		$attribs = array_diff_key($attribs1, $attribs2) + array_diff_key($attribs2, $attribs1);
 
 		// Add/combine the duplicate ids
-		$single_value_attributes = array('id', 'href');
+		$single_value_attributes = ['id', 'href'];
 		foreach ($dublicate_attribs as $key => $val)
 		{
 			if (in_array($key, $single_value_attributes))
@@ -558,7 +558,7 @@ class NNText
 		}
 
 		// Remove < > html entities
-		$string = str_replace(array('&lt;', '&gt;'), '', $string);
+		$string = str_replace(['&lt;', '&gt;'], '', $string);
 
 		// Convert html entities
 		$string = html_entity_decode($string, ENT_COMPAT, 'UTF-8');
@@ -611,9 +611,9 @@ class NNText
 	/**
 	 * Creates an array of different syntaxes of titles to match against a url variable
 	 */
-	public static function createUrlMatches($titles = array())
+	public static function createUrlMatches($titles = [])
 	{
-		$matches = array();
+		$matches = [];
 		foreach ($titles as $title)
 		{
 			$matches[] = $title;
@@ -645,7 +645,7 @@ class NNText
 			$matches[$i] = trim(str_replace('?', '', $title));
 		}
 
-		$matches = array_diff(array_unique($matches), array('', '-'));
+		$matches = array_diff(array_unique($matches), ['', '-']);
 
 		return $matches;
 	}
@@ -654,7 +654,7 @@ class NNText
 	{
 		if (strpos($html, '<body') === false || strpos($html, '</body>') === false)
 		{
-			return array('', $html, '');
+			return ['', $html, ''];
 		}
 
 		$html_split = explode('<body', $html, 2);
@@ -664,15 +664,15 @@ class NNText
 		$post       = array_pop($body_split);
 		$body       = implode('</body>', $body_split) . '</body>';
 
-		return array($pre, $body, $post);
+		return [$pre, $body, $post];
 	}
 
-	static function getContentContainingSearches($string, $start_searches = array(), $end_searches = array(), $start_offset = 1000, $end_offset = null)
+	static function getContentContainingSearches($string, $start_searches = [], $end_searches = [], $start_offset = 1000, $end_offset = null)
 	{
 		// String is too short to split and search through
 		if (strlen($string) < 2000)
 		{
-			return array('', $string, '');
+			return ['', $string, ''];
 		}
 
 		$end_offset = is_null($end_offset) ? $start_offset : $end_offset;
@@ -694,15 +694,15 @@ class NNText
 		}
 
 		// No searches are found
-		if (!$found)
+		if ( ! $found)
 		{
-			return array($string, '', '');
+			return [$string, '', ''];
 		}
 
 		// String is too short to split
 		if (strlen($string) < ($start_offset + $end_offset + 1000))
 		{
-			return array('', $string, '');
+			return ['', $string, ''];
 		}
 
 		$start_split = max($start_split - $start_offset, 0);
@@ -733,9 +733,9 @@ class NNText
 		}
 
 		// No end split is found, so don't split remainder
-		if (!$found)
+		if ( ! $found)
 		{
-			return array($pre, $string, '');
+			return [$pre, $string, ''];
 		}
 
 		$end_split = min($end_split + $end_offset, strlen($string));
@@ -745,12 +745,12 @@ class NNText
 
 		self::fixBrokenTagsByPostString($post, $string);
 
-		return array($pre, $string, $post);
+		return [$pre, $string, $post];
 	}
 
 	protected static function fixBrokenTagsByPreString(&$pre, &$string)
 	{
-		if (!preg_match('#</?[a-z][^>]*(="[^"]*)?$#s', $pre, $match))
+		if ( ! preg_match('#</?[a-z][^>]*(="[^"]*)?$#s', $pre, $match))
 		{
 			return;
 		}
@@ -761,12 +761,12 @@ class NNText
 
 	protected static function fixBrokenTagsByPostString(&$post, &$string)
 	{
-		if (!preg_match('#</?[a-z][^>]*(="[^"]*)?$#s', $string, $match))
+		if ( ! preg_match('#</?[a-z][^>]*(="[^"]*)?$#s', $string, $match))
 		{
 			return;
 		}
 
-		if (!preg_match('#^[^>]*>#s', $post, $match))
+		if ( ! preg_match('#^[^>]*>#s', $post, $match))
 		{
 			return;
 		}
@@ -800,7 +800,7 @@ class NNText
 		return false;
 	}
 
-	public static function getTagRegex($tags, $include_no_attributes = true, $include_ending = true, $required_attributes = array())
+	public static function getTagRegex($tags, $include_no_attributes = true, $include_ending = true, $required_attributes = [])
 	{
 		require_once __DIR__ . '/tags.php';
 

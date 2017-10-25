@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -24,7 +24,7 @@ class RLAssignmentsGeo extends RLAssignment
 	 */
 	public function passContinents()
 	{
-		if (!$this->getGeo() || empty($this->geo->continentCode))
+		if ( ! $this->getGeo() || empty($this->geo->continentCode))
 		{
 			return $this->pass(false);
 		}
@@ -39,7 +39,7 @@ class RLAssignmentsGeo extends RLAssignment
 	{
 		$this->getGeo();
 
-		if (!$this->getGeo() || empty($this->geo->countryCode))
+		if ( ! $this->getGeo() || empty($this->geo->countryCode))
 		{
 			return $this->pass(false);
 		}
@@ -52,14 +52,13 @@ class RLAssignmentsGeo extends RLAssignment
 	 */
 	public function passRegions()
 	{
-		if (!$this->getGeo() || empty($this->geo->countryCode) || empty($this->geo->regionCodes))
+		if ( ! $this->getGeo() || empty($this->geo->countryCode) || empty($this->geo->regionCodes))
 		{
 			return $this->pass(false);
 		}
 
 		$regions = $this->geo->regionCodes;
-		array_walk($regions, function (&$value)
-		{
+		array_walk($regions, function (&$value) {
 			$value = $this->geo->countryCode . '-' . $value;
 		});
 
@@ -71,7 +70,7 @@ class RLAssignmentsGeo extends RLAssignment
 	 */
 	public function passPostalcodes()
 	{
-		if (!$this->getGeo() || empty($this->geo->postalCode))
+		if ( ! $this->getGeo() || empty($this->geo->postalCode))
 		{
 			return $this->pass(false);
 		}
@@ -89,7 +88,7 @@ class RLAssignmentsGeo extends RLAssignment
 			return $this->geo;
 		}
 
-		if (!file_exists(JPATH_LIBRARIES . '/geoip/geoip.php'))
+		if ( ! file_exists(JPATH_LIBRARIES . '/geoip/geoip.php'))
 		{
 			return false;
 		}

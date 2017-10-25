@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -13,12 +13,12 @@ defined('_JEXEC') or die;
 
 class NNTags
 {
-	public static function getValuesFromString($string = '', $main_key = 'title', $known_boolean_keys = array())
+	public static function getValuesFromString($string = '', $main_key = 'title', $known_boolean_keys = [])
 	{
 		// Only one value, so return simple key/value object
 		if (strpos($string, '="') == false && strpos($string, '|') == false)
 		{
-			return (object) array($main_key => $string);
+			return (object) [$main_key => $string];
 		}
 
 		self::protectSpecialChars($string);
@@ -28,16 +28,16 @@ class NNTags
 		{
 			self::unprotectSpecialChars($string);
 
-			$values = self::getTagValues($string, array($main_key));
+			$values = self::getTagValues($string, [$main_key]);
 			self::convertOldSyntax($values, $known_boolean_keys);
 
 			return $values;
 		}
 
 		// Cannot find right syntax, so return simple key/value object
-		if (!preg_match_all('#([a-z0-9-_]+)\s*=\s*"(.*?)"#si', $string, $values))
+		if ( ! preg_match_all('#([a-z0-9-_]+)\s*=\s*"(.*?)"#si', $string, $values))
 		{
-			return (object) array($main_key => $string);
+			return (object) [$main_key => $string];
 		}
 
 		$tag = (object) [];
@@ -71,12 +71,12 @@ class NNTags
 
 		// replace escaped characters with special markup
 		$string = str_replace(
-			array('\\=', '\\"'),
-			array($temp_equal, $temp_quote),
+			['\\=', '\\"'],
+			[$temp_equal, $temp_quote],
 			$string
 		);
 
-		if (!preg_match_all('#<.*?>#s', $string, $tags))
+		if ( ! preg_match_all('#<.*?>#s', $string, $tags))
 		{
 			return;
 		}
@@ -85,8 +85,8 @@ class NNTags
 		{
 			// replace unescaped characters with special markup
 			$protected = str_replace(
-				array('=', '"'),
-				array($temp_equal, $temp_quote),
+				['=', '"'],
+				[$temp_equal, $temp_quote],
 				$tag
 			);
 			$string    = str_replace($tag, $protected, $string);
@@ -100,14 +100,14 @@ class NNTags
 
 		// replace special markup with unescaped characters
 		$string = str_replace(
-			array($temp_equal, $temp_quote),
-			array('=', '"'),
+			[$temp_equal, $temp_quote],
+			['=', '"'],
 			$string
 		);
 	}
 
 	/* @Deprecated */
-	public static function getTagValues($string = '', $keys = array('title'), $separator = '|', $equal = '=', $limit = 0)
+	public static function getTagValues($string = '', $keys = ['title'], $separator = '|', $equal = '=', $limit = 0)
 	{
 		$temp_separator = '[[SEPARATOR]]';
 		$temp_equal     = '[[EQUAL]]';
@@ -115,20 +115,20 @@ class NNTags
 		$tag_end        = '[[/TAG]]';
 
 		// replace separators and equal signs with special markup
-		$string = str_replace(array($separator, $equal), array($temp_separator, $temp_equal), $string);
+		$string = str_replace([$separator, $equal], [$temp_separator, $temp_equal], $string);
 		// replace protected separators and equal signs back to original
-		$string = str_replace(array('\\' . $temp_separator, '\\' . $temp_equal), array($separator, $equal), $string);
+		$string = str_replace(['\\' . $temp_separator, '\\' . $temp_equal], [$separator, $equal], $string);
 
 		// protect all html tags
 		preg_match_all('#</?[a-z][^>]*>#si', $string, $tags, PREG_SET_ORDER);
 
-		if (!empty($tags))
+		if ( ! empty($tags))
 		{
 			foreach ($tags as $tag)
 			{
 				$string = str_replace(
 					$tag['0'],
-					$tag_start . base64_encode(str_replace(array($temp_separator, $temp_equal), array($separator, $equal), $tag['0'])) . $tag_end,
+					$tag_start . base64_encode(str_replace([$temp_separator, $temp_equal], [$separator, $equal], $tag['0'])) . $tag_end,
 					$string
 				);
 			}
@@ -141,7 +141,7 @@ class NNTags
 
 		// initialize return vars
 		$tag_values         = (object) [];
-		$tag_values->params = array();
+		$tag_values->params = [];
 
 		// loop through splits
 		foreach ($vals as $i => $keyval)
@@ -150,7 +150,7 @@ class NNTags
 			$keyval = explode($temp_equal, $keyval, 2);
 			if (isset($keyval['1']))
 			{
-				$keyval['1'] = str_replace(array($temp_separator, $temp_equal), array($separator, $equal), $keyval['1']);
+				$keyval['1'] = str_replace([$temp_separator, $temp_equal], [$separator, $equal], $keyval['1']);
 			}
 
 			// unprotect tags in key and val
@@ -158,7 +158,7 @@ class NNTags
 			{
 				preg_match_all('#' . preg_quote($tag_start, '#') . '(.*?)' . preg_quote($tag_end, '#') . '#si', $val, $tags, PREG_SET_ORDER);
 
-				if (!empty($tags))
+				if ( ! empty($tags))
 				{
 					foreach ($tags as $tag)
 					{
@@ -199,7 +199,7 @@ class NNTags
 		return $tag_values;
 	}
 
-	public static function replaceKeyAliases(&$values, $key_aliases = array())
+	public static function replaceKeyAliases(&$values, $key_aliases = [])
 	{
 		foreach ($key_aliases as $key => $aliases)
 		{
@@ -210,7 +210,7 @@ class NNTags
 
 			foreach ($aliases as $alias)
 			{
-				if (!isset($values->{$alias}))
+				if ( ! isset($values->{$alias}))
 				{
 					continue;
 				}
@@ -221,13 +221,13 @@ class NNTags
 		}
 	}
 
-	public static function convertOldSyntax(&$values, $known_boolean_keys = array(), $extra_key = 'class')
+	public static function convertOldSyntax(&$values, $known_boolean_keys = [], $extra_key = 'class')
 	{
-		$extra = isset($values->class) ? array($values->class) : array();
+		$extra = isset($values->class) ? [$values->class] : [];
 
 		foreach ($values->params as $i => $param)
 		{
-			if (!$param)
+			if ( ! $param)
 			{
 				continue;
 			}
@@ -264,17 +264,17 @@ class NNTags
 		return '(?:[^\{\}]*\{[^\}]*\})*.*?';
 	}
 
-	public static function getRegexSurroundingTagPre($elements = array('p', 'span'))
+	public static function getRegexSurroundingTagPre($elements = ['p', 'span'])
 	{
 		return '(?:<(?:' . implode('|', $elements) . ')(?: [^>]*)?>\s*(?:<br ?/?>\s*)*){0,3}';
 	}
 
-	public static function getRegexSurroundingTagPost($elements = array('p', 'span'))
+	public static function getRegexSurroundingTagPost($elements = ['p', 'span'])
 	{
 		return '(?:(?:\s*<br ?/?>)*\s*<\/(?:' . implode('|', $elements) . ')>){0,3}';
 	}
 
-	public static function getRegexTags($tags, $include_no_attributes = true, $include_ending = true, $required_attributes = array())
+	public static function getRegexTags($tags, $include_no_attributes = true, $include_ending = true, $required_attributes = [])
 	{
 		require_once __DIR__ . '/text.php';
 
@@ -285,7 +285,7 @@ class NNTags
 		$attributes = '(?:\s+[a-z0-9-_]+' . $value . ')+';
 
 		$required_attributes = NNText::toArray($required_attributes);
-		if (!empty($required_attributes))
+		if ( ! empty($required_attributes))
 		{
 			$attributes = '(?:' . $attributes . ')?' . '(?:\s+' . implode('|', $required_attributes) . ')' . $value . '(?:' . $attributes . ')?';
 		}
@@ -295,7 +295,7 @@ class NNTags
 			$attributes = '\s*(?:' . $attributes . ')?';
 		}
 
-		if (!$include_ending)
+		if ( ! $include_ending)
 		{
 			return '<' . $tags . $attributes . '\s*/?>';
 		}
@@ -303,7 +303,7 @@ class NNTags
 		return '<(?:\/' . $tags . '|' . $tags . $attributes . '\s*/?)\s*/?>';
 	}
 
-	public static function cleanSurroundingTags($tags, $elements = array('p', 'span'))
+	public static function cleanSurroundingTags($tags, $elements = ['p', 'span'])
 	{
 		require_once __DIR__ . '/text.php';
 
@@ -318,11 +318,11 @@ class NNTags
 		}
 
 		// Remove paragraphs around block elements
-		$block_elements = array(
+		$block_elements = [
 			'p', 'div',
 			'table', 'tr', 'td', 'thead', 'tfoot',
 			'h[1-6]',
-		);
+		];
 		$block_elements = '(' . implode('|', $block_elements) . ')';
 		while (preg_match('#(<p(?: [^>]*)?>)(\s*' . $breaks . ')(<' . $block_elements . '(?: [^>]*)?>)#s', $string, $match))
 		{
@@ -341,7 +341,7 @@ class NNTags
 
 		$tags = explode(':|:', $string);
 
-		$new_tags = array();
+		$new_tags = [];
 
 		foreach ($tags as $key => $val)
 		{
@@ -399,7 +399,7 @@ class NNTags
 
 		$tags = explode(':|:', $string);
 
-		$new_tags = array();
+		$new_tags = [];
 
 		foreach ($tags as $key => $val)
 		{
@@ -412,26 +412,26 @@ class NNTags
 
 	private static function getBlockElements()
 	{
-		return array(
+		return [
 			'div', 'p', 'pre',
 			'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-		);
+		];
 	}
 
 	private static function getBlockElementsNoDiv()
 	{
-		return array(
+		return [
 			'p', 'pre',
 			'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-		);
+		];
 	}
 
 	private static function getInlineElements()
 	{
-		return array(
+		return [
 			'span', 'code', 'a',
 			'strong', 'b', 'em', 'i', 'u', 'big', 'small', 'font',
-		);
+		];
 	}
 
 	public static function setSurroundingTags($pre, $post, $tags = 0)
@@ -439,14 +439,14 @@ class NNTags
 		if ($tags == 0)
 		{
 			// tags that have a matching ending tag
-			$tags = array(
+			$tags = [
 				'div', 'p', 'span', 'pre', 'a',
 				'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
 				'strong', 'b', 'em', 'i', 'u', 'big', 'small', 'font',
 				// html 5 stuff
 				'header', 'nav', 'section', 'article', 'aside', 'footer',
 				'figure', 'figcaption', 'details', 'summary', 'mark', 'time',
-			);
+			];
 		}
 		$a = explode('<', $pre);
 		$b = explode('</', $post);
@@ -493,20 +493,20 @@ class NNTags
 				}
 			}
 			$a = array_reverse($a);
-			list($pre, $post) = array(implode('', $a), implode('', $b));
+			list($pre, $post) = [implode('', $a), implode('', $b)];
 		}
 
-		return array(trim($pre), trim($post));
+		return [trim($pre), trim($post)];
 	}
 
 	public static function getDivTags($start_tag = '', $end_tag = '', $tag_start = '{', $tag_end = '}')
 	{
-		$start_div = array('pre' => '', 'tag' => '', 'post' => '');
-		$end_div   = array('pre' => '', 'tag' => '', 'post' => '');
+		$start_div = ['pre' => '', 'tag' => '', 'post' => ''];
+		$end_div   = ['pre' => '', 'tag' => '', 'post' => ''];
 
-		if (!empty($start_tag)
+		if ( ! empty($start_tag)
 			&& preg_match(
-				'#^(?P<pre>.*?)(?P<tag>' . $tag_start . 'div(?: .*?)?' . $tag_end . ')(?P<post>.*)$#s',
+				'#^(?<pre>.*?)(?<tag>' . $tag_start . 'div(?: .*?)?' . $tag_end . ')(?<post>.*)$#s',
 				$start_tag,
 				$match
 			)
@@ -515,9 +515,9 @@ class NNTags
 			$start_div = $match;
 		}
 
-		if (!empty($end_tag)
+		if ( ! empty($end_tag)
 			&& preg_match(
-				'#^(?P<pre>.*?)(?P<tag>' . $tag_start . '/div' . $tag_end . ')(?P<post>.*)$#s',
+				'#^(?<pre>.*?)(?<tag>' . $tag_start . '/div' . $tag_end . ')(?<post>.*)$#s',
 				$end_tag,
 				$match
 			)
@@ -528,7 +528,7 @@ class NNTags
 
 		if (empty($start_div['tag']) || empty($end_div['tag']))
 		{
-			return array($start_div, $end_div);
+			return [$start_div, $end_div];
 		}
 
 		$extra = trim(preg_replace('#' . $tag_start . 'div(.*)' . $tag_end . '#si', '\1', $start_div['tag']));
@@ -538,7 +538,7 @@ class NNTags
 
 		if (empty($extra))
 		{
-			return array($start_div, $end_div);
+			return [$start_div, $end_div];
 		}
 
 		$extra  = explode('|', $extra);
@@ -562,7 +562,7 @@ class NNTags
 			$attribs .= 'class="' . $extras->class . '"';
 		}
 
-		$style = array();
+		$style = [];
 
 		if (isset($extras->width))
 		{
@@ -587,18 +587,18 @@ class NNTags
 			$style[] = 'float:' . $extras->align;
 		}
 
-		if (!isset($extras->align) && isset($extras->float))
+		if ( ! isset($extras->align) && isset($extras->float))
 		{
 			$style[] = 'float:' . $extras->float;
 		}
 
-		if (!empty($style))
+		if ( ! empty($style))
 		{
 			$attribs .= ' style="' . implode(';', $style) . ';"';
 		}
 
 		$start_div['tag'] = trim('<div ' . trim($attribs)) . '>';
 
-		return array($start_div, $end_div);
+		return [$start_div, $end_div];
 	}
 }

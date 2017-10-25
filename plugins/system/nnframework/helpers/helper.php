@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -24,7 +24,7 @@ class NNFrameworkHelper
 			return NNCache::get($hash);
 		}
 
-		if (!$params)
+		if ( ! $params)
 		{
 			require_once __DIR__ . '/parameters.php';
 			$params = NNParameters::getInstance()->getPluginParams($plugin->get('_name'));
@@ -64,21 +64,21 @@ class NNFrameworkHelper
 		return NNCache::set($hash, true);
 	}
 
-	static function processArticle(&$article, &$context, &$helper, $method, $params = array())
+	static function processArticle(&$article, &$context, &$helper, $method, $params = [])
 	{
-		if (!empty($article->description))
+		if ( ! empty($article->description))
 		{
-			call_user_func_array(array($helper, $method), array_merge(array(&$article->description), $params));
+			call_user_func_array([$helper, $method], array_merge([&$article->description], $params));
 		}
 
-		if (!empty($article->title))
+		if ( ! empty($article->title))
 		{
-			call_user_func_array(array($helper, $method), array_merge(array(&$article->title), $params));
+			call_user_func_array([$helper, $method], array_merge([&$article->title], $params));
 		}
 
-		if (!empty($article->created_by_alias))
+		if ( ! empty($article->created_by_alias))
 		{
-			call_user_func_array(array($helper, $method), array_merge(array(&$article->created_by_alias), $params));
+			call_user_func_array([$helper, $method], array_merge([&$article->created_by_alias], $params));
 		}
 
 		if (self::isCategoryList($context))
@@ -87,21 +87,21 @@ class NNFrameworkHelper
 		}
 
 		// Process texts
-		if (!empty($article->text))
+		if ( ! empty($article->text))
 		{
-			call_user_func_array(array($helper, $method), array_merge(array(&$article->text), $params));
+			call_user_func_array([$helper, $method], array_merge([&$article->text], $params));
 
 			return;
 		}
 
-		if (!empty($article->introtext))
+		if ( ! empty($article->introtext))
 		{
-			call_user_func_array(array($helper, $method), array_merge(array(&$article->introtext), $params));
+			call_user_func_array([$helper, $method], array_merge([&$article->introtext], $params));
 		}
 
-		if (!empty($article->fulltext))
+		if ( ! empty($article->fulltext))
 		{
-			call_user_func_array(array($helper, $method), array_merge(array(&$article->fulltext), $params));
+			call_user_func_array([$helper, $method], array_merge([&$article->fulltext], $params));
 		}
 	}
 }

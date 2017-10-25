@@ -7,7 +7,7 @@
     <license>GNU/GPL v3 http://www.gnu.org/licenses/gpl.html</license>
     <authorEmail>edo888@gmail.com</authorEmail>
     <authorUrl>https://gtranslate.io</authorUrl>
-    <version>3.0.39</version>
+    <version>3.7.3</version>
     <description>
     <![CDATA[
     <span style='font-weight:normal;text-align:left;font-size:120%;line-height:1.5;'>
@@ -15,6 +15,7 @@
     <p><i>Ugrade your <a href="https://gtranslate.io/?xyz=997#pricing" target="_blank">GTranslate</a> to a paid plan and enable the following features:</i></p>
     <ul>
         <li><strong>Enable search engine indexing</strong> - Search engines will index your translated pages which will increase international traffic.</li>
+        <li><strong>Neural machine translations</strong> - Human level translation quality.</li>
         <li><strong>Search engine friendly</strong> - The URL will change depending on a selected language e.g. <b>es.domain.com</b> or <b>domain.com/es/</b> for Spanish.</li>
         <li><strong>Meta data translation</strong> - Meta keywords and description will be translated which will increase translated keywords ranking in the search engines.</li>
         <li><strong>Ability to edit translations</strong> - You will be able to edit the translated texts directly from the front-end.</li>
@@ -27,8 +28,8 @@
         <li><strong>Language hosting</strong> - Host your language on top level country domain name to rank higher on local search engines results (ccTLD <b>domain.es</b>).</li>
     </ul>
 
-    <p><a href='https://gtranslate.io/docs/54-joomla-module-documentation' target='_blank' class='btn btn-large btn-info'><i class='icon-support'></i> Documentation</a> &nbsp; <a href='http://extensions.joomla.org/extensions/extension/languages/automatic-translations/gtranslate#reviews' target='_blank' class='btn btn-large btn-warning'><i class='icon-comments'></i> Reviews</a></p>
-    <p><b>Version: 3.0.39</b><br/>Copyright &copy; 2008 - 2017 Edvard Ananyan, All rights reserved. <a href='https://gtranslate.io' target='_blank'><b>http://gtranslate.io</b></a></p>
+    <p><a href='https://gtranslate.io/?xyz=997#pricing' target='_blank' class='btn btn-large btn-success'><i class='icon-info-2'></i> Plans &amp; Pricing</a> &nbsp; <a href='https://gtranslate.io/?xyz=997#faq' target='_blank' class='btn btn-large btn-primary'><i class='icon-info'></i> FAQ</a> &nbsp; <a href='https://gtranslate.io/docs/54-joomla-module-documentation' target='_blank' class='btn btn-large btn-info'><i class='icon-support'></i> Documentation</a> &nbsp; <a href='http://extensions.joomla.org/extensions/extension/languages/automatic-translations/gtranslate#reviews' target='_blank' class='btn btn-large btn-warning'><i class='icon-comments'></i> Reviews</a></p>
+    <p><b>Version: 3.7.3</b><br/>Copyright &copy; 2008 - 2017 Edvard Ananyan, All rights reserved. <a href='https://gtranslate.io/?xyz=997' target='_blank'><b>http://gtranslate.io</b></a></p>
     </span>
     ]]>
     </description>
@@ -42,17 +43,22 @@
         <filename>helper.php</filename>
         <filename>index.html</filename>
         <folder>tmpl</folder>
+        <folder>field</folder>
     </files>
 
     <config>
         <fields name="params">
             <fieldset name="basic">
                 <field name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be applied to the css class of the module (table.moduletable), this allows individual module styling" />
-                <field name="look" type="radio" class="btn-group" default="both" label="Look" description="The way it will appear in your site (can be used except Google Default method)">
+                <field name="look" type="list" default="dropdown_with_flags" label="Look" description="The way it will appear in your site">
                     <option value="both">Flags and Dropdown</option>
                     <option value="flags">Flags</option>
                     <option value="dropdown">Drop down list</option>
                     <option value="dropdown_with_flags">Nice dropdown with flags</option>
+                    <option value="flags_name">(new) Flags with language name</option>
+                    <option value="flags_code">(new) Flags with language code</option>
+                    <option value="lang_names">(new) Language names</option>
+                    <option value="lang_codes">(new) Language codes</option>
                 </field>
                 <field name="language" type="list" default="en" label="Site Language" description="Your site's native language">
                     <option value="af">Afrikaans</option>
@@ -171,16 +177,23 @@
                     <option value="0">Off</option>
                     <option value="1">On</option>
                 </field>
+                <field name="paid" type="note" label="* paid feature" class="alert alert-info" description="Upgrade your GTranslate to a paid plan to use this feature and get SEO benefits." />
+
                 <field name="flag_size" type="radio" class="btn-group" default="16" label="Flag size" description="Size of the language flags">
                     <option value="16">16px</option>
                     <option value="24">24px</option>
                     <option value="32">32px</option>
+                    <option value="48">48px</option>
+                </field>
+                <field name="native_language_names" type="radio" class="btn-group" default="0" label="Show native language names" description="Display language name in native alphabet.">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
                 </field>
                 <field name="new_tab" type="radio" class="btn-group" default="0" label="Open translation in new tab" description="Opens translated page in new window. Works with Sub-directory or Sub-domain URL structure only.">
                     <option value="0">Off</option>
                     <option value="1">On</option>
                 </field>
-                <field name="analytics" type="radio" class="btn-group" default="0" label="Analytics" description="If you have Google Analytics new code on your site (_gaq). You can enable this which will allow you to see translation events in Google Analytics -&gt; Content -&gt; Event Tracking. Note: Will not work if you use Google Default translation method.">
+                <field name="analytics" type="radio" class="btn-group" default="0" label="Analytics" description="If you have Google Analytics code on your site, you can enable this which will allow you to see translation events in Google Analytics -&gt; Events.">
                     <option value="0">Off</option>
                     <option value="1">On</option>
                 </field>
@@ -263,8 +276,9 @@
                 <field name="show_en" type="radio" class="btn-group" default="2" label="Show English" description="Show English in language list">
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                    <option value="2">As a GB flag</option>
-                    <option value="3">As a US flag</option>
+                    <option value="2">As GB flag</option>
+                    <option value="3">As USA flag</option>
+                    <option value="4">As Canada flag</option>
                 </field>
                 <field name="show_et" type="radio" class="btn-group" default="1" label="Show Estonian" description="Show Estonian in language list">
                     <option value="1">Yes</option>
@@ -284,7 +298,8 @@
                 <field name="show_fr" type="radio" class="btn-group" default="2" label="Show French" description="Show French in language list">
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                    <option value="2">As a flag</option>
+                    <option value="2">As France flag</option>
+                    <option value="3">As Quebec flag</option>
                 </field>
                 <field name="show_gl" type="radio" class="btn-group" default="1" label="Show Galician" description="Show Galician in language list">
                     <option value="1">Yes</option>
@@ -399,8 +414,8 @@
                 <field name="show_pt" type="radio" class="btn-group" default="2" label="Show Portuguese" description="Show Portuguese in language list">
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                    <option value="2">As a PT flag</option>
-                    <option value="3">As a BR flag</option>
+                    <option value="2">As Portugal flag</option>
+                    <option value="3">As Brazil flag</option>
                 </field>
                 <field name="show_ro" type="radio" class="btn-group" default="1" label="Show Romanian" description="Show Romanian in language list">
                     <option value="1">Yes</option>
@@ -430,8 +445,8 @@
                 <field name="show_es" type="radio" class="btn-group" default="2" label="Show Spanish" description="Show Spanish in language list">
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                    <option value="2">As a ES flag</option>
-                    <option value="3">As a MX flag</option>
+                    <option value="2">As Spain flag</option>
+                    <option value="3">As Mexico flag</option>
                 </field>
                 <field name="show_sw" type="radio" class="btn-group" default="1" label="Show Swahili" description="Show Swahili in language list">
                     <option value="1">Yes</option>
@@ -668,10 +683,13 @@
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                 </field>
+
+                <!-- Live Chat -->
+                <field name="live_chat" type="LiveChat" label="" description="" />
             </fieldset>
 
             <fieldset name="advanced">
-                <field name="cache" type="list" default="1" label="COM_MODULES_FIELD_CACHING_LABEL" description="COM_MODULES_FIELD_CACHING_DESC">
+                <field name="cache" type="list" default="0" label="COM_MODULES_FIELD_CACHING_LABEL" description="COM_MODULES_FIELD_CACHING_DESC">
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
                 </field>

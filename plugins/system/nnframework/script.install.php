@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -11,18 +11,18 @@
 
 defined('_JEXEC') or die;
 
-if (!class_exists('PlgSystemNNFrameworkInstallerScript'))
+if ( ! class_exists('PlgSystemNNFrameworkInstallerScript'))
 {
 	class PlgSystemNNFrameworkInstallerScript
 	{
 		public function preflight($route, JAdapterInstance $adapter)
 		{
-			if (!in_array($route, array('install', 'update')))
+			if ( ! in_array($route, ['install', 'update']))
 			{
 				return;
 			}
 
-			if (!$this->isNewer())
+			if ( ! $this->isNewer())
 			{
 				return false;
 			}
@@ -35,7 +35,7 @@ if (!class_exists('PlgSystemNNFrameworkInstallerScript'))
 
 			JFactory::getLanguage()->load('plg_system_nnframework', $this->getMainFolder());
 
-			if (!in_array($route, array('install', 'update')))
+			if ( ! in_array($route, ['install', 'update']))
 			{
 				return;
 			}
@@ -89,14 +89,14 @@ if (!class_exists('PlgSystemNNFrameworkInstallerScript'))
 		{
 			$file = $file ?: $this->getCurrentXMLFile();
 
-			if (!is_file($file))
+			if ( ! is_file($file))
 			{
 				return '';
 			}
 
 			$xml = JApplicationHelper::parseXMLInstallFile($file);
 
-			if (!$xml || !isset($xml['version']))
+			if ( ! $xml || ! isset($xml['version']))
 			{
 				return '';
 			}
@@ -106,7 +106,7 @@ if (!class_exists('PlgSystemNNFrameworkInstallerScript'))
 
 		private function isNewer()
 		{
-			if (!$installed_version = $this->getVersion($this->getInstalledXMLFile()))
+			if ( ! $installed_version = $this->getVersion($this->getInstalledXMLFile()))
 			{
 				return true;
 			}
@@ -134,7 +134,7 @@ if (!class_exists('PlgSystemNNFrameworkInstallerScript'))
 
 		private function removeNoNumberCache()
 		{
-			$this->delete(array(JPATH_ADMINISTRATOR . '/cache/nonumber'));
+			$this->delete([JPATH_ADMINISTRATOR . '/cache/nonumber']);
 		}
 
 		private function removeGlobalLanguageFiles()
@@ -172,7 +172,7 @@ if (!class_exists('PlgSystemNNFrameworkInstallerScript'))
 				$installed_languages
 			);
 
-			$delete_languages = array();
+			$delete_languages = [];
 
 			foreach ($languages as $language)
 			{

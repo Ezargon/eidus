@@ -1,15 +1,3 @@
-
-#sp-bottom{
-    display: none !important;
-}
-
-.moduletablefoot  ul li {
-    float:right; /* Hacemos que el menu se muestre horizontal */
-    padding-left:10px;
-    padding-right:10px;
-
-}
-
 .form-control {
   display: block;
   height: 34px;
@@ -826,10 +814,10 @@ dl.article-info dd.hits span[class*=" icon-"] {
 .sp-megamenu-parent >li >span {
   display: inline-block;
   padding: 0 15px;
-  line-height: 100px;
-  font-size: 16px;
-  /* text-transform: uppercase; */
- /* letter-spacing: 1px; */
+  line-height: 90px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   color: #000;
   margin: 0;
 }
@@ -858,11 +846,9 @@ dl.article-info dd.hits span[class*=" icon-"] {
   display: none;
 }
 .sp-megamenu-parent .sp-dropdown .sp-dropdown-inner {
-  /* background: #e9be33; */
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 0 3px 5px 0 rgba(0,0,0,0.2);
-  padding: 0px 25px 25px 25px;
-  opacity: 0.97;
+  padding: 20px;
 }
 .sp-megamenu-parent .sp-dropdown .sp-dropdown-items {
   list-style: none;
@@ -871,7 +857,7 @@ dl.article-info dd.hits span[class*=" icon-"] {
 }
 .sp-megamenu-parent .sp-dropdown .sp-dropdown-items .sp-has-child>a:after {
   font-family: "FontAwesome";
-  /*content: " \f105";*/
+  content: " \f105";
   float: right;
 }
 .sp-megamenu-parent .sp-dropdown.sp-menu-center {
@@ -906,7 +892,7 @@ dl.article-info dd.hits span[class*=" icon-"] {
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item span {
   display: block;
   padding: 10px;
-  color: #333333;
+  color: #141414;
   cursor: pointer;
 }
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item >a.sp-group-title,
@@ -1200,7 +1186,7 @@ dl.article-info dd.hits span[class*=" icon-"] {
   transform: translate(0,100px);
   opacity: 0;
   padding: 0 20px !important;
-  background-color: #e9be33;
+  background-color: #ffffff;
 }
 .menu-drop-in .sp-has-child .sp-menu-item:first-child {
   padding-top: 20px !important;
@@ -1760,7 +1746,6 @@ body {
   -webkit-transition: all 400ms ease;
   transition: all 400ms ease;
   background-color: #ffffff;
-  color:#666;
 }
 a,
 a:hover,
@@ -1776,7 +1761,7 @@ legend {
 }
 img {
   display: block;
-  max-width: 80%;
+  max-width: 100%;
   height: auto;
 }
 .btn,
@@ -2024,7 +2009,7 @@ textarea.uneditable-input {
   color: #000;
 }
 #sp-top-bar {
-  padding: 4px 0;
+  padding: 8px 0;
 }
 #sp-top-bar .sp-module {
   display: inline-block;
@@ -2079,6 +2064,7 @@ ul.social-icons >li a {
 #sp-header {
   background: #ffffff none repeat scroll 0 0;
   box-shadow: 0 3px 3px rgba(0,0,0,0.05);
+  height: 90px;
   left: 0;
   position: relative;
   top: 0;
@@ -2119,7 +2105,7 @@ ul.social-icons >li a {
   min-height: 0;
 }
 .sp-page-title {
-  padding: 20px 0;
+  padding: 30px 0;
   background-repeat: no-repeat;
   background-position: 50% 50%;
   background-size: cover;
@@ -2132,7 +2118,7 @@ ul.social-icons >li a {
   color: #fff;
 }
 .sp-page-title h2 {
-  font-size: 32px;
+  font-size: 24px;
   line-height: 1;
 }
 .sp-page-title h3 {
@@ -2164,7 +2150,7 @@ ul.social-icons >li a {
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 #sp-main-body {
-  padding: 15px 0;
+  padding: 100px 0;
 }
 .com-sppagebuilder #sp-main-body {
   padding: 0;
@@ -2242,7 +2228,7 @@ ul.social-icons >li a {
 }
 .sp-module ul >li >a:before {
   font-family: FontAwesome;
-  content: "\f105"; 
+  content: "\f105";
   margin-right: 8px;
 }
 .sp-module ul >li:last-child {
@@ -2600,7 +2586,7 @@ article.item {
 }
 .helix-social-share .helix-social-share-icon ul li div a:hover,
 .helix-social-share .helix-social-share-icon ul li div a:focus {
-  background: #881435;
+  background: #22b8f0;
   color: #fff;
 }
 #sp-bottom .sp-module .sp-module-title {
@@ -2612,7 +2598,6 @@ article.item {
   color: #fff;
   text-align: center;
   padding: 20px 0;
-  background-position: 50px 50% !important;
 }
 #sp-footer a {
   color: rgba(255,255,255,0.9);

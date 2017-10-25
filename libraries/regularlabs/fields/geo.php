@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die;
 
-if (!is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
 	return;
 }
@@ -29,7 +29,7 @@ class JFormFieldRL_Geo extends \RegularLabs\Library\Field
 	{
 		$this->params = $this->element->attributes();
 
-		if (!is_array($this->value))
+		if ( ! is_array($this->value))
 		{
 			$this->value = explode(',', $this->value);
 		}
@@ -40,7 +40,7 @@ class JFormFieldRL_Geo extends \RegularLabs\Library\Field
 		$options = [];
 		foreach ($this->{$group} as $key => $val)
 		{
-			if (!$val)
+			if ( ! $val)
 			{
 				$options[] = JHtml::_('select.option', '-', '&nbsp;', 'value', 'text', true);
 				continue;
@@ -72,7 +72,7 @@ class JFormFieldRL_Geo extends \RegularLabs\Library\Field
 		'AN' => 'Antarctica',
 	];
 
-	public $countries = array(
+	public $countries = [
 		'AF' => "Afghanistan",
 		'AX' => "Aland Islands",
 		'AL' => "Albania",
@@ -317,9 +317,9 @@ class JFormFieldRL_Geo extends \RegularLabs\Library\Field
 		'YE' => "Yemen",
 		'ZM' => "Zambia",
 		'ZW' => "Zimbabwe",
-	);
+	];
 
-	public $regions = array(
+	public $regions = [
 		'-AU'    => "Australia",
 		'AU-ACT' => "Australia: Australian Capital Territory",
 		'AU-NSW' => "Australia: New South Wales",
@@ -1692,6 +1692,6 @@ class JFormFieldRL_Geo extends \RegularLabs\Library\Field
 		'VN-72' => "Vietnam: Đắk Nông",
 		'VN-39' => "Vietnam: Đồng Nai",
 		'VN-45' => "Vietnam: Đồng Tháp",
-	);
+	];
 
 }

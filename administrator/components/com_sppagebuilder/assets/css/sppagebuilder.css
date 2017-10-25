@@ -5942,3 +5942,44 @@ fieldset[disabled] .com_sppagebuilder.view-pages .subhead .btn-danger.focus {
       font-size: 16px;
   }
 }
+
+
+/* Page Builder Notice CSS */
+.sp-pagebuilder-pages.top-notice-bar{
+    background: transparent;
+    margin-top: 0;
+    margin-right: 20px;
+    padding: 0;
+    margin-bottom: 20px;
+}
+.sppb-upgrade-pro{
+    margin-top: 20px;
+    background: #fff;
+    padding-right: 15px;
+}
+.sppb-upgrade-pro a {
+    margin-top: 24px;
+}
+.sppb-upgrade-pro a img{
+    width: 13px;
+}
+.sppb-upgrade-pro a:hover img{
+    opacity: .7;
+}
+.sppb-upgrade-pro-icon{
+    background: #80c328;
+    padding: 14px 12px;
+}
+.sppb-upgrade-pro-icon img{
+    width: 40px;
+    max-width: initial;
+}
+.sppp-upgrade-pro-text{
+    padding: 15px 0 0 15px;
+}
+.sppp-upgrade-pro-text h4{
+    margin: 0 0 5px;
+}
+.sppp-upgrade-pro-text p{
+    margin-bottom: 0;
+}

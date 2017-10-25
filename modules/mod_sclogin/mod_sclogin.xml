@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="1.6" type="module" method="upgrade" client="site">
     <name>SCLogin</name>
-    <version>7.2.1</version>
-    <creationDate>2017/06/21</creationDate>
+    <version>7.2.2</version>
+    <creationDate>2017/10/08</creationDate>
     <author>SourceCoast | www.sourcecoast.com</author>
     <authorEmail>support@sourcecoast.com</authorEmail>
     <authorUrl>http://www.sourcecoast.com</authorUrl>
@@ -66,6 +66,7 @@
         <language tag="ro-RO">ro-RO.mod_sclogin.ini</language>
         <language tag="ru-RU">ru-RU.mod_sclogin.ini</language>
         <language tag="sk-SK">sk-SK.mod_sclogin.ini</language>
+        <language tag="sl-SI">sl-SI.mod_sclogin.ini</language>
         <language tag="sr-YU">sr-YU.mod_sclogin.ini</language>
         <language tag="sv-SE">sv-SE.mod_sclogin.ini</language>
         <language tag="th-TH">th-TH.mod_sclogin.ini</language>

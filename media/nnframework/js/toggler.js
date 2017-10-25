@@ -1,6 +1,6 @@
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -63,12 +63,12 @@ var nnToggler = null;
 							val = keyval[1];
 						}
 
-						if (typeof( toggler.elements[key] ) == "undefined") {
+						if (typeof toggler.elements[key] === 'undefined') {
 							toggler.elements[key] = [];
 						}
 						toggler.elements[key].push(val);
 
-						if (typeof( self.elements[key] ) == "undefined") {
+						if (typeof self.elements[key] === 'undefined') {
 							self.elements[key]          = {};
 							self.elements[key].elements = [];
 							self.elements[key].values   = [];
@@ -100,9 +100,9 @@ var nnToggler = null;
 					&& !el.hasClass('input')
 					&& !el.hasClass('nn_hr')
 					// GK elements
-					&& el.id.indexOf('gk_') === -1
-					&& el.className.indexOf('gk_') === -1
-					&& el.className.indexOf('switcher-') === -1
+					&& el.id.indexOf('gk_') < 0
+					&& el.className.indexOf('gk_') < 0
+					&& el.className.indexOf('switcher-') < 0
 				) {
 					el.css('height', 'auto');
 				}
@@ -118,7 +118,7 @@ var nnToggler = null;
 		},
 
 		toggleByID: function(id, nofx) {
-			if (typeof( this.togglers[id] ) == "undefined") {
+			if (typeof this.togglers[id] === 'undefined') {
 				return;
 			}
 
@@ -183,7 +183,7 @@ var nnToggler = null;
 						}
 						break;
 					default:
-						if (typeof( el.elements ) != "undefined" && el.elements.length > 1) {
+						if (typeof el.elements !== 'undefined' && el.elements.length > 1) {
 							for (var i = 0; i < el.elements.length; i++) {
 								if (el.checked) {
 									values.push(el.value);
@@ -209,7 +209,7 @@ var nnToggler = null;
 					.trim();
 
 				if (el_name !== '') {
-					if (typeof( self.elements[el_name]) != "undefined") {
+					if (typeof self.elements[el_name] !== 'undefined') {
 						self.elements[el_name].elements.push(el);
 						self.setValues(el_name);
 						self.setElementEvents(el, el_name);
@@ -221,7 +221,7 @@ var nnToggler = null;
 		setElementEvents: function(el, el_name) {
 			var self = this;
 			var type;
-			if (typeof( el.type ) == "undefined") {
+			if (typeof el.type === 'undefined') {
 				if ($(el).prop("tagName") == 'select') {
 					type = 'select';
 				}

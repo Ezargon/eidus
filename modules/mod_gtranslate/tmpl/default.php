@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+include 'native_names_map.php';
+
 if($pro_version or $enterprise_version)
     $method = 'standard';
 else
@@ -50,25 +52,15 @@ if(!defined('GTRANSLATE_INCLUDED')) {
 <?php if($new_tab): ?>
     function openTab(url) {var form=document.createElement('form');form.method='post';form.action=url;form.target='_blank';document.body.appendChild(form);form.submit();}
     <?php if($pro_version): ?>
-    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq=='undefined')alert('Google Analytics is not installed, please turn off Analytics feature in GTranslate');else _gaq.push(['_trackEvent', 'GTranslate', lang, location.pathname+location.search]);<?php endif; ?>var plang=location.pathname.split('/')[1];if(plang.length !=2 && plang != 'zh-CN' && plang != 'zh-TW')plang='<?php echo $language; ?>';openTab(location.protocol+'//'+location.host+'/'+lang+'<?php echo $request_uri; ?>');}
+    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq!='undefined'){_gaq.push(['_trackEvent', 'GTranslate', lang, location.pathname+location.search]);}else {if(typeof ga!='undefined')ga('send', 'event', 'GTranslate', lang, location.pathname+location.search);}<?php endif; ?>var plang=location.pathname.split('/')[1];if(plang.length !=2 && plang != 'zh-CN' && plang != 'zh-TW')plang='<?php echo $language; ?>';openTab(location.protocol+'//'+location.host+'/'+lang+'<?php echo $request_uri; ?>');}
     <?php elseif($enterprise_version): ?>
-    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq=='undefined')alert('Google Analytics is not installed, please turn off Analytics feature in GTranslate');else _gaq.push(['_trackEvent', 'GTranslate', lang, location.hostname+location.pathname+location.search]);<?php endif; ?>var plang=location.hostname.split('.')[0];if(plang.length !=2 && plang.toLowerCase() != 'zh-cn' && plang.toLowerCase() != 'zh-tw')plang='<?php echo $language; ?>';openTab(location.protocol+'//'+(lang == '<?php echo $language; ?>' ? '' : lang+'.')+location.hostname.replace('www.', '').replace(RegExp("^" + plang + '\\.'), '')+'<?php echo $request_uri; ?>');}
-    <?php else: ?>
-    if(top.location!=self.location)top.location=self.location;
-    window['_tipoff']=function(){};window['_tipon']=function(a){};
-    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;if(location.hostname=='<?php echo $main_url; ?>' && lang_pair=='<?php echo $language; ?>|<?php echo $language; ?>')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq=='undefined')alert('Google Analytics is not installed, please turn off Analytics feature in GTranslate');else _gaq.push(['_trackEvent', 'GTranslate', lang, location.pathname+location.search]);<?php endif; ?>if(location.hostname!='<?php echo $main_url; ?>' && lang_pair=='<?php echo $language; ?>|<?php echo $language; ?>')openTab(unescape(gfg('u')));else if(location.hostname=='<?php echo $main_url; ?>' && lang_pair!='<?php echo $language; ?>|<?php echo $language; ?>')openTab('//translate.google.com/translate?client=tmpg&hl=en&langpair='+lang_pair+'&u='+escape(location.href));else openTab('//translate.google.com/translate?client=tmpg&hl=en&langpair='+lang_pair+'&u='+unescape(gfg('u')));}
-    function gfg(name) {name=name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");var regexS="[\\?&]"+name+"=([^&#]*)";var regex=new RegExp(regexS);var results=regex.exec(location.href);if(results==null)return '';return results[1];}
+    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq!='undefined'){_gaq.push(['_trackEvent', 'GTranslate', lang, location.hostname+location.pathname+location.search]);}else {if(typeof ga!='undefined')ga('send', 'event', 'GTranslate', lang, location.hostname+location.pathname+location.search);}<?php endif; ?>var plang=location.hostname.split('.')[0];if(plang.length !=2 && plang.toLowerCase() != 'zh-cn' && plang.toLowerCase() != 'zh-tw')plang='<?php echo $language; ?>';openTab(location.protocol+'//'+(lang == '<?php echo $language; ?>' ? '' : lang+'.')+location.hostname.replace('www.', '').replace(RegExp("^" + plang + '\\.'), '')+'<?php echo $request_uri; ?>');}
     <?php endif; ?>
 <?php else: ?>
     <?php if($pro_version): ?>
-    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq=='undefined')alert('Google Analytics is not installed, please turn off Analytics feature in GTranslate');else _gaq.push(['_trackEvent', 'GTranslate', lang, location.pathname+location.search]);<?php endif; ?>var plang=location.pathname.split('/')[1];if(plang.length !=2 && plang != 'zh-CN' && plang != 'zh-TW')plang='<?php echo $language; ?>';location.href=location.protocol+'//'+location.host+'/'+lang+'<?php echo $request_uri; ?>';}
+    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq!='undefined'){_gaq.push(['_trackEvent', 'GTranslate', lang, location.pathname+location.search]);}else {if(typeof ga!='undefined')ga('send', 'event', 'GTranslate', lang, location.pathname+location.search);}<?php endif; ?>var plang=location.pathname.split('/')[1];if(plang.length !=2 && plang != 'zh-CN' && plang != 'zh-TW')plang='<?php echo $language; ?>';location.href=location.protocol+'//'+location.host+'/'+lang+'<?php echo $request_uri; ?>';}
     <?php elseif($enterprise_version): ?>
-    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq=='undefined')alert('Google Analytics is not installed, please turn off Analytics feature in GTranslate');else _gaq.push(['_trackEvent', 'GTranslate', lang, location.hostname+location.pathname+location.search]);<?php endif; ?>var plang=location.hostname.split('.')[0];if(plang.length !=2 && plang.toLowerCase() != 'zh-cn' && plang.toLowerCase() != 'zh-tw')plang='<?php echo $language; ?>';location.href=location.protocol+'//'+(lang == '<?php echo $language; ?>' ? '' : lang+'.')+location.hostname.replace('www.', '').replace(RegExp("^" + plang + '\\.'), '')+'<?php echo $request_uri; ?>';}
-    <?php else: ?>
-    if(top.location!=self.location)top.location=self.location;
-    window['_tipoff']=function(){};window['_tipon']=function(a){};
-    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;if(location.hostname=='<?php echo $main_url; ?>' && lang_pair=='<?php echo $language; ?>|<?php echo $language; ?>')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq=='undefined')alert('Google Analytics is not installed, please turn off Analytics feature in GTranslate');else _gaq.push(['_trackEvent', 'GTranslate', lang, location.pathname+location.search]);<?php endif; ?>if(location.hostname!='<?php echo $main_url; ?>' && lang_pair=='<?php echo $language; ?>|<?php echo $language; ?>')location.href=unescape(gfg('u'));else if(location.hostname=='<?php echo $main_url; ?>' && lang_pair!='<?php echo $language; ?>|<?php echo $language; ?>')location.href='//translate.google.com/translate?client=tmpg&hl=en&langpair='+lang_pair+'&u='+escape(location.href);else location.href='//translate.google.com/translate?client=tmpg&hl=en&langpair='+lang_pair+'&u='+unescape(gfg('u'));}
-    function gfg(name) {name=name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");var regexS="[\\?&]"+name+"=([^&#]*)";var regex=new RegExp(regexS);var results=regex.exec(location.href);if(results==null)return '';return results[1];}
+    function doGTranslate(lang_pair) {if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];<?php if($analytics): ?>if(typeof _gaq!='undefined'){_gaq.push(['_trackEvent', 'GTranslate', lang, location.hostname+location.pathname+location.search]);}else {if(typeof ga!='undefined')ga('send', 'event', 'GTranslate', lang, location.hostname+location.pathname+location.search);}<?php endif; ?>var plang=location.hostname.split('.')[0];if(plang.length !=2 && plang.toLowerCase() != 'zh-cn' && plang.toLowerCase() != 'zh-tw')plang='<?php echo $language; ?>';location.href=location.protocol+'//'+(lang == '<?php echo $language; ?>' ? '' : lang+'.')+location.hostname.replace('www.', '').replace(RegExp("^" + plang + '\\.'), '')+'<?php echo $request_uri; ?>';}
     <?php endif; ?>
 <?php endif; ?>
 /* ]]> */
@@ -78,43 +70,14 @@ if(!defined('GTRANSLATE_INCLUDED')) {
 <?php if($method == 'onfly'): ?>
 <script type="text/javascript">
 /* <![CDATA[ */
-eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('6 7(a,b){n{4(2.9){3 c=2.9("o");c.p(b,f,f);a.q(c)}g{3 c=2.r();a.s(\'t\'+b,c)}}u(e){}}6 h(a){4(a.8)a=a.8;4(a==\'\')v;3 b=a.w(\'|\')[1];3 c;3 d=2.x(\'y\');z(3 i=0;i<d.5;i++)4(d[i].A==\'B-C-D\')c=d[i];4(2.j(\'k\')==E||2.j(\'k\').l.5==0||c.5==0||c.l.5==0){F(6(){h(a)},G)}g{c.8=b;7(c,\'m\');7(c,\'m\')}}',43,43,'||document|var|if|length|function|GTranslateFireEvent|value|createEvent||||||true|else|doGTranslate||getElementById|google_translate_element2|innerHTML|change|try|HTMLEvents|initEvent|dispatchEvent|createEventObject|fireEvent|on|catch|return|split|getElementsByTagName|select|for|className|goog|te|combo|null|setTimeout|500'.split('|'),0,{}))
+function GTranslateGetCurrentLang() {var keyValue = document.cookie.match('(^|;) ?googtrans=([^;]*)(;|$)');return keyValue ? keyValue[2].split('/')[2] : null;}
+function GTranslateFireEvent(element,event){try{if(document.createEventObject){var evt=document.createEventObject();element.fireEvent('on'+event,evt)}else{var evt=document.createEvent('HTMLEvents');evt.initEvent(event,true,true);element.dispatchEvent(evt)}}catch(e){}}
+function doGTranslate(lang_pair){if(lang_pair.value)lang_pair=lang_pair.value;if(lang_pair=='')return;var lang=lang_pair.split('|')[1];if(GTranslateGetCurrentLang() == null && lang == lang_pair.split('|')[0])return;<?php if($analytics): ?>if(typeof ga!='undefined'){ga('send', 'event', 'GTranslate', lang, location.hostname+location.pathname+location.search);}else{if(typeof _gaq!='undefined')_gaq.push(['_trackEvent', 'GTranslate', lang, location.hostname+location.pathname+location.search]);}<?php endif; ?>var teCombo;var sel=document.getElementsByTagName('select');for(var i=0;i<sel.length;i++)if(sel[i].className=='goog-te-combo')teCombo=sel[i];if(document.getElementById('google_translate_element2')==null||document.getElementById('google_translate_element2').innerHTML.length==0||teCombo.length==0||teCombo.innerHTML.length==0){setTimeout(function(){doGTranslate(lang_pair)},500)}else{teCombo.value=lang;GTranslateFireEvent(teCombo,'change');GTranslateFireEvent(teCombo,'change')}}
+<?php if($look == 'dropdown_with_flags'): ?>
+if(GTranslateGetCurrentLang() != null)jQuery(document).ready(function() {jQuery('div.switcher div.selected a').html(jQuery('div.switcher div.option').find('img[alt="'+GTranslateGetCurrentLang()+'"]').parent().html());});
+<?php endif; ?>
 /* ]]> */
 </script>
-<?php endif; ?>
-
-<?php if($method == 'google_default'): ?>
-<?php
-$document = JFactory::getDocument();
-$document->addStyleDeclaration("
-#goog-gt-tt {display:none !important;}
-.goog-te-banner-frame {display:none !important;}
-.goog-te-gadget-icon {background-image:url(//joomla-gtranslate.googlecode.com/svn/trunk/gt_logo_19x19.gif) !important;background-position:0 0 !important;}
-.goog-te-menu-value:hover {text-decoration:none !important;}
-body {top:0 !important;}
-");
-?>
-<div id="google_translate_element"></div>
-<script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: '<?php echo $language; ?>',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay: false,
-    includedLanguages: '<?php
-    foreach($lang_array as $lang => $lang_name) {
-        $show_this = 'show_'.str_replace('-', '', $lang);
-        if($$show_this)
-            echo $lang.',';
-    }
-    ?>'
-  }, 'google_translate_element');
-}
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<?php return; endif; ?>
-
-<?php if($method == 'onfly'): ?>
 <?php
 $document = JFactory::getDocument();
 $document->addStyleDeclaration("
@@ -133,16 +96,14 @@ body {top:0 !important;}
 <?php
     $document = JFactory::getDocument();
     $document->addStyleDeclaration("
-        a.flag {font-size:{$flag_size}px;padding:1px 0;background-repeat:no-repeat;background-image:url('" . JURI::root(true) . '/modules/mod_gtranslate/tmpl/lang/' . $flag_size . 'a.png' . "');}
-        a.flag:hover {background-image:url('" . JURI::root(true) . '/modules/mod_gtranslate/tmpl/lang/' . $flag_size.'.png' . "');}
-        a.flag img {border:0;}
-        a.alt_flag {font-size:{$flag_size}px;padding:1px 0;background-repeat:no-repeat;background-image:url('" . JURI::root(true) . '/modules/mod_gtranslate/tmpl/lang/alt_flagsa.png' . "');}
-        a.alt_flag:hover {background-image:url('" . JURI::root(true) . '/modules/mod_gtranslate/tmpl/lang/alt_flags.png' . "');}
-        a.alt_flag img {border:0;}
+        a.flag {text-decoration:none;}
+        a.flag img {vertical-align:middle;padding:0;margin:0;border:0;display:inline;height:{$flag_size}px;opacity:0.8;}
+        a.flag:hover img {opacity:1;}
+        a.flag span {margin-right:5px;font-size:15px;vertical-align:middle;}
     ");
 }
 
-if($look == 'flags') {
+if($look == 'flags' or $look == 'flags_name' or $look == 'flags_code' or $look == 'lang_names' or $look == 'lang_codes') {
     $session = JFactory::getSession();
     $uri = JURI::getInstance();
     foreach($lang_array as $lang => $lang_name) {
@@ -153,65 +114,51 @@ if($look == 'flags') {
         else
             $href = '#';
 
+        if($native_language_names)
+            $lang_name = $native_names_map[$lang];
+
         $show_this = 'show_'.str_replace('-', '', $lang);
-        list($flag_x, $flag_y) = $flag_map[$lang];
         if($$show_this) {
-            if($$show_this == '3') {
-                switch($lang) {
-                    case 'en':
-                        $flag_x = 0;
-                        if($flag_size == 16)
-                            $flag_y = 0;
-                        if($flag_size == 24)
-                            $flag_y = 100;
-                        if($flag_size == 32)
-                            $flag_y = 200;
-                        echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="alt_flag" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-                        break;
-                    case 'pt':
-                        $flag_x = 100;
-                        if($flag_size == 16)
-                            $flag_y = 0;
-                        if($flag_size == 24)
-                            $flag_y = 100;
-                        if($flag_size == 32)
-                            $flag_y = 200;
-                        echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="alt_flag" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-                        break;
-                    case 'es':
-                        $flag_x = 200;
-                        if($flag_size == 16)
-                            $flag_y = 0;
-                        if($flag_size == 24)
-                            $flag_y = 100;
-                        if($flag_size == 32)
-                            $flag_y = 200;
-                        echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="alt_flag" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-                        break;
-                }
-            }
+            if($lang == 'en' and $$show_this == '3')
+                $flag = 'en-us';
+            elseif($lang == 'en' and $$show_this == '4')
+                $flag = 'en-ca';
+            elseif($lang == 'pt' and $$show_this == '3')
+                $flag = 'pt-br';
+            elseif($lang == 'es' and $$show_this == '3')
+                $flag = 'es-mx';
+            elseif($lang == 'fr' and $$show_this == '3')
+                $flag = 'fr-qc';
             else
-                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a>';
-            if($orientation == 'v')
-                echo '<br />';
-            else
-                echo ' ';
+                $flag = $lang;
+
+            if($look == 'flags')
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl notranslate"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/'.$flag_size.'/'.$flag.'.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang.'" /></a>';
+            elseif($look == 'flags_name')
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl notranslate"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/'.$flag_size.'/'.$flag.'.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang.'" /> <span>'.$lang_name.'</span></a> ';
+            elseif($look == 'flags_code')
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl notranslate"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/'.$flag_size.'/'.$flag.'.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang.'" /> <span>'.strtoupper($lang).'</span></a> ';
+            elseif($look == 'lang_names')
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl notranslate">'.$lang_name.'</a> ';
+            elseif($look == 'lang_codes')
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl notranslate">'.strtoupper($lang).'</a> ';
+
         }
     }
 } elseif ($look == 'dropdown') {
-    echo '<div class="styled-select">';
-    echo '<select onchange="doGTranslate(this);">';
-    echo '<option value="">Seleccionar idioma</option>';
+    echo '<select onchange="doGTranslate(this);" class="notranslate">';
+    echo '<option value="">Select Language</option>';
     $i = 0;
     foreach($lang_array as $lang => $lang_name) {
         $show_this = 'show_'.str_replace('-', '', $lang);
-        $flag_y = $flag_map_vertical[$lang];
+
+        if($native_language_names)
+            $lang_name = $native_names_map[$lang];
+
         if($$show_this)
-            echo '<option value="'.$language.'|'.$lang.'" style="'.($lang == $language ? 'font-weight:bold;' : '').'background:url(\''.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/16l.png\') no-repeat scroll 0 -'.$flag_y.'px;padding-left:18px;">'.$lang_name.'</option>';
+            echo '<option value="'.$language.'|'.$lang.'" style="'.($lang == $language ? 'font-weight:bold;' : '').'">'.$lang_name.'</option>';
     }
     echo '</select>';
-    echo '<div id="idiomaSelect"><i class="fa fa-language fa-2x" aria-hidden="true"></i></div>';
-    echo '</div>';
 } elseif ($look == 'both') {
     $session = JFactory::getSession();
     $uri = JURI::getInstance();
@@ -223,64 +170,66 @@ if($look == 'flags') {
         else
             $href = '#';
 
+        if($native_language_names)
+            $lang_name = $native_names_map[$lang];
+
         $show_this = 'show_'.str_replace('-', '', $lang);
-        list($flag_x, $flag_y) = $flag_map[$lang];
-        if($$show_this == '2')
-            echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-        elseif($$show_this == '3') {
-            switch($lang) {
-                    case 'en':
-                        $flag_x = 0;
-                        if($flag_size == 16)
-                            $flag_y = 0;
-                        if($flag_size == 24)
-                            $flag_y = 100;
-                        if($flag_size == 32)
-                            $flag_y = 200;
-                        echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="alt_flag nturl" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-                        break;
-                    case 'pt':
-                        $flag_x = 100;
-                        if($flag_size == 16)
-                            $flag_y = 0;
-                        if($flag_size == 24)
-                            $flag_y = 100;
-                        if($flag_size == 32)
-                            $flag_y = 200;
-                        echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="alt_flag nturl" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-                        break;
-                    case 'es':
-                        $flag_x = 200;
-                        if($flag_size == 16)
-                            $flag_y = 0;
-                        if($flag_size == 24)
-                            $flag_y = 100;
-                        if($flag_size == 32)
-                            $flag_y = 200;
-                        echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="alt_flag nturl" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang_name.'" /></a> ';
-                        break;
-                }
+        if($$show_this) {
+            if($lang == 'en' and $$show_this == '3')
+                $flag = 'en-us';
+            elseif($lang == 'en' and $$show_this == '4')
+                $flag = 'en-ca';
+            elseif($lang == 'pt' and $$show_this == '3')
+                $flag = 'pt-br';
+            elseif($lang == 'es' and $$show_this == '3')
+                $flag = 'es-mx';
+            elseif($lang == 'fr' and $$show_this == '3')
+                $flag = 'fr-qc';
+            else
+                $flag = $lang;
+
+            if($$show_this != '1' and $$show_this != '0')
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');return false;" title="'.$lang_name.'" class="flag nturl notranslate"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/'.$flag_size.'/'.$flag.'.png" height="'.$flag_size.'" width="'.$flag_size.'" alt="'.$lang.'" /></a>';
         }
     }
-    echo '<br/><select onchange="doGTranslate(this);">';
-    echo '<option value="">Seleccionar idioma</option>';
+    echo '<br/><select onchange="doGTranslate(this);" class="notranslate">';
+    echo '<option value="">Select Language</option>';
     foreach($lang_array as $lang => $lang_name) {
+        if($native_language_names)
+            $lang_name = $native_names_map[$lang];
+
         $show_this = 'show_'.str_replace('-', '', $lang);
         if($$show_this)
             echo '<option '.($lang == $language ? 'style="font-weight:bold;"' : '').' value="'.$language.'|'.$lang.'">'.$lang_name.'</option>';
     }
     echo '</select>';
-} elseif ($look = 'dropdown_with_flags') {
+} elseif ($look == 'dropdown_with_flags') {
 
     JHtml::_('jquery.framework');
 
-    $current_language = isset($_SERVER['HTTP_X_GT_LANG']) ? $_SERVER['HTTP_X_GT_LANG'] : $language;
+    $current_language = isset($_SERVER['HTTP_X_GT_LANG']) ? str_replace(array('zh-cn', 'zh-tw'), array('zh-CN', 'zh-TW'), $_SERVER['HTTP_X_GT_LANG']) : $language;
 
-    list($flag_x, $flag_y) = $flag_map[$current_language];
+    if($native_language_names)
+        $lang_name = $native_names_map[$current_language];
+    else
+        $lang_name = $lang_array[$current_language];
+
+    if($current_language == 'en' and $show_en == '3')
+        $flag = 'en-us';
+    elseif($current_language == 'en' and $show_en == '4')
+        $flag = 'en-ca';
+    elseif($current_language == 'pt' and $show_pt == '3')
+        $flag = 'pt-br';
+    elseif($current_language == 'es' and $show_es == '3')
+        $flag = 'es-mx';
+    elseif($current_language == 'fr' and $show_fr == '3')
+        $flag = 'fr-qc';
+    else
+        $flag = $current_language;
 
     echo '<div class="switcher notranslate">';
     echo '<div class="selected">';
-    echo '<a href="#" onclick="return false;"><span class="gflag" style="background-position:-'.$flag_x.'px -'.$flag_y.'px"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="16" width="16" alt="'.$lang_array[$current_language].'" /></span>'.$lang_array[$current_language].'</a>';
+    echo '<a href="#" onclick="return false;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/16/'.$flag.'.png" height="16" width="16" alt="'.$lang_array[$current_language].'" /> '.$lang_name.'</a>';
     echo '</div>';
     echo '<div class="option">';
 
@@ -288,18 +237,33 @@ if($look == 'flags') {
     $uri = JURI::getInstance();
 
     foreach($lang_array as $lang => $lang_name) {
+        if($pro_version)
+            $href = ($language == $lang) ? $uri->toString() : '/' . $lang . str_replace('/' . $session->get('glang', $language) . '/', '/', $uri->toString(array('path', 'query')));
+        elseif($enterprise_version)
+            $href = ($language == $lang) ? $uri->toString() : $uri->getScheme() . '://' . $lang . '.' . str_replace('www.', '', $uri->toString(array('host', 'path', 'query')));
+        else
+            $href = '#';
+
+        if($native_language_names)
+            $lang_name = $native_names_map[$lang];
+
         $show_this = 'show_'.str_replace('-', '', $lang);
-        list($flag_x, $flag_y) = $flag_map[$lang];
-
-        if($$show_this == '2') {
-            if($pro_version)
-                $href = ($language == $lang) ? $uri->toString() : '/' . $lang . str_replace('/' . $session->get('glang', $language) . '/', '/', $uri->toString(array('path', 'query')));
-            elseif($enterprise_version)
-                $href = ($language == $lang) ? $uri->toString() : $uri->getScheme() . '://' . $lang . '.' . str_replace('www.', '', $uri->toString(array('host', 'path', 'query')));
+        if($$show_this) {
+            if($lang == 'en' and $$show_this == '3')
+                $flag = 'en-us';
+            elseif($lang == 'en' and $$show_this == '4')
+                $flag = 'en-ca';
+            elseif($lang == 'pt' and $$show_this == '3')
+                $flag = 'pt-br';
+            elseif($lang == 'es' and $$show_this == '3')
+                $flag = 'es-mx';
+            elseif($lang == 'fr' and $$show_this == '3')
+                $flag = 'fr-qc';
             else
-                $href = '#';
+                $flag = $lang;
 
-            echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');jQuery(this).parent().parent().find(\'div.selected a\').html(jQuery(this).html());return false;" title="'.$lang_name.'" class="nturl '.($current_language == $lang ? ' selected' : '').'"><span class="gflag" style="background-position:-'.$flag_x.'px -'.$flag_y.'px;"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/blank.png" height="16" width="16" alt="'.$lang_name.'" /></span>'.$lang_name.'</a>';
+            if($$show_this)
+                echo '<a href="'.$href.'" onclick="doGTranslate(\''.$language.'|'.$lang.'\');jQuery(\'div.switcher div.selected a\').html(jQuery(this).html());return false;" title="'.$lang_name.'" class="nturl '.($current_language == $lang ? ' selected' : '').'"><img src="'.JURI::root(true).'/modules/mod_gtranslate/tmpl/lang/16/'.$flag.'.png" height="16" width="16" alt="'.$lang.'" /> '.$lang_name.'</a>';
         }
     }
 
@@ -310,28 +274,32 @@ if($look == 'flags') {
     // Adding slider javascript
     $document->addScriptDeclaration("
         jQuery(document).ready(function() {
-          jQuery('.switcher .selected').click(function() {if(!(jQuery('.switcher .option').is(':visible'))) {jQuery('.switcher .option').stop(true,true).delay(50).slideDown(800);}});
-          jQuery('body').not('.switcher .selected').mousedown(function() {if(jQuery('.switcher .option').is(':visible')) {jQuery('.switcher .option').stop(true,true).delay(300).slideUp(800);}});
+            jQuery('.switcher .selected').click(function() {if(!(jQuery('.switcher .option').is(':visible'))) {jQuery('.switcher .option').stop(true,true).delay(100).slideDown(500);jQuery('.switcher .selected a').toggleClass('open')}});
+            jQuery('.switcher .option').bind('mousewheel', function(e) {var options = jQuery('.switcher .option');if(options.is(':visible'))options.scrollTop(options.scrollTop() - e.originalEvent.wheelDelta);return false;});
+            jQuery('body').not('.switcher').mousedown(function(e) {if(jQuery('.switcher .option').is(':visible') && e.target != jQuery('.switcher .option').get(0)) {jQuery('.switcher .option').stop(true,true).delay(100).slideUp(500);jQuery('.switcher .selected a').toggleClass('open')}});
         });
     ");
 
     // Adding slider css
     $module_url = JURI::root(true).'/modules/mod_gtranslate/tmpl/lang';
     $document->addStyleDeclaration("
-        span.gflag {font-size:16px;padding:1px 0;background-repeat:no-repeat;background-image:url($module_url/16.png);}
-        span.gflag img {border:0;margin-top:2px;}
-        .switcher {font-family:Arial;font-size:10pt;text-align:left;cursor:pointer;overflow:hidden;width:163px;line-height:16px;}
+        .switcher {font-family:Arial;font-size:10pt;text-align:left;cursor:pointer;overflow:hidden;width:163px;line-height:17px;}
         .switcher a {text-decoration:none;display:block;font-size:10pt;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;}
-        .switcher a span.gflag {margin-right:3px;padding:0;display:block;float:left;}
+        .switcher a img {vertical-align:middle;display:inline;border:0;padding:0;margin:0;opacity:0.8;}
+        .switcher a:hover img {opacity:1;}
         .switcher .selected {background:#FFFFFF url($module_url/switcher.png) repeat-x;position:relative;z-index:9999;}
         .switcher .selected a {border:1px solid #CCCCCC;background:url($module_url/arrow_down.png) 146px center no-repeat;color:#666666;padding:3px 5px;width:151px;}
+        .switcher .selected a.open {background-image:url($module_url/arrow_up.png)}
         .switcher .selected a:hover {background:#F0F0F0 url($module_url/arrow_down.png) 146px center no-repeat;}
-        .switcher .option {position:relative;z-index:9998;border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;background-color:#EEEEEE;display:none;width:161px;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;}
+        .switcher .option {position:relative;z-index:9998;border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;background-color:#EEEEEE;display:none;width:161px;max-height:198px;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;overflow-y:auto;overflow-x:hidden;}
         .switcher .option a {color:#000;padding:3px 5px;}
         .switcher .option a:hover {background:#FFC;}
         .switcher .option a.selected {background:#FFC;}
         #selected_lang_name {float: none;}
         .l_name {float: none !important;margin: 0;}
+        .switcher .option::-webkit-scrollbar-track{-webkit-box-shadow:inset 0 0 3px rgba(0,0,0,0.3);border-radius:5px;background-color:#F5F5F5;}
+        .switcher .option::-webkit-scrollbar {width:5px;}
+        .switcher .option::-webkit-scrollbar-thumb {border-radius:5px;-webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.3);background-color:#888;}
     ");
 
 }

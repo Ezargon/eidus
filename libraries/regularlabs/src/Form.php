@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -41,7 +41,7 @@ class Form
 		$parameters = Parameters::getInstance();
 		$params     = $parameters->getPluginParams('regularlabs');
 
-		if (!is_array($value))
+		if ( ! is_array($value))
 		{
 			$value = explode(',', $value);
 		}
@@ -74,7 +74,7 @@ class Form
 			{
 				$value = implode(',', $value);
 			}
-			if (!$value)
+			if ( ! $value)
 			{
 				$input = '<textarea name="' . $name . '" id="' . $id . '" cols="40" rows="5">' . $value . '</textarea>';
 			}
@@ -86,12 +86,12 @@ class Form
 			return '<fieldset class="radio"><label for="' . $id . '">' . JText::_('RL_ITEM_IDS') . ':</label>' . $input . '</fieldset>';
 		}
 
-		if (!$multiple)
+		if ( ! $multiple)
 		{
 			$first_level = isset($options['0']->level) ? $options['0']->level : 0;
 			foreach ($options as &$option)
 			{
-				if (!isset($option->level))
+				if ( ! isset($option->level))
 				{
 					continue;
 				}
@@ -202,7 +202,7 @@ class Form
 				$labelclass .= ' nav-header';
 			}
 
-			if (isset($option->title) && (!isset($option->value) || !$option->value))
+			if (isset($option->title) && ( ! isset($option->value) || ! $option->value))
 			{
 				$item .= '<label class="' . $labelclass . '">' . $option->title . '</label>';
 			}
@@ -217,7 +217,7 @@ class Form
 			$item   .= '</div>';
 			$html[] = $item;
 
-			if (!isset($o[$i + 1]) && $option->level > 0)
+			if ( ! isset($o[$i + 1]) && $option->level > 0)
 			{
 				$html[] = str_repeat('</li></ul>', (int) $option->level);
 			}
@@ -313,7 +313,7 @@ class Form
 				$string = '[[:font-weight:normal;font-style:italic;color:grey;:]]' . $string;
 				break;
 
-			case (!$published):
+			case ( ! $published):
 				$string = '[[:font-style:italic;color:grey;:]]' . $string . ' [' . JText::_('JUNPUBLISHED') . ']';
 				break;
 

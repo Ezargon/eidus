@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -33,18 +33,19 @@ class Article
 	 */
 	public static function process(&$article, &$context, &$helper, $method, $params = [], $ignore = [])
 	{
-		self::processText('description', $article, $helper, $method, $params, $ignore);
 		self::processText('title', $article, $helper, $method, $params, $ignore);
 		self::processText('created_by_alias', $article, $helper, $method, $params, $ignore);
 
 		if (Document::isCategoryList($context))
 		{
+			self::processText('description', $article, $helper, $method, $params, $ignore);
+
 			return;
 		}
 
 		self::processText('text', $article, $helper, $method, $params, $ignore);
 
-		if (!empty($article->text))
+		if ( ! empty($article->text))
 		{
 			return;
 		}

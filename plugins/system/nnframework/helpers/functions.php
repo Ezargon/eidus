@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -32,12 +32,12 @@ class NNFrameworkFunctions
 
 	public static function script($file, $version = '')
 	{
-		if (!$file = self::getFileByFolder('js', $file))
+		if ( ! $file = self::getFileByFolder('js', $file))
 		{
 			return;
 		}
 
-		if (!empty($version))
+		if ( ! empty($version))
 		{
 			$file .= '?v=' . $version;
 		}
@@ -47,12 +47,12 @@ class NNFrameworkFunctions
 
 	public static function stylesheet($file, $version = '')
 	{
-		if (!$file = self::getFileByFolder('css', $file))
+		if ( ! $file = self::getFileByFolder('css', $file))
 		{
 			return;
 		}
 
-		if (!empty($version))
+		if ( ! empty($version))
 		{
 			$file .= '?v=' . $version;
 		}
@@ -71,12 +71,12 @@ class NNFrameworkFunctions
 		// Get the template
 		$template = JFactory::getApplication()->getTemplate();
 
-		$files = array();
+		$files = [];
 
 		// Detect debug mode
 		if (JFactory::getConfig()->get('debug') || JFactory::getApplication()->input->get('debug'))
 		{
-			$files[] = str_replace(array('.min.', '-min.'), '.', $file);
+			$files[] = str_replace(['.min.', '-min.'], '.', $file);
 		}
 
 		$files[] = $file;
@@ -135,7 +135,7 @@ class NNFrameworkFunctions
 			return false;
 		}
 
-		$paths = array();
+		$paths = [];
 
 		// If the file contains any /: it can be in a media extension subfolder
 		// Divide the file extracting the extension as the first part before /
@@ -158,7 +158,7 @@ class NNFrameworkFunctions
 
 	private static function fileExists($path)
 	{
-		if (!file_exists(JPATH_ROOT . $path))
+		if ( ! file_exists(JPATH_ROOT . $path))
 		{
 			return false;
 		}
@@ -174,12 +174,12 @@ class NNFrameworkFunctions
 	{
 		jimport('joomla.filesystem.file');
 
-		if (!empty($_GET['debug']))
+		if ( ! empty($_GET['debug']))
 		{
 			$url = str_replace('.min.', '.', $url);
 		}
 
-		if (!JFile::exists(JPATH_SITE . $url))
+		if ( ! JFile::exists(JPATH_SITE . $url))
 		{
 			return JFactory::getDocument()->addScriptVersion($url);
 		}
@@ -195,12 +195,12 @@ class NNFrameworkFunctions
 	{
 		jimport('joomla.filesystem.file');
 
-		if (!empty($_GET['debug']))
+		if ( ! empty($_GET['debug']))
 		{
 			$url = str_replace('.min.', '.', $url);
 		}
 
-		if (!JFile::exists(JPATH_SITE . $url))
+		if ( ! JFile::exists(JPATH_SITE . $url))
 		{
 			return JFactory::getDocument()->addStyleSheetVersion($url);
 		}
@@ -218,14 +218,14 @@ class NNFrameworkFunctions
 		}
 
 		// only allow url calls from administrator
-		if (!JFactory::getApplication()->isAdmin())
+		if ( ! JFactory::getApplication()->isAdmin())
 		{
 			die;
 		}
 
 		// only allow when logged in
 		$user = JFactory::getUser();
-		if (!$user->id)
+		if ( ! $user->id)
 		{
 			die;
 		}
@@ -236,7 +236,7 @@ class NNFrameworkFunctions
 		}
 
 		// only allow url calls to nonumber.nl domain
-		if (!(preg_match('#^https?://([^/]+\.)?nonumber\.nl/#', $url)))
+		if ( ! (preg_match('#^https?://([^/]+\.)?nonumber\.nl/#', $url)))
 		{
 			die;
 		}
@@ -304,7 +304,7 @@ class NNFrameworkFunctions
 	{
 		$buffer = JFactory::getDocument()->getBuffer('component');
 
-		if (empty($buffer) || !is_string($buffer))
+		if (empty($buffer) || ! is_string($buffer))
 		{
 			return false;
 		}
@@ -325,7 +325,7 @@ class NNFrameworkFunctions
 		$alias   = self::getAliasByName($name);
 		$element = self::getElementByAlias($alias);
 
-		return array($alias, $element);
+		return [$alias, $element];
 	}
 
 	public static function getNameByAlias($alias)
@@ -388,12 +388,12 @@ class NNFrameworkFunctions
 
 	static function getXMLValue($key, $alias, $type = 'component', $folder = 'system')
 	{
-		if (!$xml = self::getXML($alias, $type, $folder))
+		if ( ! $xml = self::getXML($alias, $type, $folder))
 		{
 			return '';
 		}
 
-		if (!isset($xml[$key]))
+		if ( ! isset($xml[$key]))
 		{
 			return '';
 		}
@@ -403,7 +403,7 @@ class NNFrameworkFunctions
 
 	static function getXML($alias, $type = 'component', $folder = 'system')
 	{
-		if (!$file = self::getXMLFile($alias, $type, $folder))
+		if ( ! $file = self::getXMLFile($alias, $type, $folder))
 		{
 			return false;
 		}
@@ -417,7 +417,7 @@ class NNFrameworkFunctions
 
 		$element = self::getElementByAlias($alias);
 
-		$files = array();
+		$files = [];
 
 		// Components
 		if (empty($type) || $type == 'component')
@@ -431,7 +431,7 @@ class NNFrameworkFunctions
 		// Plugins
 		if (empty($type) || $type == 'plugin')
 		{
-			if (!empty($folder))
+			if ( ! empty($folder))
 			{
 				$files[] = JPATH_PLUGINS . '/' . $folder . '/' . $element . '/' . $element . '.xml';
 				$files[] = JPATH_PLUGINS . '/' . $folder . '/' . $element . '.xml';
@@ -457,7 +457,7 @@ class NNFrameworkFunctions
 
 		foreach ($files as $file)
 		{
-			if (!JFile::exists($file))
+			if ( ! JFile::exists($file))
 			{
 				continue;
 			}
@@ -530,7 +530,7 @@ class NNFrameworkFunctions
 	{
 		$basePath = $basePath ?: JPATH_SITE;
 
-		if (!in_array($basePath, array(JPATH_ADMINISTRATOR, JPATH_SITE)))
+		if ( ! in_array($basePath, [JPATH_ADMINISTRATOR, JPATH_SITE]))
 		{
 			return $basePath;
 		}
@@ -592,7 +592,7 @@ class NNFrameworkFunctions
 			$xml = simplexml_load_string($url, "SimpleXMLElement", LIBXML_NONET | LIBXML_NOCDATA);
 		}
 
-		if (!@count($xml))
+		if ( ! @count($xml))
 		{
 			return NNCache::set(
 				$hash,
@@ -602,7 +602,7 @@ class NNFrameworkFunctions
 
 		if ($root)
 		{
-			if (!isset($xml->{$root}))
+			if ( ! isset($xml->{$root}))
 			{
 				return NNCache::set(
 					$hash,
@@ -645,7 +645,7 @@ class NNFrameworkFunctions
 		}
 
 		$timeout = JFactory::getApplication()->input->getInt('timeout', 3);
-		$timeout = min(array(30, max(array(3, $timeout))));
+		$timeout = min([30, max([3, $timeout])]);
 
 		$ch = curl_init($url);
 
@@ -657,7 +657,7 @@ class NNFrameworkFunctions
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
 
 		//follow on location problems
-		if (!ini_get('safe_mode') && !ini_get('open_basedir'))
+		if ( ! ini_get('safe_mode') && ! ini_get('open_basedir'))
 		{
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 			$html = curl_exec($ch);
@@ -700,10 +700,10 @@ class NNFrameworkFunctions
 			return $data;
 		}
 
-		$matches = array();
+		$matches = [];
 		preg_match('/Location:(.*?)\n/', $header, $matches);
 		$url = @parse_url(trim(array_pop($matches)));
-		if (!$url)
+		if ( ! $url)
 		{
 			//couldn't process the url to redirect to
 			$curl_loops = 0;
@@ -711,15 +711,15 @@ class NNFrameworkFunctions
 			return $data;
 		}
 		$last_url = parse_url(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL));
-		if (!$url['scheme'])
+		if ( ! $url['scheme'])
 		{
 			$url['scheme'] = $last_url['scheme'];
 		}
-		if (!$url['host'])
+		if ( ! $url['host'])
 		{
 			$url['host'] = $last_url['host'];
 		}
-		if (!$url['path'])
+		if ( ! $url['path'])
 		{
 			$url['path'] = $last_url['path'];
 		}

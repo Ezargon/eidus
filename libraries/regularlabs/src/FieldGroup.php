@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -40,7 +40,7 @@ class FieldGroup
 		$group = $this->getGroup();
 		$id    = $this->type . '_' . $group;
 
-		if (!isset($data[$id]))
+		if ( ! isset($data[$id]))
 		{
 			$data[$id] = $this->{'get' . $group}();
 		}
@@ -50,7 +50,7 @@ class FieldGroup
 
 	public function getSelectList($group = '')
 	{
-		if (!is_array($this->value))
+		if ( ! is_array($this->value))
 		{
 			$this->value = explode(',', $this->value);
 		}
@@ -75,14 +75,14 @@ class FieldGroup
 	{
 		$component = $component ?: $this->type;
 
-		if (!Extension::isInstalled($component))
+		if ( ! Extension::isInstalled($component))
 		{
 			return '<fieldset class="alert alert-danger">' . JText::_('ERROR') . ': ' . JText::sprintf('RL_FILES_NOT_FOUND', JText::_('RL_' . strtoupper($component))) . '</fieldset>';
 		}
 
 		$group = $this->getGroup();
 
-		if (!in_array($group, $tables) && !in_array($group, array_keys($tables)))
+		if ( ! in_array($group, $tables) && ! in_array($group, array_keys($tables)))
 		{
 			// no need to check database table for this group
 			return false;

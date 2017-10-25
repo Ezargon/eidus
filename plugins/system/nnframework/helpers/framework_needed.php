@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -15,43 +15,43 @@ class NNFrameworkNeeded
 {
 	public static function getOldInstalledExtensions()
 	{
-		$extensions = array(
-			'addtomenu'          => array(5, 'Add to Menu'),
-			'adminbardocker'     => array(0, 'AdminBar Docker (discontinued)'),
-			'advancedmodules'    => array(6, 'Advanced Module Manager'),
-			'advancedtemplates'  => array(2, 'Advanced Template Manager'),
-			'articlesanywhere'   => array(5, 'Articles Anywhere'),
-			'betterpreview'      => array(5, 'Better Preview'),
-			'cachecleaner'       => array(5, 'Cache Cleaner'),
-			'cdnforjoomla'       => array(5, 'CDN for Joomla!'),
-			'componentsanywhere' => array(3, 'Components Anywhere'),
-			'contenttemplater'   => array(6, 'Content Templater'),
-			'dbreplacer'         => array(5, 'DB Replacer'),
-			'dummycontent'       => array(3, 'Dummy Content'),
-			'emailprotector'     => array(3, 'Email Protector'),
-			'geoip'              => array(1, 'GeoIP'),
-			'iplogin'            => array(3, 'IP Login'),
-			'modalizer'          => array(7, 'Modalizer (now Modals)'),
-			'modals'             => array(7, 'Modals'),
-			'modulesanywhere'    => array(5, 'Modules Anywhere'),
-			'nonumbermanager'    => array(6, 'NoNumber Extension Manager (now Regular Labs Extension Manager)'),
-			'rereplacer'         => array(7, 'ReReplacer'),
-			'slider'             => array(6, 'Slider (now Sliders)'),
-			'sliders'            => array(6, 'Sliders'),
-			'snippets'           => array(5, 'Snippets'),
-			'sourcerer'          => array(6, 'Sourcerer'),
-			'tabber'             => array(6, 'Tabber (now Tabs)'),
-			'tabs'               => array(6, 'Tabs'),
-			'timedstyles'        => array(0, 'Timed Styles (discontinued)'),
-			'tooltips'           => array(5, 'Tooltips'),
-			'whatnothing'        => array(11, 'What? Nothing!'),
-		);
+		$extensions = [
+			'addtomenu'          => [5, 'Add to Menu'],
+			'adminbardocker'     => [0, 'AdminBar Docker (discontinued)'],
+			'advancedmodules'    => [6, 'Advanced Module Manager'],
+			'advancedtemplates'  => [2, 'Advanced Template Manager'],
+			'articlesanywhere'   => [5, 'Articles Anywhere'],
+			'betterpreview'      => [5, 'Better Preview'],
+			'cachecleaner'       => [5, 'Cache Cleaner'],
+			'cdnforjoomla'       => [5, 'CDN for Joomla!'],
+			'componentsanywhere' => [3, 'Components Anywhere'],
+			'contenttemplater'   => [6, 'Content Templater'],
+			'dbreplacer'         => [5, 'DB Replacer'],
+			'dummycontent'       => [3, 'Dummy Content'],
+			'emailprotector'     => [3, 'Email Protector'],
+			'geoip'              => [1, 'GeoIP'],
+			'iplogin'            => [3, 'IP Login'],
+			'modalizer'          => [7, 'Modalizer (now Modals)'],
+			'modals'             => [7, 'Modals'],
+			'modulesanywhere'    => [5, 'Modules Anywhere'],
+			'nonumbermanager'    => [6, 'NoNumber Extension Manager (now Regular Labs Extension Manager)'],
+			'rereplacer'         => [7, 'ReReplacer'],
+			'slider'             => [6, 'Slider (now Sliders)'],
+			'sliders'            => [6, 'Sliders'],
+			'snippets'           => [5, 'Snippets'],
+			'sourcerer'          => [6, 'Sourcerer'],
+			'tabber'             => [6, 'Tabber (now Tabs)'],
+			'tabs'               => [6, 'Tabs'],
+			'timedstyles'        => [0, 'Timed Styles (discontinued)'],
+			'tooltips'           => [5, 'Tooltips'],
+			'whatnothing'        => [11, 'What? Nothing!'],
+		];
 
-		$still_installed = array();
+		$still_installed = [];
 
 		foreach ($extensions as $extension => $data)
 		{
-			if (!$current_version = self::getCurrentVersion($extension))
+			if ( ! $current_version = self::getCurrentVersion($extension))
 			{
 				// Extension not found
 				continue;
@@ -59,7 +59,7 @@ class NNFrameworkNeeded
 
 			$version = $data['0'];
 
-			if (!$version || $current_version < $version)
+			if ( ! $version || $current_version < $version)
 			{
 				// An extension (version) is installed that still needs the NoNumber framework
 				$still_installed[] = $data['1'];
@@ -72,14 +72,14 @@ class NNFrameworkNeeded
 
 	private static function getCurrentVersion($extension)
 	{
-		if (!$xml = self::getXmlFile($extension))
+		if ( ! $xml = self::getXmlFile($extension))
 		{
 			return;
 		}
 
 		$xml = JInstaller::parseXMLInstallFile($xml);
 
-		if (!isset($xml['version']))
+		if ( ! isset($xml['version']))
 		{
 			return;
 		}
@@ -91,16 +91,16 @@ class NNFrameworkNeeded
 	{
 		jimport('joomla.filesystem.file');
 
-		$paths = array(
+		$paths = [
 			JPATH_ADMINISTRATOR . '/components/com_' . $extension . '/' . $extension . '.xml',
 			JPATH_ADMINISTRATOR . '/modules/mod_' . $extension . '/mod_' . $extension . '.xml',
 			JPATH_SITE . '/plugins/system/' . $extension . '/' . $extension . '.xml',
 			JPATH_SITE . '/plugins/editors-xtd/' . $extension . '/' . $extension . '.xml',
-		);
+		];
 
 		foreach ($paths as $path)
 		{
-			if (!JFile::exists($path))
+			if ( ! JFile::exists($path))
 			{
 				continue;
 			}

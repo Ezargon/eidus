@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -19,7 +19,7 @@ class NNParameters
 
 	public static function getInstance()
 	{
-		if (!self::$instance)
+		if ( ! self::$instance)
 		{
 			self::$instance = new NNFrameworkParameters;
 		}
@@ -55,7 +55,7 @@ class NNFrameworkParameters
 			);
 		}
 
-		if (!is_object($params))
+		if ( ! is_object($params))
 		{
 			$params = json_decode($params);
 			if (is_null($xml))
@@ -68,7 +68,7 @@ class NNFrameworkParameters
 			$params = $params->toObject();
 		}
 
-		if (!$params)
+		if ( ! $params)
 		{
 			return NNCache::set(
 				$hash,
@@ -181,18 +181,18 @@ class NNFrameworkParameters
 		}
 
 		jimport('joomla.filesystem.file');
-		if (!$path
-			|| !JFile::exists($path)
-			|| !$file = JFile::read($path)
+		if ( ! $path
+			|| ! JFile::exists($path)
+			|| ! $file = JFile::read($path)
 		)
 		{
 			return NNCache::set(
 				$hash,
-				array()
+				[]
 			);
 		}
 
-		$xml = array();
+		$xml = [];
 
 		$xml_parser = xml_parser_create();
 		xml_parse_into_struct($xml_parser, $file, $fields);
@@ -202,12 +202,12 @@ class NNFrameworkParameters
 		foreach ($fields as $field)
 		{
 			if ($field['tag'] != 'FIELD'
-				|| !isset($field['attributes'])
-				|| (!isset($field['attributes']['DEFAULT']) && !isset($field['attributes'][$default]))
-				|| !isset($field['attributes']['NAME'])
+				|| ! isset($field['attributes'])
+				|| ( ! isset($field['attributes']['DEFAULT']) && ! isset($field['attributes'][$default]))
+				|| ! isset($field['attributes']['NAME'])
 				|| $field['attributes']['NAME'] == ''
 				|| $field['attributes']['NAME']['0'] == '@'
-				|| !isset($field['attributes']['TYPE'])
+				|| ! isset($field['attributes']['TYPE'])
 				|| $field['attributes']['TYPE'] == 'spacer'
 			)
 			{
@@ -242,9 +242,9 @@ class NNFrameworkParameters
 			return NNCache::get($hash);
 		}
 
-		if (!is_array($xml))
+		if ( ! is_array($xml))
 		{
-			$xml = array($xml);
+			$xml = [$xml];
 		}
 
 		$object = (object) [];
@@ -255,9 +255,9 @@ class NNFrameworkParameters
 
 			if (isset($object->{$key}))
 			{
-				if (!is_array($object->{$key}))
+				if ( ! is_array($object->{$key}))
 				{
-					$object->{$key} = array($object->{$key});
+					$object->{$key} = [$object->{$key}];
 				}
 				$object->{$key}[] = $val;
 			}
@@ -272,7 +272,7 @@ class NNFrameworkParameters
 
 	function _getKeyFromXML(&$xml)
 	{
-		if (!empty($xml->_attributes) && isset($xml->_attributes['name']))
+		if ( ! empty($xml->_attributes) && isset($xml->_attributes['name']))
 		{
 			$key = $xml->_attributes['name'];
 		}
@@ -286,7 +286,7 @@ class NNFrameworkParameters
 
 	function _getValFromXML(&$xml)
 	{
-		if (!empty($xml->_attributes) && isset($xml->_attributes['value']))
+		if ( ! empty($xml->_attributes) && isset($xml->_attributes['value']))
 		{
 			$val = $xml->_attributes['value'];
 		}
@@ -304,9 +304,9 @@ class NNFrameworkParameters
 
 				if (isset($val->{$k}))
 				{
-					if (!is_array($val->{$k}))
+					if ( ! is_array($val->{$k}))
 					{
-						$val->{$k} = array($val->{$k});
+						$val->{$k} = [$val->{$k}];
 					}
 					$val->{$k}[] = $v;
 				}

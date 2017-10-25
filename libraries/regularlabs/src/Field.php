@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -211,7 +211,7 @@ class Field
 		// TODO: use node model
 		$children = [];
 
-		if (!empty($items))
+		if ( ! empty($items))
 		{
 			// first pass - collect children
 			foreach ($items as $v)

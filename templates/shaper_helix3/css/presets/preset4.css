@@ -1,44 +1,40 @@
-.sp-dropdown-sub
-{
-	display:none !important;
-}
 a {
-  color: #881435;
+  color: #eb4947;
 }
 a:hover {
-  color: #5c0d24;
+  color: #e61c19;
 }
 .sp-megamenu-parent >li.active>a,
 .sp-megamenu-parent >li:hover>a {
-  color: #881435;
+  color: #eb4947;
 }
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item >a:hover {
-  background: #881435;
+  background: #eb4947;
 }
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item.active>a {
-  color: #881435;
+  color: #eb4947;
 }
 #offcanvas-toggler >i {
   color: #000000;
 }
 #offcanvas-toggler >i:hover {
-  color: #881435;
+  color: #eb4947;
 }
 .btn-primary,
 .sppb-btn-primary {
-  border-color: #6d102b;
-  background-color: #881435;
+  border-color: #e82e2b;
+  background-color: #eb4947;
 }
 .btn-primary:hover,
 .sppb-btn-primary:hover {
-  border-color: #450a1b;
-  background-color: #5c0d24;
+  border-color: #cf1917;
+  background-color: #e61c19;
 }
 ul.social-icons >li a:hover {
-  color: #881435;
+  color: #eb4947;
 }
 .sp-page-title {
-  background: #881435;
+  background: #eb4947;
 }
 .layout-boxed .body-innerwrapper {
   background: #ffffff;
@@ -47,50 +43,50 @@ ul.social-icons >li a:hover {
   color: #000000;
 }
 .sp-module ul >li >a:hover {
-  color: #881435;
+  color: #eb4947;
 }
 .sp-module .latestnews >div >a {
   color: #000000;
 }
 .sp-module .latestnews >div >a:hover {
-  color: #881435;
+  color: #eb4947;
 }
 .sp-module .tagscloud .tag-name:hover {
-  background: #881435;
+  background: #eb4947;
 }
 .sp-simpleportfolio .sp-simpleportfolio-filter > ul > li.active > a,
 .sp-simpleportfolio .sp-simpleportfolio-filter > ul > li > a:hover {
-  background: #881435;
+  background: #eb4947;
 }
 .search .btn-toolbar button {
-  background: #881435;
+  background: #eb4947;
 }
 .post-format {
-  background: #881435;
+  background: #eb4947;
 }
 .voting-symbol span.star.active:before {
-  color: #881435;
+  color: #eb4947;
 }
 .sp-rating span.star:hover:before,
 .sp-rating span.star:hover ~ span.star:before {
-  color: #5c0d24;
+  color: #e61c19;
 }
 .entry-link,
 .entry-quote {
-  background: #881435;
+  background: #eb4947;
 }
 blockquote {
-  border-color: #881435;
+  border-color: #eb4947;
 }
 .carousel-left:hover,
 .carousel-right:hover {
-  background: #881435;
+  background: #eb4947;
 }
 #sp-footer {
-  background: #881435;
+  background: #eb4947;
 }
 .sp-comingsoon body {
-  background-color: #881435;
+  background-color: #eb4947;
 }
 .pagination>li>a,
 .pagination>li>span {
@@ -104,13 +100,13 @@ blockquote {
 }
 .pagination>.active>a,
 .pagination>.active>span {
-  border-color: #881435;
-  background-color: #881435;
+  border-color: #eb4947;
+  background-color: #eb4947;
 }
 .pagination>.active>a:hover,
 .pagination>.active>a:focus,
 .pagination>.active>span:hover,
 .pagination>.active>span:focus {
-  border-color: #881435;
-  background-color: #881435;
+  border-color: #eb4947;
+  background-color: #eb4947;
 }

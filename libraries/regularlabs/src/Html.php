@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -31,7 +31,7 @@ class Html
 	public static function convertWysiwygToPlainText($string)
 	{
 		// replace chr style enters with normal enters
-		$string = str_replace(array(chr(194) . chr(160), '&#160;', '&nbsp;'), ' ', $string);
+		$string = str_replace([chr(194) . chr(160), '&#160;', '&nbsp;'], ' ', $string);
 
 		// replace linebreak tags with normal linebreaks (paragraphs, enters, etc).
 		$enter_tags = ['p', 'br'];
@@ -120,7 +120,7 @@ class Html
 		}
 
 		// No searches are found
-		if (!$found)
+		if ( ! $found)
 		{
 			return [$string, '', ''];
 		}
@@ -160,7 +160,7 @@ class Html
 		}
 
 		// No end split is found, so don't split remainder
-		if (!$found)
+		if ( ! $found)
 		{
 			return [$pre, $string, ''];
 		}
@@ -196,7 +196,7 @@ class Html
 	 */
 	public static function fix($string)
 	{
-		if (!self::containsBlockElements($string))
+		if ( ! self::containsBlockElements($string))
 		{
 			return $string;
 		}
@@ -326,7 +326,7 @@ class Html
 
 		foreach ($parts as $i => &$part)
 		{
-			if (!RegEx::match('^' . $block_regex, $part, $type))
+			if ( ! RegEx::match('^' . $block_regex, $part, $type))
 			{
 				continue;
 			}
@@ -642,7 +642,7 @@ class Html
 	 */
 	public static function getBlockElements($exclude = [])
 	{
-		if (!is_array($exclude))
+		if ( ! is_array($exclude))
 		{
 			$exclude = [$exclude];
 		}
@@ -664,7 +664,7 @@ class Html
 	 */
 	public static function getInlineElements($exclude = [])
 	{
-		if (!is_array($exclude))
+		if ( ! is_array($exclude))
 		{
 			$exclude = [$exclude];
 		}
@@ -753,7 +753,7 @@ class Html
 	 */
 	private static function fixBrokenTagsByPreString(&$pre, &$string)
 	{
-		if (!RegEx::match('<(\![^>]*|/?[a-z][^>]*(="[^"]*)?)$', $pre, $match))
+		if ( ! RegEx::match('<(\![^>]*|/?[a-z][^>]*(="[^"]*)?)$', $pre, $match))
 		{
 			return;
 		}
@@ -771,12 +771,12 @@ class Html
 	 */
 	private static function fixBrokenTagsByPostString(&$post, &$string)
 	{
-		if (!RegEx::match('<(\![^>]*|/?[a-z][^>]*(="[^"]*)?)$', $string, $match))
+		if ( ! RegEx::match('<(\![^>]*|/?[a-z][^>]*(="[^"]*)?)$', $string, $match))
 		{
 			return;
 		}
 
-		if (!RegEx::match('^[^>]*>', $post, $match))
+		if ( ! RegEx::match('^[^>]*>', $post, $match))
 		{
 			return;
 		}

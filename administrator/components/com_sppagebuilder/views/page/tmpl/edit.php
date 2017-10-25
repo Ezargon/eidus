@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 jimport('joomla.application.component.helper');
 require_once JPATH_COMPONENT .'/builder/classes/base.php';
 require_once JPATH_COMPONENT .'/builder/classes/config.php';

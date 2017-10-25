@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Fabrik\Helpers\LayoutFile;
 
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.file');
@@ -273,6 +274,23 @@ class PlgFabrik_Element extends FabrikPlugin
 	 * @var array
 	 */
 	protected $phpOptions = array();
+
+	/**
+	 *
+	 * Cache for suboptions
+	 *
+	 * @var null|array
+	 *
+	 * @since 3.7
+	 */
+	protected $subOptionValues = null;
+
+	/**
+	 * Cache for subpoption labels
+	 *
+	 * @var null|array
+	 */
+	protected $subOptionLabels = null;
 
 	/**
 	 * Constructor
@@ -1672,6 +1690,7 @@ class PlgFabrik_Element extends FabrikPlugin
 		$displayData->j3         = FabrikWorker::j3();
 		$displayData->hidden     = $this->isHidden();
 		$displayData->label      = FText::_($element->label);
+		$displayData->altLabel   = $this->getListHeading();
 		$displayData->hasLabel   = $this->get('hasLabel');
 		$displayData->view       = $this->app->input->get('view', 'form');
 		$displayData->tip        = $this->tipHtml($model->data);
@@ -1733,12 +1752,18 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	protected function labelPaths()
 	{
+		// base built-in layouts
 		$basePath       = COM_FABRIK_BASE . 'components/com_fabrik/layouts/element';
 		$pluginPath     = COM_FABRIK_BASE . '/plugins/fabrik_element/' . $this->getPluginName() . '/layouts';
+		// Custom per template layouts
+		$view = $this->getFormModel()->isEditable() ? 'form' : 'details';
+		$tmplPath = COM_FABRIK_FRONTEND . '/views/'. $view . '/tmpl/' . $this->getFormModel()->getTmpl() . '/layouts/element/';
+		$tmplElPath = COM_FABRIK_FRONTEND . '/views/'. $view . '/tmpl/' . $this->getFormModel()->getTmpl() . '/layouts/element/' . $this->getFullName(true, false);
+		// Custom per theme layouts
 		$perThemePath   = JPATH_THEMES . '/' . $this->app->getTemplate() . '/html/layouts/com_fabrik/element';
 		$perElementPath = JPATH_THEMES . '/' . $this->app->getTemplate() . '/html/layouts/com_fabrik/element/' . $this->getFullName(true, false);
 
-		return array($basePath, $pluginPath, $perThemePath, $perElementPath);
+		return array($basePath, $pluginPath, $tmplPath, $tmplElPath, $perThemePath, $perElementPath);
 	}
 
 	/**
@@ -1800,21 +1825,25 @@ class PlgFabrik_Element extends FabrikPlugin
 			$data = ArrayHelper::fromObject($data);
 		}
 
-		//$title = $this->tipTextAndValidations($mode, $data);
-		//$opts = $this->tipOpts();
-		//$opts = json_encode($opts);
+		$title    = $this->tipTextAndValidations($mode, $data);
 
-		//return $title !== '' ? 'title="' . $title . '" opts=\'' . $opts . '\'' : '';
+		// $$$ hugh - only run the layout if there's a title, save row rendering time
+		if (!empty($title))
+		{
+			$layout                  = FabrikHelperHTML::getLayout('element.fabrik-element-tip');
+			$displayData             = new stdClass;
+			$displayData->tipTitle   = $title;
+			$displayData->tipText    = $txt;
+			$displayData->rollOver   = $this->isTipped();
+			$displayData->isEditable = $this->isEditable();
+			$displayData->tipOpts    = $this->tipOpts();
 
-		$layout                  = FabrikHelperHTML::getLayout('element.fabrik-element-tip');
-		$displayData             = new stdClass;
-		$displayData->tipTitle   = $this->tipTextAndValidations($mode, $data);
-		$displayData->tipText    = $txt;
-		$displayData->rollOver   = $this->isTipped();
-		$displayData->isEditable = $this->isEditable();
-		$displayData->tipOpts    = $this->tipOpts();
-
-		$rollOver = $layout->render($displayData);
+			$rollOver = $layout->render($displayData);
+		}
+		else
+		{
+			$rollOver = (string)$txt;
+		}
 
 		return $rollOver;
 	}
@@ -1863,8 +1892,6 @@ class PlgFabrik_Element extends FabrikPlugin
 			return '';
 		}
 
-		$lines[] = '<ul class="validation-notices" style="list-style:none">';
-
 		if ($this->isTipped($mode))
 		{
 			$lines[] = '<li>' . FabrikHelperHTML::image('question-sign', 'form', $tmpl) . ' ' . $this->getTipText($data) . '</li>';
@@ -1882,16 +1909,17 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if (count($lines) > 0)
 		{
+			array_unshift($lines,'<ul class="validation-notices" style="list-style:none">');
 			$lines[] = '</ul>';
+			$lines    = array_unique($lines);
+			$rollOver = implode('', $lines);
+			// $$$ rob - looks like htmlspecialchars is needed otherwise invalid markup created and pdf output issues.
+			$rollOver = htmlspecialchars($rollOver, ENT_QUOTES);
 		}
-
-		$lines    = array_unique($lines);
-		$rollOver = implode('', $lines);
-
-		// $$$ rob - looks like htmlspecialchars is needed otherwise invalid markup created and pdf output issues.
-		$rollOver = htmlspecialchars($rollOver, ENT_QUOTES);
-
-		//$rollOver = str_replace('"', '&quot;', $rollOver);
+		else
+		{
+			$rollOver = '';
+		}
 
 		return $rollOver;
 	}
@@ -3712,9 +3740,16 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if (!$phpOpts)
 		{
-			$params = $this->getParams();
-			$opts   = $params->get('sub_options', '');
-			$opts   = $opts == '' ? array() : (array) @$opts->sub_values;
+			// cache, as even just fetching the params can eat up time in list with lots of rows
+			if (!isset($this->subOptionValues))
+			{
+				$params = $this->getParams();
+				$opts   = $params->get('sub_options', '');
+				$opts   = $opts == '' ? array() : (array) @$opts->sub_values;
+				$this->subOptionValues = $opts;
+			}
+
+			return $this->subOptionValues;
 		}
 		else
 		{
@@ -3758,9 +3793,22 @@ class PlgFabrik_Element extends FabrikPlugin
 
 		if (!$phpOpts)
 		{
-			$params = $this->getParams();
-			$opts   = $params->get('sub_options', '');
-			$opts   = $opts == '' ? array() : (array) @$opts->sub_labels;
+			// cache, as running FText::() can eat up time with lots of options
+			if (!isset($this->subOptionLabels))
+			{
+				$params = $this->getParams();
+				$opts   = $params->get('sub_options', '');
+				$opts   = $opts == '' ? array() : (array) @$opts->sub_labels;
+
+				foreach ($opts as &$opt)
+				{
+					$opt = FText::_($opt);
+				}
+
+				$this->subOptionLabels = $opts;
+			}
+
+			return $this->subOptionLabels;
 		}
 		else
 		{
@@ -6320,7 +6368,7 @@ class PlgFabrik_Element extends FabrikPlugin
 			$db->setQuery("ALTER TABLE `#__fabrik_elements` MODIFY `params` MEDIUMTEXT");
 			try
 			{
-				$db->execute;
+				$db->execute();
 			}
 			catch (RuntimeException $e)
 			{
@@ -7764,20 +7812,20 @@ class PlgFabrik_Element extends FabrikPlugin
 
 	/**
 	 * Get the element's JLayout file
-	 * Its actually an instance of FabrikLayoutFile which inverses the ordering added include paths.
-	 * In FabrikLayoutFile the addedPath takes precedence over the default paths, which makes more sense!
+	 * Its actually an instance of LayoutFile which inverses the ordering added include paths.
+	 * In LayoutFile the addedPath takes precedence over the default paths, which makes more sense!
 	 *
 	 * @param   string $type  form/details/list
 	 * @param   array  $paths Optional paths to add as includes
 	 *
-	 * @return FabrikLayoutFile
+	 * @return LayoutFile
 	 */
 	public function getLayout($type, $paths = array(), $options = array())
 	{
 		$defaultOptions = array('debug' => false, 'component' => 'com_fabrik', 'client' => 'site');
 		$options        = array_merge($defaultOptions, $options);
 		$basePath       = $this->layoutBasePath();
-		$layout         = new FabrikLayoutFile('fabrik-element-' . $this->getPluginName() . '-' . $type, $basePath, $options);
+		$layout         = new LayoutFile('fabrik-element-' . $this->getPluginName() . '-' . $type, $basePath, $options);
 
 		foreach ($paths as $path)
 		{
@@ -7795,8 +7843,6 @@ class PlgFabrik_Element extends FabrikPlugin
 		$view = $this->getFormModel()->isEditable() ? 'form' : 'details';
 		$layout->addIncludePaths(COM_FABRIK_FRONTEND . '/views/'. $view . '/tmpl/' . $this->getFormModel()->getTmpl() . '/layouts/element/');
 		$layout->addIncludePaths(COM_FABRIK_FRONTEND . '/views/'. $view . '/tmpl/' . $this->getFormModel()->getTmpl() . '/layouts/element/' . $this->getFullName(true, false));
-		$layout->addIncludePaths(COM_FABRIK_FRONTEND . '/views/list/tmpl/' . $this->getFormModel()->getListModel()->getTmpl() . '/layouts/element/');
-		$layout->addIncludePaths(COM_FABRIK_FRONTEND . '/views/list/tmpl/' . $this->getFormModel()->getListModel()->getTmpl() . '/layouts/element/' . $this->getFullName(true, false));
 		return $layout;
 	}
 
@@ -7913,5 +7959,16 @@ class PlgFabrik_Element extends FabrikPlugin
 	 */
 	public function jsJLayouts()
 	{
+	}
+
+	/**
+	 * Give elements a chance to reset data after a failed validation.  For instance, file upload element
+	 * needs to reset the values as they aren't submitted with the form
+	 *
+	 * @param  $data  array form data
+	 */
+	public function setValidationFailedData(&$data)
+	{
+		return;
 	}
 }

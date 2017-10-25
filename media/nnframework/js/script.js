@@ -1,6 +1,6 @@
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -91,13 +91,13 @@ var nnScripts = null;
 				return;
 			}
 
-			if (typeof(xml[extension]) == 'undefined') {
+			if (typeof xml[extension] === 'undefined') {
 				return;
 			}
 
 			var dat = xml[extension];
 
-			if (!dat || typeof(dat['version']) == 'undefined' || !dat['version']) {
+			if (!dat || typeof dat['version'] === 'undefined' || !dat['version']) {
 				return;
 			}
 
@@ -142,7 +142,7 @@ var nnScripts = null;
 					el.setAttribute('size', ( el.length > 100 ) ? 100 : el.length);
 					link.getElement('span.show').setStyle('display', 'none');
 					link.getElement('span.hide').setStyle('display', 'inline');
-					if (typeof( window['nnToggler'] ) != "undefined") {
+					if (typeof nnToggler !== 'undefined') {
 						nnToggler.autoHeightDivs();
 					}
 				} else {
@@ -188,10 +188,10 @@ var nnScripts = null;
 				$(this).children().each(function() {
 					el[this.nodeName.toLowerCase()] = String($(this).text()).trim();
 				});
-				if (typeof(el.alias) !== 'undefined') {
+				if (typeof el.alias !== 'undefined') {
 					obj[el.alias] = el;
 				}
-				if (typeof(el.extname) !== 'undefined' && el.extname != el.alias) {
+				if (typeof el.extname !== 'undefined' && el.extname != el.alias) {
 					obj[el.extname] = el;
 				}
 			});
@@ -208,10 +208,10 @@ var nnScripts = null;
 
 			var max = Math.max(num1.length, num2.length);
 			for (var i = 0; i < max; i++) {
-				if (typeof(num1[i]) == 'undefined') {
+				if (typeof num1[i] === 'undefined') {
 					num1[i] = '0';
 				}
-				if (typeof(num2[i]) == 'undefined') {
+				if (typeof num2[i] === 'undefined') {
 					num2[i] = '0';
 				}
 
@@ -289,7 +289,7 @@ var nnScripts = null;
 			var editor_frame  = iframes[0];
 			var contentWindow = editor_frame.contentWindow;
 
-			if (typeof contentWindow.getSelection != "undefined") {
+			if (typeof contentWindow.getSelection !== 'undefined') {
 				var sel = contentWindow.getSelection();
 
 				if (sel.rangeCount) {
@@ -305,7 +305,7 @@ var nnScripts = null;
 				return '';
 			}
 
-			if (typeof contentWindow.document.selection != "undefined") {
+			if (typeof contentWindow.document.selection !== 'undefined') {
 				if (contentWindow.document.selection.type == "Text") {
 					return contentWindow.document.selection.createRange().htmlText;
 				}

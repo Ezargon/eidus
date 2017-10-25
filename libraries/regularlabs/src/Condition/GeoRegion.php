@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -22,14 +22,13 @@ class GeoRegion
 {
 	public function pass()
 	{
-		if (!$this->getGeo() || empty($this->geo->countryCode) || empty($this->geo->regionCodes))
+		if ( ! $this->getGeo() || empty($this->geo->countryCode) || empty($this->geo->regionCodes))
 		{
 			return $this->_(false);
 		}
 
 		$regions = $this->geo->regionCodes;
-		array_walk($regions, function (&$value)
-		{
+		array_walk($regions, function (&$value) {
 			$value = $this->geo->countryCode . '-' . $value;
 		});
 

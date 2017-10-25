@@ -1,6 +1,6 @@
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -62,7 +62,7 @@
 				var $text = $(this).val().toLowerCase();
 				list.find('li').each(function() {
 					var $li = $(this);
-					if ($li.text().toLowerCase().indexOf($text) == -1) {
+					if ($li.text().toLowerCase().indexOf($text) < 0) {
 						$li.hide();
 					} else {
 						$li.show();

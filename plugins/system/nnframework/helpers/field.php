@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -41,7 +41,7 @@ class NNFormField extends JFormField
 		// This only returns 1 option!!!
 		if (empty($this->element->option))
 		{
-			return array();
+			return [];
 		}
 
 		$option = $this->element->option;
@@ -50,12 +50,12 @@ class NNFormField extends JFormField
 		$value     = (string) $option['value'];
 		$text      = trim((string) $option) ? trim((string) $option) : $value;
 
-		return array(
-			array(
+		return [
+			[
 				'value' => $value,
 				'text'  => '- ' . JText::alt($text, $fieldname) . ' -',
-			),
-		);
+			],
+		];
 	}
 
 	public function get($val, $default = '')
@@ -63,9 +63,9 @@ class NNFormField extends JFormField
 		return (isset($this->params[$val]) && (string) $this->params[$val] != '') ? (string) $this->params[$val] : $default;
 	}
 
-	function getOptionsByList($list, $extras = array(), $levelOffset = 0)
+	function getOptionsByList($list, $extras = [], $levelOffset = 0)
 	{
-		$options = array();
+		$options = [];
 		foreach ($list as $item)
 		{
 			$options[] = $this->getOptionByListItem($item, $extras, $levelOffset);
@@ -74,7 +74,7 @@ class NNFormField extends JFormField
 		return $options;
 	}
 
-	function getOptionByListItem($item, $extras = array(), $levelOffset = 0)
+	function getOptionByListItem($item, $extras = [], $levelOffset = 0)
 	{
 		$name = trim($item->name);
 
@@ -90,7 +90,7 @@ class NNFormField extends JFormField
 				continue;
 			}
 
-			if (in_array($extra, array('id', 'alias')) && $item->{$extra} == $item->name)
+			if (in_array($extra, ['id', 'alias']) && $item->{$extra} == $item->name)
 			{
 				continue;
 			}
@@ -110,34 +110,34 @@ class NNFormField extends JFormField
 		return $option;
 	}
 
-	function getOptionsTreeByList($items = array(), $root = 0)
+	function getOptionsTreeByList($items = [], $root = 0)
 	{
 		// establish the hierarchy of the menu
 		// TODO: use node model
-		$children = array();
+		$children = [];
 
-		if (!empty($items))
+		if ( ! empty($items))
 		{
 			// first pass - collect children
 			foreach ($items as $v)
 			{
 				$pt   = $v->parent_id;
-				$list = @$children[$pt] ? $children[$pt] : array();
+				$list = @$children[$pt] ? $children[$pt] : [];
 				array_push($list, $v);
 				$children[$pt] = $list;
 			}
 		}
 
 		// second pass - get an indent list of the items
-		$list = JHtml::_('menu.treerecurse', $root, '', array(), $children, 9999, 0, 0);
+		$list = JHtml::_('menu.treerecurse', $root, '', [], $children, 9999, 0, 0);
 
 		// assemble items to the array
-		$options = array();
+		$options = [];
 		if ($this->get('show_ignore'))
 		{
 			if (in_array('-1', $this->value))
 			{
-				$this->value = array('-1');
+				$this->value = ['-1'];
 			}
 			$options[] = JHtml::_('select.option', '-1', '- ' . JText::_('NN_IGNORE') . ' -', 'value', 'text', 0);
 			$options[] = JHtml::_('select.option', '-', '&nbsp;', 'value', 'text', 1);

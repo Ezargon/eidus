@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -24,7 +24,7 @@ class NNHtml
 		$parameters = NNParameters::getInstance();
 		$params     = $parameters->getPluginParams('nnframework');
 
-		if (!is_array($value))
+		if ( ! is_array($value))
 		{
 			$value = explode(',', $value);
 		}
@@ -52,7 +52,7 @@ class NNHtml
 			{
 				$value = implode(',', $value);
 			}
-			if (!$value)
+			if ( ! $value)
 			{
 				$input = '<textarea name="' . $name . '" id="' . $id . '" cols="40" rows="5">' . $value . '</textarea>';
 			}
@@ -64,12 +64,12 @@ class NNHtml
 			return '<fieldset class="radio"><label for="' . $id . '">' . JText::_('NN_ITEM_IDS') . ':</label>' . $input . '</fieldset>';
 		}
 
-		if (!$multiple)
+		if ( ! $multiple)
 		{
 			$first_level = isset($options['0']->level) ? $options['0']->level : 0;
 			foreach ($options as &$option)
 			{
-				if (!isset($option->level))
+				if ( ! isset($option->level))
 				{
 					continue;
 				}
@@ -101,7 +101,7 @@ class NNHtml
 		NNFrameworkFunctions::script('nnframework/multiselect.min.js', '16.4.5735');
 		NNFrameworkFunctions::stylesheet('nnframework/multiselect.min.css', '16.4.5735');
 
-		$html = array();
+		$html = [];
 
 		$html[] = '<div class="well well-small nn_multiselect" id="' . $id . '">';
 		$html[] = '
@@ -136,7 +136,7 @@ class NNHtml
 
 			<hr class="hr-condensed">';
 
-		$o = array();
+		$o = [];
 		foreach ($options as $option)
 		{
 			$option->level = isset($option->level) ? $option->level : 0;
@@ -182,7 +182,7 @@ class NNHtml
 				$labelclass .= ' nav-header';
 			}
 
-			if (isset($option->title) && (!isset($option->value) || !$option->value))
+			if (isset($option->title) && ( ! isset($option->value) || ! $option->value))
 			{
 				$item .= '<label class="' . $labelclass . '">' . $option->title . '</label>';
 			}
@@ -198,7 +198,7 @@ class NNHtml
 
 			$html[] = $item;
 
-			if (!isset($o[$i + 1]) && $option->level > 0)
+			if ( ! isset($o[$i + 1]) && $option->level > 0)
 			{
 				$html[] = str_repeat('</li></ul>', (int) $option->level);
 			}
@@ -249,7 +249,7 @@ class NNHtml
 			$regex .= 'u';
 		}
 
-		if (!preg_match($regex . 'u', $string))
+		if ( ! preg_match($regex . 'u', $string))
 		{
 			return $string;
 		}

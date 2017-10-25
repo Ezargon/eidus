@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -23,9 +23,9 @@ if ($app->isAdmin())
 if (
 	$app->isAdmin()
 	&& JFactory::getUser()->id
-	&& !$app->input->get('tmpl')
+	&& ! $app->input->get('tmpl')
 	&& $app->input->get('task') != 'preview'
-	&& !(
+	&& ! (
 		$app->input->get('option') == 'com_finder'
 		&& $app->input->get('format') == 'json'
 	)
@@ -70,7 +70,7 @@ class PlgSystemNNFramework extends JPlugin
 {
 	public function onAfterRoute()
 	{
-		if (!JFactory::getApplication()->input->getInt('nn_qp', 0))
+		if ( ! JFactory::getApplication()->input->getInt('nn_qp', 0))
 		{
 			return;
 		}

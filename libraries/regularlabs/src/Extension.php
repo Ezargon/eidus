@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -42,7 +42,7 @@ class Extension
 	{
 		$basePath = $basePath ?: JPATH_SITE;
 
-		if (!in_array($basePath, [JPATH_ADMINISTRATOR, JPATH_SITE]))
+		if ( ! in_array($basePath, [JPATH_ADMINISTRATOR, JPATH_SITE]))
 		{
 			return $basePath;
 		}
@@ -108,7 +108,7 @@ class Extension
 				list($type, $folder) = $type;
 			}
 
-			if (!self::isInstalled($extension, $type, $folder))
+			if ( ! self::isInstalled($extension, $type, $folder))
 			{
 				return false;
 			}
@@ -278,12 +278,12 @@ class Extension
 	 */
 	public static function getXMLValue($key, $alias, $type = 'component', $folder = 'system')
 	{
-		if (!$xml = self::getXML($alias, $type, $folder))
+		if ( ! $xml = self::getXML($alias, $type, $folder))
 		{
 			return '';
 		}
 
-		if (!isset($xml[$key]))
+		if ( ! isset($xml[$key]))
 		{
 			return '';
 		}
@@ -302,7 +302,7 @@ class Extension
 	 */
 	public static function getXML($alias, $type = 'component', $folder = 'system')
 	{
-		if (!$file = self::getXMLFile($alias, $type, $folder))
+		if ( ! $file = self::getXMLFile($alias, $type, $folder))
 		{
 			return false;
 		}
@@ -337,7 +337,7 @@ class Extension
 		// Plugins
 		if (empty($type) || $type == 'plugin')
 		{
-			if (!empty($folder))
+			if ( ! empty($folder))
 			{
 				$files[] = JPATH_PLUGINS . '/' . $folder . '/' . $element . '/' . $element . '.xml';
 				$files[] = JPATH_PLUGINS . '/' . $folder . '/' . $element . '.xml';
@@ -363,7 +363,7 @@ class Extension
 
 		foreach ($files as $file)
 		{
-			if (!JFile::exists($file))
+			if ( ! JFile::exists($file))
 			{
 				continue;
 			}
@@ -384,20 +384,24 @@ class Extension
 		return JPluginHelper::isEnabled('system', 'regularlabs');
 	}
 
-	public static function isAuthorised()
+	public static function isAuthorised($require_core_auth = true)
 	{
 		$user = JFactory::getUser();
 
 		if ($user->get('guest'))
 		{
-
 			return false;
 		}
 
+		if ( ! $require_core_auth)
+		{
+			return true;
+		}
+
 		if (
-			!$user->authorise('core.edit', 'com_content')
-			&& !$user->authorise('core.edit.own', 'com_content')
-			&& !$user->authorise('core.create', 'com_content')
+			! $user->authorise('core.edit', 'com_content')
+			&& ! $user->authorise('core.edit.own', 'com_content')
+			&& ! $user->authorise('core.create', 'com_content')
 		)
 		{
 			return false;
@@ -408,19 +412,19 @@ class Extension
 
 	public static function isEnabledInArea($params)
 	{
-		if (!isset($params->enable_frontend))
+		if ( ! isset($params->enable_frontend))
 		{
 			return true;
 		}
 
 		// Only allow in frontend
-		if ($params->enable_frontend == 2 && JFactory::getApplication()->isAdmin())
+		if ($params->enable_frontend == 2 && Document::isClient('administrator'))
 		{
 			return false;
 		}
 
 		// Do not allow in frontend
-		if (!$params->enable_frontend && JFactory::getApplication()->isSite())
+		if ( ! $params->enable_frontend && Document::isClient('site'))
 		{
 			return false;
 		}
@@ -430,11 +434,11 @@ class Extension
 
 	public static function isEnabledInComponent($params)
 	{
-		if (!isset($params->disabled_components))
+		if ( ! isset($params->disabled_components))
 		{
 			return true;
 		}
 
-		return !Protect::isRestrictedComponent($params->disabled_components);
+		return ! Protect::isRestrictedComponent($params->disabled_components);
 	}
 }

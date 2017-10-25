@@ -3,8 +3,8 @@
  * @package         SCLogin
  * @copyright (c)   2009-2017 by SourceCoast - All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * @version         Release v7.2.1
- * @build-date      2017/06/21
+ * @version         Release v7.2.2
+ * @build-date      2017/10/08
  */
 
 defined('JPATH_PLATFORM') or die;

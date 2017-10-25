@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -28,7 +28,7 @@ class JFormFieldNN_Framework_Needed extends NNFormField
 
 		$still_installed = NNFrameworkNeeded::getOldInstalledExtensions();
 
-		if (!empty($still_installed))
+		if ( ! empty($still_installed))
 		{
 			// An extension (version) is installed that still needs the NoNumber framework
 			return

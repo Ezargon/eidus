@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die;
 
-if (!is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
 	return;
 }
@@ -27,6 +27,7 @@ class JFormFieldRL_SimpleCategories extends \RegularLabs\Library\Field
 	protected function getInput()
 	{
 		JHtml::_('jquery.framework');
+
 		RL_Document::script('regularlabs/script.min.js');
 		RL_Document::script('regularlabs/toggler.min.js');
 
@@ -50,7 +51,7 @@ class JFormFieldRL_SimpleCategories extends \RegularLabs\Library\Field
 
 		$options = array_merge($options, $categories);
 
-		if (!$this->get('show_new', 1))
+		if ( ! $this->get('show_new', 1))
 		{
 			return JHtml::_('select.genericlist',
 				$options,
@@ -97,17 +98,17 @@ class JFormFieldRL_SimpleCategories extends \RegularLabs\Library\Field
 	{
 		$table = $this->get('table');
 
-		if (!$table)
+		if ( ! $table)
 		{
 			return [];
 		}
 
 		// Get the user groups from the database.
 		$query = $this->db->getQuery(true)
-			->select(array(
+			->select([
 				$this->db->quoteName('category', 'value'),
 				$this->db->quoteName('category', 'text'),
-			))
+			])
 			->from($this->db->quoteName('#__' . $table))
 			->where($this->db->quoteName('category') . ' != ' . $this->db->quote(''))
 			->group($this->db->quoteName('category'))

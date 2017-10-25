@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die;
 
-if (!is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
 	return;
 }
@@ -89,7 +89,7 @@ class JFormFieldRL_Templates extends \RegularLabs\Library\Field
 				$name = JText::_($style->name);
 
 				// Initialize the group if necessary.
-				if (!isset($groups[$template]))
+				if ( ! isset($groups[$template]))
 				{
 					$groups[$template]   = [];
 					$groups[$template][] = JHtml::_('select.option', $template, $name);

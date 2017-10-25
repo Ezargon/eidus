@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Sourcerer
- * @version         7.1.6
+ * @version         7.1.9
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -9,7 +9,7 @@
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-namespace RegularLabs\Sourcerer;
+namespace RegularLabs\Plugin\System\Sourcerer;
 
 defined('_JEXEC') or die;
 
@@ -23,7 +23,7 @@ use RegularLabs\Library\Protect as RL_Protect;
  */
 class Helper
 {
-	public function onContentPrepare($article, $context)
+	public function onContentPrepare($context, &$article)
 	{
 		$params = Params::get();
 
@@ -33,7 +33,7 @@ class Helper
 			&& in_array($context, ['com_search.search', 'com_search.search.article', 'com_finder.indexer']);
 
 
-		if (!RL_Document::isCategoryList($context))
+		if ( ! RL_Document::isCategoryList($context))
 		{
 			switch (true)
 			{
@@ -63,7 +63,7 @@ class Helper
 
 	public function onAfterDispatch()
 	{
-		if (!RL_Document::isHtml() || !$buffer = RL_Document::getBuffer())
+		if ( ! RL_Document::isHtml() || ! $buffer = RL_Document::getBuffer())
 		{
 			return;
 		}
@@ -76,7 +76,7 @@ class Helper
 	public function onAfterRender()
 	{
 		// only in html, pdfs, ajax/raw and feeds
-		if (!in_array(JFactory::getDocument()->getType(), ['html', 'pdf', 'ajax', 'raw']) && !RL_Document::isFeed())
+		if ( ! in_array(JFactory::getDocument()->getType(), ['html', 'pdf', 'ajax', 'raw']) && ! RL_Document::isFeed())
 		{
 			return;
 		}

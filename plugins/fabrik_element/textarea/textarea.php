@@ -316,7 +316,7 @@ class PlgFabrik_ElementTextarea extends PlgFabrik_Element
 		{
 			$editor = JEditor::getInstance($this->config->get('editor'));
 			$buttons = (bool) $params->get('wysiwyg_extra_buttons', true);
-			$layoutData->editor = $editor->display($name, $value, $cols * 10, $rows * 15, $cols, $rows, $buttons, $id);
+			$layoutData->editor = $editor->display($name, $value, $cols * 10, $rows * 15, $cols, $rows, $buttons, $id, 'com_fabrik');
 			$layout = $this->getLayout('wysiwyg');
 		}
 		else
@@ -480,11 +480,6 @@ class PlgFabrik_ElementTextarea extends PlgFabrik_Element
 
 			// Testing not using name as duplication of group does not trigger clone()
 			$id = $this->getHTMLId($repeatCounter);
-
-			if ($this->inDetailedView)
-			{
-				$id .= '_ro';
-			}
 		}
 		else
 		{

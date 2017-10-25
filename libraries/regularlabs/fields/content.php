@@ -1,7 +1,7 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.5.13702
+ * @version         17.9.4890
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die;
 
-if (!is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
 	return;
 }
@@ -83,6 +83,14 @@ class JFormFieldRL_Content extends \RegularLabs\Library\FieldGroup
 		$this->db->setQuery($query);
 		$list = $this->db->loadObjectList();
 
-		return $this->getOptionsByList($list, ['language', 'cat', 'id']);
+		$options = $this->getOptionsByList($list, ['language', 'cat', 'id']);
+
+		if ($this->get('showselect'))
+		{
+			array_unshift($options, JHtml::_('select.option', '-', '&nbsp;', 'value', 'text', true));
+			array_unshift($options, JHtml::_('select.option', '-', '- ' . JText::_('Select Item') . ' -'));
+		}
+
+		return $options;
 	}
 }

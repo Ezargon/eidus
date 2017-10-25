@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 JHtml::_('bootstrap.tooltip');
 JHtml::_('formbehavior.chosen', '.filter-select select, .sp-pagebuilder-pages-toolbar select');
@@ -89,28 +89,22 @@ Joomla.orderTable = function() {
 					</div>
 				</div>
 
-				<div class="sp-pagebuilder-message-container">
-					<div class="sppb-buy-pro-wrap">
-						<div class="row-fluid">
-							<div class="col-sm-12 col-lg-10  sp-pagebuilder-message-text">
-								<div class="row">
-									<div class="col-sm-2 sppb-buypro-logo">
-										<img src="<?php echo JURI::root() . '/administrator/components/com_sppagebuilder/assets/img/logo-white.png' ;?>" alt="SP PageBuilder Logo">
-									</div>
-
-									<div class="col-sm-10 sppb-buypro-content-wrap">
-										<div class="sppb-buypro-content">
-											<h1><?php echo JText::_('COM_SPPAGEBUILDER_BUY_SPPAGEBUILDER_PRO') ?></h1>
-											<p><?php echo JText::_('COM_SPPAGEBUILDER_BUY_SPPAGEBUILDER_PRO_DESC') ?></p>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-12 col-lg-2  sp-pagebuilder-pro-button">
-								<a href="<?php echo JRoute::_('https://www.joomshaper.com/join-now#page-builder');?>" target="_blank" class="sp-pagebuilder-btn sp-pagebuilder-btn-success sp-pagebuilder-btn-lg"><?php echo JText::_('COM_SPPAGEBUILDER_BUY_PRO') ?></a>
-							</div>
-						</div>
-					</div>
+				<div class="sp-pagebuilder-pages top-notice-bar">
+				  <div class="row-fluid">
+				      <div class="span12">
+				          <div class="sppb-upgrade-pro">
+				              <div class="sppb-upgrade-pro-icon pull-left">
+				                  <img src="<?php echo JURI::root(true) . '/administrator/components/com_sppagebuilder/assets/img/notice-alert.png'; ?>" alt="Notice">
+				              </div>
+				              <div class="sppp-upgrade-pro-text pull-left">
+				                  <h4>Get SP Page Builder Pro to unlock the best experience</h4>
+				                  <p>SP Page Builder Pro offers live frontend editing, 48+ addons, 20+ readymade templates, premium support, and more. <a href="https://www.joomshaper.com/page-builder" target="_blank"><strong>Get SP Page Builder Pro now!</strong></a></p>
+				              </div>
+				              <a href="#" class="pull-right"><img alt="Close Icon" src="<?php echo JURI::root(true) . '/administrator/components/com_sppagebuilder/assets/img/close-icon.png'; ?>"></a>
+				              <div class="clearfix"></div>
+				          </div>
+				      </div>
+				  </div>
 				</div>
 
 				<?php
