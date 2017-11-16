@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 class SppagebuilderControllerPage extends JControllerForm {
 
@@ -76,7 +76,7 @@ class SppagebuilderControllerPage extends JControllerForm {
 		if (empty($recordId)) {
 			$authorised = $user->authorise('core.create', 'com_sppagebuilder') || (count($user->getAuthorisedCategories('com_sppagebuilder', 'core.create')));
 		} else {
-			$authorised = $user->authorise('core.edit', 'com_sppagebuilder') || ($user->authorise('core.edit.own',   'com_sppagebuilder.page.' . $recordId) && $data['created_by'] == $user->id);
+			$authorised = $user->authorise('core.edit', 'com_sppagebuilder') || $user->authorise('core.edit', 'com_sppagebuilder.page.' . $recordId) || $user->authorise('core.edit', 'com_sppagebuilder.page.' . $recordId) || ($user->authorise('core.edit.own',   'com_sppagebuilder.page.' . $recordId) && $data['created_by'] == $user->id);
 		}
 
 		if ($authorised !== true)
@@ -185,8 +185,15 @@ class SppagebuilderControllerPage extends JControllerForm {
 
 				// Redirect back to the edit screen.
 				$output['redirect'] = 'index.php?option=' . $this->option . '&view=' . $this->view_item . $this->getRedirectToItemAppend($recordId);
-				$output['preview_url'] = JURI::root() . 'index.php?option=com_sppagebuilder&view=page&id=' . $recordId;
-				$output['frontend_editor_url'] = JURI::root() . 'index.php?option=com_sppagebuilder&view=form&id=' . $recordId . '&layout=edit';
+				$siteApp = JApplication::getInstance('site');
+				$siteRouter = $siteApp->getRouter();
+				$Itemid = SppagebuilderHelper::getMenuId($recordId);
+
+				$preview = 'index.php?option=com_sppagebuilder&view=page&id=' . $recordId . $Itemid;
+				$output['preview_url'] = str_replace('/administrator', '', $siteRouter->build($preview));
+
+				$front_link = 'index.php?option=com_sppagebuilder&view=form&tmpl=componenet&layout=edit&id=' . $recordId . $Itemid;
+				$output['frontend_editor_url'] = str_replace('/administrator', '', $siteRouter->build($front_link));
 				$output['id'] = $recordId;
 				break;
 
@@ -200,8 +207,47 @@ class SppagebuilderControllerPage extends JControllerForm {
 				break;
 		}
 
+		if(isset($output['id']) && $output['id']){
+			$css_file_path = JPATH_ROOT . "/media/sppagebuilder/css/page-{$output['id']}.css";
+			if( file_exists( $css_file_path ) ) {
+				unlink( $css_file_path );
+			}
+		}
+
 		echo json_encode($output);
 		die();
+	}
+
+	public function getMySections() {
+		$model = $this->getModel();
+		die($model->getMySections());
+	}
+
+	public function deleteSection(){
+		$model = $this->getModel();
+		$app = JFactory::getApplication();
+		$input = $app->input;
+
+		$id = $input->get('id', '', 'INT');
+
+		die($model->deleteSection($id));
+	}
+
+	public function saveSection() {
+		$model = $this->getModel();
+		$app = JFactory::getApplication();
+		$input = $app->input;
+
+		$title = htmlspecialchars($input->get('title', '', 'STRING'));
+		$section = $input->get('section', '', 'RAW');
+
+		if($title && $section) {
+			$section_id = $model->saveSection($title, $section);
+			echo $section_id;
+			die();
+		} else {
+			die('Failed');
+		}
 	}
 
 }

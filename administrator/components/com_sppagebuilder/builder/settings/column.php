@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 $column_settings = array(
 	'attr' => array(
@@ -103,10 +103,24 @@ $column_settings = array(
 				),
 			),
 
+			'items_align_center'=>array(
+				'type'=>'checkbox',
+				'title'=>JText::_('COM_SPPAGEBUILDER_ROW_COLUMNS_ALIGN_CENTER'),
+				'desc'=>JText::_('COM_SPPAGEBUILDER_ROW_COLUMNS_ALIGN_CENTER_DESC'),
+				'std'=>0
+			),
+
 			'padding'=>array(
 				'type'=>'padding',
 				'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_PADDING'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_PADDING_DESC'),
+				'responsive'=> true
+			),
+
+			'boxshadow'=>array(
+				'type'=>'boxshadow',
+				'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BOXSHADOW'),
+				'std'=>'0 0 0 0 #fff',
 			),
 
 			'class'=>array(

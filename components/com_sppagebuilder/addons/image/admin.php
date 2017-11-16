@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -14,6 +14,7 @@ SpAddonsConfig::addonConfig(
 		'addon_name'=>'sp_image',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_IMAGE'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_IMAGE_DESC'),
+		'category'=>'Media',
 		'attr'=>array(
 			'general' => array(
 				'admin_label'=>array(
@@ -46,35 +47,40 @@ SpAddonsConfig::addonConfig(
 					'depends'=>array(array('title', '!=', '')),
 				),
 
+				'title_font_family'=>array(
+					'type'=>'fonts',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_FAMILY'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_FAMILY_DESC'),
+					'depends'=>array(array('title', '!=', '')),
+					'selector'=> array(
+						'type'=>'font',
+						'font'=>'{{ VALUE }}',
+						'css'=>'.sppb-addon-title { font-family: {{ VALUE }}; }'
+					)
+				),
+
 				'title_fontsize'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_SIZE'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_SIZE_DESC'),
 					'std'=>'',
 					'depends'=>array(array('title', '!=', '')),
+					'responsive' => true,
+					'max'=> 400,
 				),
 
 				'title_lineheight'=>array(
-					'type'=>'text',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_LINE_HEIGHT'),
 					'std'=>'',
 					'depends'=>array(array('title', '!=', '')),
+					'responsive' => true,
+					'max'=> 400,
 				),
 
-				'title_fontstyle'=>array(
-					'type'=>'select',
+				'title_font_style'=>array(
+					'type'=>'fontstyle',
 					'title'=> JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_STYLE'),
-					'values'=>array(
-						'underline'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UNDERLINE'),
-						'uppercase'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UPPERCASE'),
-						'italic'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_ITALIC'),
-						'lighter'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_LIGHTER'),
-						'normal'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_NORMAL'),
-						'bold'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLD'),
-						'bolder'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLDER'),
-					),
-					'multiple'=>true,
-					'std'=>'',
 					'depends'=>array(array('title', '!=', '')),
 				),
 
@@ -98,14 +104,6 @@ SpAddonsConfig::addonConfig(
 					'depends'=>array(array('title', '!=', '')),
 				),
 
-				'title_fontweight'=>array(
-					'type'=>'text',
-					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_WEIGHT'),
-					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_WEIGHT_DESC'),
-					'std'=>'',
-					'depends'=>array(array('title', '!=', '')),
-				),
-
 				'title_text_color'=>array(
 					'type'=>'color',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_TEXT_COLOR'),
@@ -114,18 +112,33 @@ SpAddonsConfig::addonConfig(
 				),
 
 				'title_margin_top'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_TOP'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_TOP_DESC'),
 					'placeholder'=>'10',
 					'depends'=>array(array('title', '!=', '')),
+					'responsive' => true,
+					'max'=> 400,
 				),
 
 				'title_margin_bottom'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_BOTTOM'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_BOTTOM_DESC'),
 					'placeholder'=>'10',
+					'depends'=>array(array('title', '!=', '')),
+					'responsive' => true,
+					'max'=> 400,
+				),
+
+				'title_position'=>array(
+					'type'=>'select',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_POSITION'),
+					'values'=>array(
+						'top'=> 'Top',
+						'bottom'=> 'Bottom',
+					),
+					'std'=>'top',
 					'depends'=>array(array('title', '!=', '')),
 				),
 
@@ -133,14 +146,22 @@ SpAddonsConfig::addonConfig(
 					'type'=>'media',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_IMAGE_SELECT'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_IMAGE_SELECT_DESC'),
-					'show_input' => true
+					'show_input' => true,
+					'std'=>'https://sppagebuilder.com/addons/image/image1.jpg'
+				),
+
+				'border_radius'=>array(
+					'type'=>'slider',
+					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BORDER_RADIUS'),
+					'std'=>0,
+					'max'=>1200
 				),
 
 				'alt_text'=>array(
 					'type'=>'text',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_ALT_TEXT'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_ALT_TEXT_DESC'),
-					'std'=>'',
+					'std'=>'Image',
 					'depends'=>array(
 						array('image', '!=', ''),
 					),

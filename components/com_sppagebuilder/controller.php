@@ -6,12 +6,12 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 //import Joomla controller library
 jimport('joomla.application.component.controller');
 
-class SppagebuilderController extends JControllerLegacy{
+class SppagebuilderController extends JControllerLegacy {
 
 	function display( $cachable = false, $urlparams = false )
 	{
@@ -23,7 +23,11 @@ class SppagebuilderController extends JControllerLegacy{
 
 		if ($vName == 'page') {
 				$viewStatus = true;
-		} else if ($vName == 'ajax') {
+		}else if ($vName == 'form') {
+				$viewStatus = true;
+		}else if ($vName == 'ajax') {
+				$viewStatus = true;
+		}else if ($vName == 'media') {
 				$viewStatus = true;
 		}
 

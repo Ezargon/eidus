@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 class SppagebuilderAddonAlert extends SppagebuilderAddons{
 
@@ -20,12 +20,12 @@ class SppagebuilderAddonAlert extends SppagebuilderAddons{
 		$text = (isset($this->addon->settings->text) && $this->addon->settings->text) ? $this->addon->settings->text : '';
 
 		if($text) {
-
+			
 			$output  = '<div class="sppb-addon sppb-addon-alert ' . $class .'">';
-			$output  .= '<' . $heading_selector . ' class="sppb-addon-title">' . $title .'</' . $heading_selector . '>';
+			$output .= (!empty($title)) ? '<' . $heading_selector . ' class="sppb-addon-title">' . $title .'</' . $heading_selector . '>' : '';
 			$output .= '<div class="sppb-addon-content">';
 			$output .= '<div class="sppb-alert' . $type . ' sppb-fade in">';
-			$output .= ($close) ? '<button type="button" class="close" data-dismiss="sppb-alert"><span aria-hidden="true">&times;</span></button>' : '';
+			$output .= ( $close ) ? '<button type="button" class="sppb-close" data-dismiss="sppb-alert"><span aria-hidden="true">&times;</span></button>' : '';
 			$output .= $text;
 			$output .= '</div>';
 			$output .= '</div>';
@@ -35,5 +35,22 @@ class SppagebuilderAddonAlert extends SppagebuilderAddons{
 		}
 
 		return;
+	}
+
+	 public static function getTemplate()
+	{
+		$output = '
+		<div class="sppb-addon sppb-addon-alert {{ data.class }}">
+			<# if( !_.isEmpty( data.title ) ){ #><{{ data.heading_selector }} class="sppb-addon-title">{{{ data.title }}}</{{ data.heading_selector }}><# } #>
+			<div class="sppb-addon-content">
+				<div class="sppb-alert sppb-alert-{{ data.alrt_type }} sppb-fade in">
+					<# if( data.close ){ #>
+						<button type="button" class="sppb-close"><span aria-hidden="true">&times;</span></button>
+					<# } #>
+					{{{ data.text }}}
+				</div>
+			</div>
+		</div>';
+		return $output;
 	}
 }

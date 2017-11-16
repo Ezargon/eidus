@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 array(
@@ -14,6 +14,7 @@ array(
 	'addon_name'=>'alert',
 	'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_ALERT'),
 	'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_ALERT_DESC'),
+	'category'=>'Content',
 	'attr'=>array(
 		'general' => array(
 			'admin_label'=>array(
@@ -46,35 +47,40 @@ array(
 				'depends'=>array(array('title', '!=', '')),
 			),
 
+			'title_font_family'=>array(
+				'type'=>'fonts',
+				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_FAMILY'),
+				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_FAMILY_DESC'),
+				'depends'=>array(array('title', '!=', '')),
+				'selector'=> array(
+					'type'=>'font',
+					'font'=>'{{ VALUE }}',
+					'css'=>'.sppb-addon-title { font-family: {{ VALUE }}; }'
+				)
+			),
+
 			'title_fontsize'=>array(
-				'type'=>'number',
+				'type'=>'slider',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_SIZE'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_SIZE_DESC'),
 				'std'=>'',
 				'depends'=>array(array('title', '!=', '')),
+				'responsive' => true,
+				'max'=> 400,
 			),
 
 			'title_lineheight'=>array(
-				'type'=>'text',
+				'type'=>'slider',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_LINE_HEIGHT'),
 				'std'=>'',
 				'depends'=>array(array('title', '!=', '')),
+				'responsive' => true,
+				'max'=> 400,
 			),
 
-			'title_fontstyle'=>array(
-				'type'=>'select',
+			'title_font_style'=>array(
+				'type'=>'fontstyle',
 				'title'=> JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_STYLE'),
-				'values'=>array(
-					'underline'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UNDERLINE'),
-					'uppercase'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UPPERCASE'),
-					'italic'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_ITALIC'),
-					'lighter'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_LIGHTER'),
-					'normal'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_NORMAL'),
-					'bold'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLD'),
-					'bolder'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLDER'),
-				),
-				'multiple'=>true,
-				'std'=>'',
 				'depends'=>array(array('title', '!=', '')),
 			),
 
@@ -98,14 +104,6 @@ array(
 				'depends'=>array(array('title', '!=', '')),
 			),
 
-			'title_fontweight'=>array(
-				'type'=>'text',
-				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_WEIGHT'),
-				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_WEIGHT_DESC'),
-				'std'=>'',
-				'depends'=>array(array('title', '!=', '')),
-			),
-
 			'title_text_color'=>array(
 				'type'=>'color',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_TEXT_COLOR'),
@@ -114,19 +112,23 @@ array(
 			),
 
 			'title_margin_top'=>array(
-				'type'=>'number',
+				'type'=>'slider',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_TOP'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_TOP_DESC'),
 				'placeholder'=>'10',
 				'depends'=>array(array('title', '!=', '')),
+				'responsive' => true,
+				'max'=> 400,
 			),
 
 			'title_margin_bottom'=>array(
-				'type'=>'number',
+				'type'=>'slider',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_BOTTOM'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_BOTTOM_DESC'),
 				'placeholder'=>'10',
 				'depends'=>array(array('title', '!=', '')),
+				'responsive' => true,
+				'max'=> 400,
 			),
 
 			'separator_options'=>array(
@@ -138,7 +140,19 @@ array(
 				'type'=>'editor',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_ALERT_TEXT'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_ALERT_TEXT_DESC'),
-				'std'=>'Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.'
+				'std'=>'<strong>Alert Addon</strong><br />Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.'
+			),
+
+			'text_font_family'=>array(
+				'type'=>'fonts',
+				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CONTENT_FONT_FAMILY'),
+				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CONTENT_FONT_FAMILY_DESC'),
+				'depends'=>array(array('text', '!=', '')),
+				'selector'=> array(
+					'type'=>'font',
+					'font'=>'{{ VALUE }}',
+					'css'=>'.sppb-addon-content { font-family: {{ VALUE }}; }'
+				)
 			),
 
 			'close'=>array(
@@ -153,12 +167,15 @@ array(
 				'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_ALERT_TYPE'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_ALERT_TYPE_DESC'),
 				'values'=> array(
+					'primary'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_PRIMARY'),
 					'success'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SUCCESS'),
 					'info'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_INFO'),
 					'warning'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_WARNING'),
 					'danger'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DANGER'),
+					'light'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_LIGHT'),
+					'dark'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DARK'),
 				),
-				'std'=>  'info'
+				'std'=>  'primary'
 			),
 
 			'class'=>array(

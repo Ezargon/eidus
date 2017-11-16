@@ -26,3 +26,12 @@
 2017-10-25T11:05:51+00:00	INFO 127.0.0.1	update	Borrando los archivos y carpetas que han sido eliminados.
 2017-10-25T11:05:52+00:00	INFO 127.0.0.1	update	Limpieza posterior a la instalación.
 2017-10-25T11:05:52+00:00	INFO 127.0.0.1	update	La actualización a la versión 3.8.1 se ha completado.
+2017-11-09T09:02:21+00:00	INFO 127.0.0.1	update	Actualización inciciadoa por el usuario Ezequiel Ardila (42). La versión antigua es la 3.8.1.
+2017-11-09T09:02:25+00:00	INFO 127.0.0.1	update	Descargando el archivo desde https://s3-us-west-2.amazonaws.com/joomla-official-downloads/joomladownloads/joomla3/Joomla_3.8.2-Stable-Update_Package.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIZ6S3Q3YQHG57ZRA%2F20171109%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20171109T090427Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=14a1529d21573171f07a066056ae12a860999b98e46970cbd8cab44692f0637e.
+2017-11-09T09:02:36+00:00	INFO 127.0.0.1	update	El archivoe Joomla_3.8.2-Stable-Update_Package.zip se ha descargado correctamente.
+2017-11-09T09:02:36+00:00	INFO 127.0.0.1	update	Iniciando la instalación de la versión nueva.
+2017-11-09T09:03:03+00:00	INFO 127.0.0.1	update	Finalizando la instalación.
+2017-11-09T09:03:03+00:00	INFO 127.0.0.1	update	Consulta ejecutada desde el archivo 3.8.2-2017-10-14. Texto de la consulta: ALTER TABLE `#__content` ADD INDEX `idx_alias` (`alias`(191));.
+2017-11-09T09:03:03+00:00	INFO 127.0.0.1	update	Borrando los archivos y carpetas que han sido eliminados.
+2017-11-09T09:03:04+00:00	INFO 127.0.0.1	update	Limpieza posterior a la instalación.
+2017-11-09T09:03:04+00:00	INFO 127.0.0.1	update	La actualización a la versión 3.8.2 se ha completado.

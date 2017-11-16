@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 JHtml::_('bootstrap.tooltip');
 JHtml::_('formbehavior.chosen', '.filter-select select, .sp-pagebuilder-pages-toolbar select');
@@ -37,8 +37,7 @@ Joomla.orderTable = function() {
 	table = document.getElementById("sortTable");
 	direction = document.getElementById("directionTable");
 	order = table.options[table.selectedIndex].value;
-	if (order != '<?php echo $listOrder; ?>')
-	{
+	if (order != '<?php echo $listOrder; ?>') {
 		dirn = 'asc';
 	} else {
 		dirn = direction.options[direction.selectedIndex].value;
@@ -64,7 +63,7 @@ Joomla.orderTable = function() {
 						<div class="sp-pagebuilder-input-group">
 							<input type="text" class="sp-pagebuilder-form-control" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('JSEARCH_FILTER'); ?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" class="hasTooltip" title="<?php echo JHtml::tooltipText('JSEARCH_FILTER_SUBMIT'); ?>">
 							<span class="sp-pagebuilder-input-group-btn">
-								<button class="sp-pagebuilder-btn sp-pagebuilder-btn-success sp-pagebuilder-btn-lg" type="submit" class="hasTooltip" title="<?php echo JHtml::tooltipText('JSEARCH_FILTER_SUBMIT'); ?>"><i class="icon-search"></i></button>
+								<button class="sp-pagebuilder-btn sp-pagebuilder-btn-success" type="submit" class="hasTooltip" title="<?php echo JHtml::tooltipText('JSEARCH_FILTER_SUBMIT'); ?>"><i class="fa fa-search"></i></button>
 							</span>
 						</div>
 					</div>
@@ -90,32 +89,34 @@ Joomla.orderTable = function() {
 				</div>
 
 				<div class="sp-pagebuilder-pages top-notice-bar">
-				  <div class="row-fluid">
-				      <div class="span12">
-				          <div class="sppb-upgrade-pro">
-				              <div class="sppb-upgrade-pro-icon pull-left">
-				                  <img src="<?php echo JURI::root(true) . '/administrator/components/com_sppagebuilder/assets/img/notice-alert.png'; ?>" alt="Notice">
-				              </div>
-				              <div class="sppp-upgrade-pro-text pull-left">
-				                  <h4>Get SP Page Builder Pro to unlock the best experience</h4>
-				                  <p>SP Page Builder Pro offers live frontend editing, 48+ addons, 20+ readymade templates, premium support, and more. <a href="https://www.joomshaper.com/page-builder" target="_blank"><strong>Get SP Page Builder Pro now!</strong></a></p>
-				              </div>
-				              <a href="#" class="pull-right"><img alt="Close Icon" src="<?php echo JURI::root(true) . '/administrator/components/com_sppagebuilder/assets/img/close-icon.png'; ?>"></a>
-				              <div class="clearfix"></div>
-				          </div>
-				      </div>
-				  </div>
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="sppb-upgrade-pro">
+								<div class="sppb-upgrade-pro-icon pull-left">
+									<img src="<?php echo JURI::root(true) . '/administrator/components/com_sppagebuilder/assets/img/notice-alert.png'; ?>" alt="Notice">
+								</div>
+								<div class="sppp-upgrade-pro-text pull-left">
+									<h4>Get SP Page Builder Pro to unlock the best experience ever</h4>
+									<p>SP Page Builder Pro offers live frontend editing, 45+ addons, 90+ ready Sections, 25+ readymade templates, premium support, and more. <a href="https://www.joomshaper.com/page-builder" target="_blank"><strong>Get SP Page Builder Pro now!</strong></a></p>
+								</div>
+								<a href="#" class="pull-right"><img alt="Close Icon" src="<?php echo JURI::root(true) . '/administrator/components/com_sppagebuilder/assets/img/close-icon.png'; ?>"></a>
+								<div class="clearfix"></div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<?php
-					$app = JFactory::getApplication();
-					$messages = $app->getMessageQueue();
-					if (empty($this->items)) {
-						$messages = array(array('type'=>'warning', 'message'=>JText::_('JGLOBAL_NO_MATCHING_RESULTS')));
-					}
+				$app = JFactory::getApplication();
+				$messages = $app->getMessageQueue();
+				if (empty($this->items)) {
+					$messages = array(array('type'=>'warning', 'message'=>JText::_('JGLOBAL_NO_MATCHING_RESULTS')));
+				}
 				?>
 
-				<?php if(count($messages)) { ?>
+				<?php
+				if(count($messages)) {
+					?>
 					<div class="sp-pagebuilder-message-container">
 						<?php
 						foreach ($messages as $key => $message) {
@@ -130,7 +131,8 @@ Joomla.orderTable = function() {
 						?>
 					</div>
 					<?php
-				} ?>
+				}
+				?>
 
 				<?php
 				if(count($this->items)) {
@@ -221,8 +223,8 @@ Joomla.orderTable = function() {
 												<?php echo $this->escape($item->title); ?>
 											<?php endif; ?>
 
-											<a class="sp-pagebuilder-btn sp-pagebuilder-btn-default sp-pagebuilder-btn-xs sp-pagebuilder-btn-preview-page" target="_blank" href="<?php echo JURI::root(); ?>index.php?option=com_sppagebuilder&amp;view=page&amp;id=<?php echo $item->id; ?>" style="color: #fff; margin: 5px;">Preview</a>
-											<a class="sp-pagebuilder-btn sp-pagebuilder-btn-success sp-pagebuilder-btn-xs sp-pagebuilder-btn-frontend-editor" target="_blank" href="javascript:;" style="color: #fff; margin: 5px 0;">Frontend Editor <small style="font-size: 8px; color: rgba(255, 255, 255, .8);">(PRO)</small></a>
+											<a class="sp-pagebuilder-btn sp-pagebuilder-btn-default sp-pagebuilder-btn-xs sp-pagebuilder-btn-preview-page" target="_blank" href="<?php echo $item->preview; ?>" style="color: #fff; margin: 5px;"><?php echo JText::_('COM_SPPAGEBUILDER_PREVIEW'); ?></a>
+											<a class="sp-pagebuilder-btn sp-pagebuilder-btn-success sp-pagebuilder-btn-xs sp-pagebuilder-btn-frontend-editor" target="_blank" href="<?php echo $item->frontend_edit; ?>" style="color: #fff; margin: 5px 0;"><?php echo JText::_('COM_SPPAGEBUILDER_FRONTEND_EDITOR'); ?></a>
 
 											<?php
 											if(isset($item->created_by) && $item->created_by) {
@@ -243,6 +245,7 @@ Joomla.orderTable = function() {
 													<?php echo JText::_('JCATEGORY') . ": " . $this->escape($item->category_title); ?>
 												</div>
 											<?php endif; ?>
+
 										</td>
 										<td class="small hidden-phone">
 											<?php echo $this->escape($item->access_title); ?>

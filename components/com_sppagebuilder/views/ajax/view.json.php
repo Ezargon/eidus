@@ -6,11 +6,23 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/classes/ajax.php';
 if(!class_exists('SppagebuilderHelperSite')) {
 	require_once JPATH_ROOT . '/components/com_sppagebuilder/helpers/helper.php';
+}
+
+$user = JFactory::getUser();
+$app  = JFactory::getApplication();
+
+$authorised = $user->authorise('core.edit', 'com_sppagebuilder') || ($user->authorise('core.edit.own', 'com_sppagebuilder') && ($this->item->created_by == $user->id));
+if ($authorised !== true)
+{
+	$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+	$app->setHeader('status', 403, true);
+
+	return false;
 }
 
 SppagebuilderHelperSite::loadLanguage();
@@ -32,34 +44,41 @@ if ( $action === 'addon' ) {
 	$addon_path = AddonParser::getAddonPath( $addon_name );
 
 	$output = '';
-	$output .= JLayoutHelper::render('addon.start', array('addon' => $addon)); // start addon
 
 	require_once $addon_path.'/site.php';
 
-	if ( class_exists( $class_name ) ) {
-			$addon_obj  = new $class_name( $addon, 0, 0 );  // initialize addon class
-			$output     .= $addon_obj->render();
-	} else {
-		$output .= AddonParser::spDoAddon( AddonParser::generateShortcode($addon, 0, 0));
-	}
-
-	$output .= JLayoutHelper::render('addon.end'); // end addon
-
-
 	$assets = array();
-	$inlineCSS = JLayoutHelper::render('addon.css', array('addon' => $addon)); // start addon
+	$css = JLayoutHelper::render('addon.css', array('addon' => $addon));
 
-	if(isset($class_name::$assets)) {
-		$assets = $class_name::$assets;
-	}
+	if ( class_exists( $class_name ) ) {
+			$addon_obj = new $class_name($addon);  // initialize addon class
+			$addon_output = $addon_obj->render();
 
-	if(isset($assets['inlineCSS'])) {
-			$assets['inlineCSS'] .= $inlineCSS;
+			// css
+			if (method_exists($class_name, 'css')) {
+				 $css .= $addon_obj->css();
+			}
+
+			// js
+			if (method_exists($class_name, 'js')) {
+					$assets['js'] = $addon_obj->js();
+			}
+
 	} else {
-			$assets['inlineCSS'] = $inlineCSS;
+		$addon_output = AddonParser::spDoAddon( AddonParser::generateShortcode($addon, 0, 0));
 	}
 
-	echo json_encode(array('html' => htmlspecialchars_decode($output), 'status' => 'true', 'assets' => $assets, 'test' => json_encode($assets) )); die;
+	if($css) {
+		$assets['css'] = $css;
+	}
+	
+	if(!empty($addon_output)){
+		$output .= JLayoutHelper::render('addon.start', array('addon' => $addon)); // start addon
+		$output .= $addon_output;
+		$output .= JLayoutHelper::render('addon.end'); // end addon
+	}
+
+	echo json_encode(array('html' => htmlspecialchars_decode($output), 'status' => 'true', 'assets' => $assets )); die;
 }
 
 if ( $action === 'get-page-data' ) {
@@ -68,14 +87,137 @@ if ( $action === 'get-page-data' ) {
 		$content = file_get_contents( $page_path );
 		if (is_array(json_decode($content))) {
 			require_once JPATH_COMPONENT_ADMINISTRATOR . '/builder/classes/addon.php';
-			$content = SpPageBuilderAddonHelper::__($content);
-			$content = SpPageBuilderAddonHelper::getFontendEditingPage($content);
+			$content = SpPageBuilderAddonHelper::__($content, true);
+			//$content = SpPageBuilderAddonHelper::getFontendEditingPage($content);
 
 			echo json_encode(array('status'=>true, 'data'=>$content)); die;
 		}
 	}
 
 	echo json_encode(array('status'=>false, 'data'=>'Something worng there.')); die;
+}
+
+// all settings loading
+if ( $action === 'setting_value' ) {
+	require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/classes/base.php';
+	require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/classes/config.php';
+
+	$addon_name = $_POST['name'];
+	$addon_id = $_POST['id'];
+	SpPgaeBuilderBase::loadSingleAddon( $addon_name );
+	$form_fields = SpAddonsConfig::$addons;
+
+	$first_attr = current($form_fields[$addon_name]['attr']);
+	$options = SpPgaeBuilderBase::addonOptions();
+
+	if(isset($first_attr['type']) && !is_array($first_attr['type'])){
+		$newArry['general'] = $form_fields[$addon_name]['attr'];
+		$form_fields[$addon_name]['attr'] = $newArry;
+	}
+
+	// Merge style
+	if(isset($form_fields[$addon_name]['attr']['style'])) {
+		$options['style'] = array_merge($form_fields[$addon_name]['attr']['style'], $options['style']);
+	}
+
+	foreach ($options as $key => $option) {
+		$form_fields[$addon_name]['attr'][$key] = $option;
+	}
+
+	$atts = $form_fields[$addon_name]['attr'];
+
+	$settings = array();
+
+	$atts_access = array();
+	if(isset($atts['access']) && !empty($atts['access'])){
+		$atts_access = $atts['access'];
+
+		foreach($atts_access as $attr => $attr_values){
+			if(isset($attr_values['std'])){
+				$settings[$attr] = $attr_values['std'];
+			}
+		}
+	}
+
+	$atts_general = array();
+	if(isset($atts['general']) && !empty($atts['general'])){
+		$atts_general = $atts['general'];
+
+		foreach($atts_general as $attr => $attr_values){
+			if(isset($attr_values['std'])){
+				$settings[$attr] = $attr_values['std'];
+			}
+		}
+	}
+
+	$atts_responsive = array();
+	if(isset($atts['responsive']) && !empty($atts['responsive'])){
+		$atts_responsive = $atts['responsive'];
+
+		foreach($atts_responsive as $attr => $attr_values){
+			if(isset($attr_values['std'])){
+				$settings[$attr] = $attr_values['std'];
+			}
+		}
+	}
+
+	$atts_style = array();
+	if(isset($atts['style']) && !empty($atts['style'])){
+		$atts_style = $atts['style'];
+
+		foreach($atts_style as $attr => $attr_values){
+			if(isset($attr_values['std'])){
+				$settings[$attr] = $attr_values['std'];
+			}
+		}
+	}
+
+	
+	require_once JPATH_COMPONENT . '/parser/addon-parser.php';
+
+
+	$addon = json_decode(json_encode(array('id' => $addon_id, 'name' => $addon_name, 'settings' => $settings)));
+
+
+	$class_name = 'SppagebuilderAddon' . ucfirst($addon_name);
+	$addon_path = AddonParser::getAddonPath( $addon_name );
+
+	$output = '';
+	
+	require_once $addon_path.'/site.php';
+
+	$assets = array();
+	$css = JLayoutHelper::render('addon.css', array('addon' => $addon));
+
+	if ( class_exists( $class_name ) ) {
+			$addon_obj = new $class_name($addon);  // initialize addon class
+			$addon_output = $addon_obj->render();
+
+			// css
+			if (method_exists($class_name, 'css')) {
+					$css .= $addon_obj->css();
+			}
+
+			// js
+			if (method_exists($class_name, 'js')) {
+					$assets['js'] = $addon_obj->js();
+			}
+
+	} else {
+		$addon_output = AddonParser::spDoAddon( AddonParser::generateShortcode($addon, 0, 0));
+	}
+
+	if($css) {
+		$assets['css'] = $css;
+	}
+	
+	if(!empty($addon_output)){
+		$output .= JLayoutHelper::render('addon.start', array('addon' => $addon)); // start addon
+		$output .= $addon_output;
+		$output .= JLayoutHelper::render('addon.end'); // end addon
+	}
+
+	echo json_encode(array('formData' => json_encode($settings), 'html' => htmlspecialchars_decode($output), 'status' => 'true', 'assets' => $assets )); die;
 }
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/ajax.php';

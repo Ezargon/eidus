@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 // Common
 JText::script('COM_SPPAGEBUILDER_FRONTEND_EDITOR');
@@ -57,6 +57,7 @@ JText::script('COM_SPPAGEBUILDER_PAGE_TEMPLATES');
 JText::script('COM_SPPAGEBUILDER_UNDO');
 JText::script('COM_SPPAGEBUILDER_REDO');
 JText::script('COM_SPPAGEBUILDER_SAVE');
+JText::script('COM_SPPAGEBUILDER_SAVE_ROW');
 
 //Addon
 JText::script('COM_SPPAGEBUILDER_ROW_COLUMNS_OPTIONS');
@@ -81,3 +82,16 @@ JText::script('COM_SPPAGEBUILDER_DISABLE_ADDON');
 JText::script('COM_SPPAGEBUILDER_ADDON_PARENT_COLUMN');
 JText::script('COM_SPPAGEBUILDER_ADD_NEW_INNER_ROW');
 JText::script('COM_SPPAGEBUILDER_MOVE_COLUMN');
+
+JText::script('COM_SPPAGEBUILDER_DAY');
+JText::script('COM_SPPAGEBUILDER_DAYS');
+JText::script('COM_SPPAGEBUILDER_HOUR');
+JText::script('COM_SPPAGEBUILDER_HOURS');
+JText::script('COM_SPPAGEBUILDER_MINUTE');
+JText::script('COM_SPPAGEBUILDER_MINUTES');
+JText::script('COM_SPPAGEBUILDER_SECOND');
+JText::script('COM_SPPAGEBUILDER_SECONDS');
+
+JText::script('COM_SPPAGEBUILDER_ADDON_OPTIN_FORM_SUBCSCRIBE');
+JText::script('COM_SPPAGEBUILDER_ADDON_AJAX_CONTACT_NAME');
+JText::script('COM_SPPAGEBUILDER_ADDON_AJAX_CONTACT_EMAIL');

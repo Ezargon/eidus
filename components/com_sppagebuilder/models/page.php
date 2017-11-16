@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 jimport('joomla.application.component.modelitem');
 
@@ -113,6 +113,56 @@ class SppagebuilderModelPage extends JModelItem
 		return $this->_item[$pageId];
 	}
 
+	// Get form
+	public function getForm($data = array(), $loadData = true)
+	{
+		// Get the form.
+		$form = $this->loadForm('com_users.profile', 'profile', array('control' => 'jform', 'load_data' => $loadData));
+
+		if (empty($form))
+		{
+			return false;
+		}
+
+		// Check for username compliance and parameter set
+		$isUsernameCompliant = true;
+
+		if ($this->loadFormData()->username)
+		{
+			$username = $this->loadFormData()->username;
+			$isUsernameCompliant  = !(preg_match('#[<>"\'%;()&\\\\]|\\.\\./#', $username) || strlen(utf8_decode($username)) < 2
+				|| trim($username) != $username);
+		}
+
+		$this->setState('user.username.compliant', $isUsernameCompliant);
+
+		if (!JComponentHelper::getParams('com_users')->get('change_login_name') && $isUsernameCompliant)
+		{
+			$form->setFieldAttribute('username', 'class', '');
+			$form->setFieldAttribute('username', 'filter', '');
+			$form->setFieldAttribute('username', 'description', 'COM_USERS_PROFILE_NOCHANGE_USERNAME_DESC');
+			$form->setFieldAttribute('username', 'validate', '');
+			$form->setFieldAttribute('username', 'message', '');
+			$form->setFieldAttribute('username', 'readonly', 'true');
+			$form->setFieldAttribute('username', 'required', 'false');
+		}
+
+		// When multilanguage is set, a user's default site language should also be a Content Language
+		if (JLanguageMultilang::isEnabled())
+		{
+			$form->setFieldAttribute('language', 'type', 'frontend_language', 'params');
+		}
+
+		// If the user needs to change their password, mark the password fields as required
+		if (JFactory::getUser()->requireReset)
+		{
+			$form->setFieldAttribute('password1', 'required', 'true');
+			$form->setFieldAttribute('password2', 'required', 'true');
+		}
+
+		return $form;
+	}
+
 	/**
 	 * Increment the hit counter for the page.
 	 *
@@ -129,5 +179,49 @@ class SppagebuilderModelPage extends JModelItem
 
 		return true;
 	}
+
+	public function getMySections() {
+      $db = JFactory::getDbo();
+      $query = $db->getQuery(true);
+      $query->select($db->quoteName(array('id', 'title', 'section')));
+      $query->from($db->quoteName('#__sppagebuilder_sections'));
+      //$query->where($db->quoteName('profile_key') . ' LIKE '. $db->quote('\'custom.%\''));
+      $query->order('id ASC');
+      $db->setQuery($query);
+      $results = $db->loadObjectList();
+      return json_encode($results);
+    }
+
+    public function deleteSection($id){
+      $db = JFactory::getDbo();
+
+      $query = $db->getQuery(true);
+
+      // delete all custom keys for user 1001.
+      $conditions = array(
+          $db->quoteName('id') . ' = '.$id
+      );
+
+      $query->delete($db->quoteName('#__sppagebuilder_sections'));
+      $query->where($conditions);
+
+      $db->setQuery($query);
+
+      return $db->execute();
+    }
+
+    public function saveSection($title, $section){
+      $db = JFactory::getDbo();
+      $user = JFactory::getUser();
+      $obj = new stdClass();
+      $obj->title = $title;
+      $obj->section = $section;
+      $obj->created = JFactory::getDate()->toSql();
+      $obj->created_by = $user->get('id');
+
+      $db->insertObject('#__sppagebuilder_sections', $obj);
+
+      return $db->insertid();
+    }
 
 }

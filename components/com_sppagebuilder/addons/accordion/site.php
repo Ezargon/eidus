@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 class SppagebuilderAddonAccordion extends SppagebuilderAddons {
 
@@ -32,7 +32,7 @@ class SppagebuilderAddonAccordion extends SppagebuilderAddons {
 			$output  .= '<div class="sppb-panel-heading'. (($key == 0) ? ' active' : '') .'">';
 			$output  .= '<span class="sppb-panel-title">';
 
-			if($item->icon != '') {
+			if(isset($item->icon) && $item->icon != '') {
 				$output  .= '<i class="fa ' . $item->icon . '"></i> ';
 			}
 
@@ -54,4 +54,58 @@ class SppagebuilderAddonAccordion extends SppagebuilderAddons {
 
 		return $output;
 	}
+
+	public function js() {
+		$addon_id = '#sppb-addon-' . $this->addon->id;
+		$openitem = (isset($this->addon->settings->openitem) && $this->addon->settings->openitem) ? $this->addon->settings->openitem : '';
+		if ($openitem) {
+			$js ="jQuery(document).ready(function($){'use strict';
+				$( '".$addon_id."' + ' .sppb-addon-accordion .sppb-panel-heading').removeClass('active');
+				$( '".$addon_id."' + ' .sppb-addon-accordion .sppb-panel-collapse')." . $openitem . "();
+			});";
+			return $js;
+		}
+		return ;
+	}
+
+	public static function getTemplate()
+	{
+		$output = '<div class="sppb-addon sppb-addon-accordion {{ data.class }}">
+			<# if( !_.isEmpty( data.title ) ){ #><{{ data.heading_selector }} class="sppb-addon-title">{{ data.title }}</{{ data.heading_selector }}><# } #>
+			<div class="sppb-addon-content">
+				<div class="sppb-panel-group">
+					<# _.each(data.sp_accordion_item, function(accordion_item, key){ #>
+						<# var activeClass = ((key == 0 || data.openitem == "show") &&  data.openitem != "hide") ? "active" : ""; #>
+						<div class="sppb-panel sppb-{{ data.style }}">
+							<div class="sppb-panel-heading {{ activeClass }}">
+								<span class="sppb-panel-title">
+									<# if(accordion_item.icon != ""){ #>
+										<i class="fa {{ accordion_item.icon }}"></i>
+									<# } #>
+									{{ accordion_item.title }}
+								</span>
+								<span class="sppb-toggle-direction"><i class="fa fa-chevron-right"></i></span>
+							</div>
+							<# var panelStyle = ((key != 0 || data.openitem == "hide") && data.openitem != "show") ? "display: none;" : ""; #>
+							<div class="sppb-panel-collapse" style="{{ panelStyle }}">
+								<div class="sppb-panel-body">
+									<#
+									var htmlContent = "";
+									_.each(accordion_item.content, function(content){
+										htmlContent += content;
+									});
+									#>
+									{{{ htmlContent }}}
+								</div>
+							</div>
+						</div>
+					<# }); #>
+				</div>
+			</div>
+		</div>';
+		return $output;
+	}
+
+
+
 }

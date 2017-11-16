@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -14,7 +14,8 @@ SpAddonsConfig::addonConfig(
 		'addon_name'=>'sp_social_share',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_SOCIAL_SHARE'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_SOCIAL_SHARE_DESC'),
-		'pro' => true,
-		'attr'=> true
+		'category'=>'Media',
+		'attr'=>false,
+		'pro'=>true,
 	)
 );

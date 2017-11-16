@@ -6,13 +6,14 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 SpAddonsConfig::addonConfig(
 	array(
 		'type'=>'general',
 		'addon_name'=>'sp_button',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_BUTTON'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_BUTTON_DESC'),
+		'category'=>'Content',
 		'attr'=>array(
 			'general' => array(
 
@@ -42,20 +43,19 @@ SpAddonsConfig::addonConfig(
 					'std'=>'sppb-text-left',
 				),
 
-				'fontstyle'=>array(
-					'type'=>'select',
+				'font_family'=>array(
+					'type'=>'fonts',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_GLOBAL_FONT_FAMILY'),
+					'selector'=> array(
+						'type'=>'font',
+						'font'=>'{{ VALUE }}',
+						'css'=>'.sppb-btn { font-family: {{ VALUE }}; }'
+					)
+				),
+
+				'font_style'=>array(
+					'type'=>'fontstyle',
 					'title'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_FONT_STYLE'),
-					'values'=>array(
-						'underline'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UNDERLINE'),
-						'uppercase'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UPPERCASE'),
-						'italic'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_ITALIC'),
-						'lighter'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_LIGHTER'),
-						'normal'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_NORMAL'),
-						'bold'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLD'),
-						'bolder'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLDER'),
-					),
-					'multiple'=>true,
-					'std'=>''
 				),
 
 				'letterspace'=>array(
@@ -83,6 +83,7 @@ SpAddonsConfig::addonConfig(
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_URL'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_URL_DESC'),
 					'placeholder'=>'http://',
+					'hide_preview'=>true,
 				),
 
 				'target'=>array(
@@ -103,14 +104,16 @@ SpAddonsConfig::addonConfig(
 					'values'=>array(
 						'default'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DEFAULT'),
 						'primary'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_PRIMARY'),
+						'secondary'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SECONDARY'),
 						'success'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SUCCESS'),
 						'info'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_INFO'),
 						'warning'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_WARNING'),
 						'danger'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DANGER'),
+						'dark'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DARK'),
 						'link'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_LINK'),
 						'custom'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_CUSTOM'),
 					),
-					'std'=>'default',
+					'std'=>'custom',
 				),
 
 				'appearance'=>array(
@@ -129,7 +132,7 @@ SpAddonsConfig::addonConfig(
 					'type'=>'color',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_BACKGROUND_COLOR'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_BACKGROUND_COLOR_DESC'),
-					'std' => '#444444',
+					'std' => '#03E16D',
 					'depends'=>array('type'=>'custom'),
 				),
 
@@ -137,7 +140,7 @@ SpAddonsConfig::addonConfig(
 					'type'=>'color',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_COLOR'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_COLOR_DESC'),
-					'std' => '#fff',
+					'std' => '#FFFFFF',
 					'depends'=>array('type'=>'custom'),
 				),
 
@@ -145,7 +148,7 @@ SpAddonsConfig::addonConfig(
 					'type'=>'color',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_BACKGROUND_COLOR_HOVER'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_BACKGROUND_COLOR_HOVER_DESC'),
-					'std' => '#222',
+					'std' => '#00E66E',
 					'depends'=>array('type'=>'custom'),
 				),
 
@@ -153,7 +156,7 @@ SpAddonsConfig::addonConfig(
 					'type'=>'color',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_COLOR_HOVER'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_COLOR_HOVER_DESC'),
-					'std' => '#fff',
+					'std' => '#FFFFFF',
 					'depends'=>array('type'=>'custom'),
 				),
 
@@ -165,6 +168,7 @@ SpAddonsConfig::addonConfig(
 					'depends'=> array(
 						array('type', '=', 'custom'),
 					),
+					'responsive'=>true
 				),
 
 				'size'=>array(
@@ -214,6 +218,7 @@ SpAddonsConfig::addonConfig(
 							'left'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_LEFT'),
 							'right'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_RIGHT'),
 						),
+						'std'=>'left'
 					),
 
 					'class'=>array(

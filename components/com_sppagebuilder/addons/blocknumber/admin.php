@@ -6,15 +6,16 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
-array(
-	'type'=>'content',
-	'addon_name'=>'sp_blocknumber',
-	'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_BLOCKNUMBER'),
-	'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_BLOCKNUMBER_DESC'),
-	'pro'=> true,
-	'attr'=> true
+	array(
+		'type'=>'content',
+		'addon_name'=>'sp_blocknumber',
+		'pro'=>true,
+		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_BLOCKNUMBER'),
+		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_BLOCKNUMBER_DESC'),
+		'category'=>'Content',
+		'attr'=> false
 	)
 );

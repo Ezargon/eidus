@@ -9,13 +9,13 @@
 defined ('_JEXEC') or die ('restricted access');
 
 SpAddonsConfig::addonConfig(
-array(
-	'type'=>'repeatable',
-	'addon_name'=>'sp_carouselpro',
-	'category'=>'Slider',
-	'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ADVANCED'),
-	'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ADVANCED_DESC'),
-	'pro'=> true,
-	'attr'=> true
+	array(
+		'type'=>'repeatable',
+		'addon_name'=>'sp_carouselpro',
+		'category'=>'Slider',
+		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ADVANCED'),
+		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ADVANCED_DESC'),
+		'attr'=>false,
+		'pro'=>true,
 	)
 );

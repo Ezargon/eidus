@@ -7,7 +7,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -15,7 +15,8 @@ SpAddonsConfig::addonConfig(
 		'addon_name'=>'heading',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_HEADING'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_HEADING_DESC'),
-		'pro' => true,
-		'attr'=> true
+		'category'=>'General',
+		'attr'=>false,
+		'pro'=>true,
 	)
 );

@@ -6,22 +6,12 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 $options = $displayData['options'];
 $custom_class  = (isset($options->class)) ? ' ' . $options->class : '';
 $data_attr = '';
 $doc = JFactory::getDocument();
-
-// Style
-$style ='';
-if (isset($options->padding) && $options->padding) $style .= 'padding:'.$options->padding.';';
-if (isset($options->color) && $options->color) $style .= 'color:'.$options->color.';';
-if (isset($options->background) && $options->background) $style .= 'background-color:'.$options->background.';';
-
-if($style) {
-	$doc->addStyledeclaration('#column-id-' . $options->dynamicId . '{'. $style .'}');
-}
 
 // Responsive
 if(isset($options->sm_col) && $options->sm_col) {
@@ -45,6 +35,10 @@ if(isset($options->hidden_xs) && $options->hidden_xs) {
 	$custom_class .= ' sppb-hidden-xs';
 }
 
+if(isset($options->items_align_center) && $options->items_align_center) {
+	$custom_class .= ' sppb-align-items-center';
+}
+
 // Animation
 if(isset($options->animation) && $options->animation) {
 
@@ -61,6 +55,14 @@ if(isset($options->animation) && $options->animation) {
 
 $html  = '';
 $html .= '<div class="sppb-' . $options->cssClassName . '">';
-$html .= '<div id="column-id-'. $options->dynamicId .'" class="sppb-addon-container' . $custom_class . '" ' . $data_attr . '>';
+$html .= '<div id="column-id-'. $options->dynamicId .'" class="sppb-column' . $custom_class . '" ' . $data_attr . '>';
+
+if (isset($options->background_image) && $options->background_image) {
+	if (isset($options->overlay) && $options->overlay) {
+		$html .= '<div class="sppb-column-overlay"></div>';
+	}
+}
+
+$html .= '<div class="sppb-column-addons">';
 
 echo $html;

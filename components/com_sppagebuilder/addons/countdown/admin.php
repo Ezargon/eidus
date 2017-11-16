@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -14,7 +14,8 @@ SpAddonsConfig::addonConfig(
 		'addon_name'=>'sp_countdown',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_COUTNDOWN'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_COUTNDOWN_DESC'),
-		'pro' => true,
-		'attr'=> true
+		'category'=>'Content',
+		'attr'=> false,
+		'pro'=> true,
 	)
 );

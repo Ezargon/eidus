@@ -6,15 +6,15 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
 		'type'=>'content',
-		'addon_name'=>'sp_empty_space',
-		'category'=>'Deprecated',
+		'addon_name'=>'empty_space',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_EMPTY_SPACE'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_EMPTY_SPACE_DESC'),
+		'category'=>'General',
 		'attr'=>array(
 			'general' => array(
 
@@ -26,10 +26,13 @@ SpAddonsConfig::addonConfig(
 				),
 
 				'gap'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_EMPTY_SPACE_GAP'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_EMPTY_SPACE_GAP_DESC'),
-					'std'=>'20'
+					'min'=>5,
+					'max'=>400,
+					'std'=>array('md'=>40, 'sm'=>30, 'xs'=>20),
+					'responsive'=>true
 				),
 
 				'class'=>array(

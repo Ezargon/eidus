@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -14,6 +14,7 @@ SpAddonsConfig::addonConfig(
 		'addon_name'=>'sp_text_block',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TEXT_BLOCK'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TEXT_BLOCK_DESC'),
+		'category'=>'Content',
 		'attr'=>array(
 			'general' => array(
 
@@ -48,35 +49,40 @@ SpAddonsConfig::addonConfig(
 					'depends'=>array(array('title', '!=', '')),
 				),
 
+				'font_family'=>array(
+					'type'=>'fonts',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_FAMILY'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_FAMILY_DESC'),
+					'depends'=>array(array('title', '!=', '')),
+					'selector'=> array(
+						'type'=>'font',
+						'font'=>'{{ VALUE }}',
+						'css'=>'.sppb-addon-title { font-family: {{ VALUE }}; }'
+					)
+				),
+
 				'title_fontsize'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_SIZE'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_SIZE_DESC'),
 					'std'=>'',
 					'depends'=>array(array('title', '!=', '')),
+					'max'=>400,
+					'responsive'=>true
 				),
 
 				'title_lineheight'=>array(
-					'type'=>'text',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_LINE_HEIGHT'),
 					'std'=>'',
 					'depends'=>array(array('title', '!=', '')),
+					'max'=>400,
+					'responsive'=>true
 				),
 
-				'title_fontstyle'=>array(
-					'type'=>'select',
+				'title_font_style'=>array(
+					'type'=>'fontstyle',
 					'title'=> JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_FONT_STYLE'),
-					'values'=>array(
-						'underline'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UNDERLINE'),
-						'uppercase'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UPPERCASE'),
-						'italic'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_ITALIC'),
-						'lighter'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_LIGHTER'),
-						'normal'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_NORMAL'),
-						'bold'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLD'),
-						'bolder'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLDER'),
-					),
-					'multiple'=>true,
-					'std'=>'',
 					'depends'=>array(array('title', '!=', '')),
 				),
 
@@ -116,19 +122,23 @@ SpAddonsConfig::addonConfig(
 				),
 
 				'title_margin_top'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_TOP'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_TOP_DESC'),
 					'placeholder'=>'10',
 					'depends'=>array(array('title', '!=', '')),
+					'max'=>400,
+					'responsive'=>true
 				),
 
 				'title_margin_bottom'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_BOTTOM'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_MARGIN_BOTTOM_DESC'),
 					'placeholder'=>'10',
 					'depends'=>array(array('title', '!=', '')),
+					'max'=>400,
+					'responsive'=>true
 				),
 
 				// Content
@@ -148,6 +158,47 @@ SpAddonsConfig::addonConfig(
 						'sppb-text-right'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_RIGHT'),
 					),
 					'std'=>'',
+				),
+
+				'text_font_family'=>array(
+					'type'=>'fonts',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CONTENT_FONT_FAMILY'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CONTENT_FONT_FAMILY_DESC'),
+					'selector'=> array(
+						'type'=>'font',
+						'font'=>'{{ VALUE }}',
+						'css'=>'.sppb-addon-content { font-family: {{ VALUE }}; }'
+					)
+				),
+
+				'text_fontsize'=>array(
+					'type'=>'slider',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CONTENT_FONT_SIZE'),
+					'std'=>'',
+					'max'=>400,
+					'responsive'=>true
+				),
+
+				'text_lineheight'=>array(
+					'type'=>'slider',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CONTENT_LINE_HEIGHT'),
+					'std'=>'',
+					'max'=>400,
+					'responsive'=>true
+				),
+
+				'dropcap'=>array(
+					'type'=>'checkbox',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_DROPCAP'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_DROPCAP_DESC'),
+					'std'=>0
+				),
+
+				'dropcap_color'=>array(
+					'type'=>'color',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_DROPCAP_COLOR'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_DROPCAP_COLOR_DESC'),
+					'depends'=>array(array('dropcap', '=', 1)),
 				),
 
 				'class'=>array(

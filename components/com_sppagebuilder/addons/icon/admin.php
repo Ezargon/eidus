@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -14,6 +14,7 @@ SpAddonsConfig::addonConfig(
 		'addon_name'=>'sp_icon',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_ICON'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_ICON_DESC'),
+		'category'=>'Media',
 		'attr'=>array(
 
 			'general' => array(
@@ -27,28 +28,37 @@ SpAddonsConfig::addonConfig(
 				'name'=>array(
 					'type'=>'icon',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_ICON_NAME'),
+					'std'=> 'fa-cogs'
+				),
+
+				'link'=>array(
+					'type'=>'text',
+					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_LINK'),
 					'std'=> ''
 				),
 
 				'size'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_ICON_SIZE'),
-					'placeholder'=>36,
-					'std'=>36,
-				),
-
-				'height'=>array(
-					'type'=>'number',
-					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_WIDTH'),
-					'std'=>96,
-					'placeholder'=>'96',
+					'std'=>array('md'=>36),
+					'max'=>400,
+					'responsive'=>true
 				),
 
 				'width'=>array(
-					'type'=>'number',
+					'type'=>'slider',
+					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_WIDTH'),
+					'std'=>array('md'=>96),
+					'max'=>500,
+					'responsive'=>true
+				),
+
+				'height'=>array(
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_HEIGHT'),
-					'std'=>96,
-					'placeholder'=>'96',
+					'std'=>array('md'=>96),
+					'max'=>500,
+					'responsive'=>true
 				),
 
 				'color'=>array(
@@ -67,15 +77,18 @@ SpAddonsConfig::addonConfig(
 				),
 
 				'border_width'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BORDER_WIDTH'),
 					'placeholder'=>'3',
+					'responsive'=>true
 				),
 
 				'border_radius'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BORDER_RADIUS'),
 					'placeholder'=>'5',
+					'max'=>500,
+					'responsive'=>true
 				),
 
 				'margin'=>array(
@@ -83,6 +96,7 @@ SpAddonsConfig::addonConfig(
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_MARGIN'),
 					'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_MARGIN_DESC'),
 					'placeholder'=>'10',
+					'responsive'=>true
 				),
 
 				'separator'=>array(
@@ -121,18 +135,19 @@ SpAddonsConfig::addonConfig(
 				),
 
 				'hover_border_width'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BORDER_WIDTH'),
-					'placeholder'=>'3',
+					'responsive'=>true,
 					'depends'=>array(
 						array('use_hover', '=', 1)
 					)
 				),
 
 				'hover_border_radius'=>array(
-					'type'=>'number',
+					'type'=>'slider',
 					'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BORDER_RADIUS'),
-					'placeholder'=>'5',
+					'max'=>500,
+					'responsive'=>true,
 					'depends'=>array(
 						array('use_hover', '=', 1)
 					)

@@ -78,7 +78,7 @@ div.modbpcounter span.label
 }
 .sppb-icon-container:hover, .sppb-addon-content > a:hover
 {
-	color:#CD5551 !important;
+	color:#9D2235 !important;
 	transition: color 300ms ease 0s, background-color 300ms ease 0s;
 }
 .sp-module ul > li.active > a::before
@@ -96,7 +96,7 @@ div.modbpcounter span.label
 }
 .sppb-btn-default
 {
-	background-color:#CD5551;
+	background-color:#9D2235;
 	color:#fff;
 }
 .secretaria-alt .sppb-cta-title, .secretaria-alt .sp-copyright
@@ -157,5 +157,28 @@ div.modbpcounter span.label
 .sppb-btn-default:hover, .sppb-btn-default:focus, .sppb-btn-default:active, .sppb-btn-default.active, .open > .dropdown-toggle.sppb-btn-default
 {
    color: #fff !important;
-   background-color: #2CC4CF !important;
+   background-color: #BE9D56 !important;
+}
+.sppb-carousel-text
+{
+	color:white;
+	text-shadow:2px 2px #333;
+
+}
+.sppb-carousel-text h2
+{
+	font-size:42px;
+}
+.sppb-carousel-text div
+{
+	font-size:22px;
+		margin-bottom:15px;
+}
+.sp-page-title h2 {
+    font-size: 24px !Important;
+    line-height: 1;
+}
+.sp-page-title
+{
+	padding:10px 0px !important;
 }

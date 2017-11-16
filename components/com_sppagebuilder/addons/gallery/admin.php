@@ -6,16 +6,16 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
-array(
-	'type'=>'repeatable',
-	'addon_name'=>'sp_gallery',
-	'category'=>'Slider',
-	'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_GALLERY'),
-	'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_GALLERY_DESC'),
-	'pro'=> true,
-	'attr'=> true
+	array(
+		'type'=>'repeatable',
+		'addon_name'=>'sp_gallery',
+		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_GALLERY'),
+		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_GALLERY_DESC'),
+		'category'=>'Media',
+		'attr'=>false,
+		'pro'=>true,
 	)
 );

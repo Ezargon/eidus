@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 SpAddonsConfig::addonConfig(
 	array(
@@ -37,14 +37,21 @@ SpAddonsConfig::addonConfig(
 				),
 
 				'interval'=>array(
- 					'type'=>'number',
- 					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_INTERVAL'),
- 					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_INTERVAL_DESC'),
- 					'std'=> 5,
- 					'depends'=> array(
- 						array('autoplay', '=', 1),
- 					)
- 				),
+					'type'=>'number',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_INTERVAL'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_INTERVAL_DESC'),
+					'std'=> 5,
+					'depends'=> array(
+						array('autoplay', '=', 1),
+					)
+				),
+
+				'speed'=>array(
+					'type'=>'number',
+					'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_SPEED'),
+					'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_SPEED_DESC'),
+					'std'=> 600,
+				),
 
 				'controllers'=>array(
 					'type'=>'checkbox',
@@ -95,21 +102,116 @@ SpAddonsConfig::addonConfig(
 						'title'=>array(
 							'type'=>'text',
 							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE'),
-							'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_DESC'),
-							'std'=>'Carousel Item Title',
+							'std'=>'Where Art and Technology Collide',
+						),
+
+						'title_font_family'=>array(
+							'type'=>'fonts',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_FONT_FAMILY'),
+							'depends'=>array(array('title', '!=', '')),
+							'selector'=> array(
+								'type'=>'font',
+								'font'=>'{{ VALUE }}',
+								'css'=>' h2 { font-family: {{ VALUE }}; }'
+							)
+						),
+
+						'title_fontsize'=>array(
+							'type'=>'slider',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_FONTSIZE'),
+							'max'=>100,
+							'std'=>array('md'=>46, 'sm'=>36, 'xs'=>16),
+							'responsive' => true
+						),
+
+						'title_lineheight'=>array(
+							'type'=>'slider',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_LINEHEIGHT'),
+							'max'=>100,
+							'std'=>array('md'=>56, 'sm'=>46, 'xs'=>20),
+							'responsive' => true
+						),
+
+						'title_color'=>array(
+							'type'=>'color',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_COLOR'),
+							'std'=>'#fff',
+						),
+
+						'title_padding'=>array(
+							'type'=>'padding',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_PADDING'),
+							'std'=>array('md'=>'0px 0px 0px 0px', 'sm'=>'0px 0px 0px 0px', 'xs'=>'0px 0px 0px 0px'),
+							'responsive' => true
+						),
+
+						'title_margin'=>array(
+							'type'=>'margin',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_TITLE_MARGIN'),
+							'std'=>array('md'=>'0px 0px 0px 0px', 'sm'=>'0px 0px 0px 0px', 'xs'=>'0px 0px 0px 0px'),
+							'responsive' => true
 						),
 
 						'content'=>array(
 							'type'=>'editor',
 							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT'),
 							'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_DESC'),
-							'std'=> 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et.'
+							'std'=> 'You might remember the Dell computer commercials in which a youth reports this exciting news to his friends.<br />That they are about to get their new computer.'
+						),
+
+						'content_font_family'=>array(
+							'type'=>'fonts',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_FONT_FAMILY'),
+							'depends'=>array(array('content', '!=', '')),
+							'selector'=> array(
+								'type'=>'font',
+								'font'=>'{{ VALUE }}',
+								'css'=>' .sppb-carousel-pro-text .sppb-carousel-content { font-family: {{ VALUE }}; }'
+							)
+						),
+
+						'content_fontsize'=>array(
+							'type'=>'slider',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_FONTSIZE'),
+							'max'=>100,
+							'std'=>array('md'=>16, 'sm'=>14, 'xs'=>12),
+							'responsive' => true
+						),
+
+						'content_lineheight'=>array(
+							'type'=>'slider',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_LINEHEIGHT'),
+							'max'=>100,
+							'std'=>array('md'=>24, 'sm'=>22, 'xs'=>16),
+							'responsive' => true
+						),
+
+						'content_color'=>array(
+							'type'=>'color',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_COLOR'),
+							'std'=>'#fff',
+						),
+
+						'content_padding'=>array(
+							'type'=>'padding',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_PADDING'),
+							'std'=>array('md'=>'20px 0px 30px 0px', 'sm'=>'15px 0px 20px 0px', 'xs'=>'10px 0px 10px 0px'),
+							'responsive' => true
+						),
+
+						'content_margin'=>array(
+							'type'=>'margin',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_CONTENT_MARGIN'),
+							'std'=>array('md'=>'0px 0px 0px 0px', 'sm'=>'0px 0px 0px 0px', 'xs'=>'0px 0px 0px 0px'),
+							'responsive' => true
 						),
 
 						'bg'=>array(
 							'type'=>'media',
 							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_BACKGROUND_IMAGE'),
 							'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_BACKGROUND_IMAGE_DESC'),
+							'format'=>'image',
+							'std'=>'https://sppagebuilder.com/addons/carousel/carousel-bg.jpg'
 						),
 
 						//Button
@@ -117,23 +219,23 @@ SpAddonsConfig::addonConfig(
 							'type'=>'text',
 							'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_TEXT'),
 							'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_TEXT_DESC'),
-							'std'=>'Button Text',
+							'std'=>'Learn More',
 						),
 
-						'button_fontstyle'=>array(
-							'type'=>'select',
+						'button_font_family'=>array(
+							'type'=>'fonts',
+							'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_CAROUSEL_ITEM_BUTTOM_FONT_FAMILY'),
+							'depends'=>array(array('button_text', '!=', '')),
+							'selector'=> array(
+								'type'=>'font',
+								'font'=>'{{ VALUE }}',
+								'css'=>'.sppb-carousel-pro-text .sppb-btn { font-family: {{ VALUE }}; }'
+							)
+						),
+
+						'button_font_style'=>array(
+							'type'=>'fontstyle',
 							'title'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_FONT_STYLE'),
-							'values'=>array(
-								'underline'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UNDERLINE'),
-								'uppercase'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_UPPERCASE'),
-								'italic'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_ITALIC'),
-								'lighter'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_LIGHTER'),
-								'normal'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_NORMAL'),
-								'bold'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLD'),
-								'bolder'=> JText::_('COM_SPPAGEBUILDER_GLOBAL_FONT_STYLE_BOLDER'),
-							),
-							'multiple'=>true,
-							'std'=>'',
 							'depends'=> array(
 								array('button_text', '!=', ''),
 							)
@@ -167,6 +269,7 @@ SpAddonsConfig::addonConfig(
 							'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_URL'),
 							'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BUTTON_URL_DESC'),
 							'placeholder'=>'http://',
+							'hide_preview'=>true,
 							'depends'=> array(
 								array('button_text', '!=', ''),
 							)
@@ -192,14 +295,16 @@ SpAddonsConfig::addonConfig(
 							'values'=>array(
 								'default'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DEFAULT'),
 								'primary'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_PRIMARY'),
+								'secondary'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SECONDARY'),
 								'success'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SUCCESS'),
 								'info'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_INFO'),
 								'warning'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_WARNING'),
 								'danger'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DANGER'),
+								'dark'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_DARK'),
 								'link'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_LINK'),
 								'custom'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_CUSTOM'),
 							),
-							'std'=>'default',
+							'std'=>'success',
 							'depends'=> array(
 								array('button_text', '!=', ''),
 							)

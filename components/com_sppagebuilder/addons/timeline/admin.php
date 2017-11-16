@@ -5,17 +5,17 @@
  * @copyright Copyright (c) 2010 - 2016 JoomShaper
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
-//no direct accees
-defined ('_JEXEC') or die ('restricted access');
 
+//no direct accees
+defined ('_JEXEC') or die ('restricted aceess');
 SpAddonsConfig::addonConfig(
 	array(
 		'type'=>'content',
 		'addon_name'=>'sp_timeline',
-		'category'=>'Social',
 		'title'=>JText::_('COM_SPPAGEBUILDER_ADDON_TIMELINE'),
 		'desc'=>JText::_('COM_SPPAGEBUILDER_ADDON_TIMELINE_DESC'),
-		'pro' => true,
-		'attr'=> true
-		)
-	);
+		'category'=>'Content',
+		'attr'=>false,
+		'pro'=>true,
+	)
+);

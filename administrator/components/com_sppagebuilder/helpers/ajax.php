@@ -6,161 +6,219 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
-// all settings loading
-if ( $action === 'setting' ) {
-	require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/classes/base.php';
-	require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/classes/config.php';
+jimport('joomla.application.component.helper');
 
-	/* Template language load */
+$cParams = JComponentHelper::getParams('com_sppagebuilder');
 
-	$db = JFactory::getDbo();
-	$query = "SELECT template FROM #__template_styles WHERE client_id = 0 AND home = 1";
-	$db->setQuery($query);
-	$defaultemplate = $db->loadResult();
+$app = JFactory::getApplication();
+$input = $app->input;
 
-	$lang = JFactory::getLanguage();
-	$lang->load('tpl_' . $defaultemplate, JPATH_SITE, $lang->getName(), true);
+// Load Page Template List
+if ( $action === 'pre-page-list' ) {
 
-	/* Template language load */
+	jimport( 'joomla.filesystem.folder' );
+	$cache_path = JPATH_CACHE . '/sppagebuilder';
+	$cache_file = $cache_path . '/templates.json';
 
-	$type = $_POST['type'];
+	$output = array('status' => false, 'data' => 'Templates not found.');
+	$templates = array(); // All pre-defined templates list
+	$templatesData = '';
 
-	if ( $type == 'list' ) // Load addons list
-	{
-		SpPgaeBuilderBase::loadAddons();
-		$form_fields = SpAddonsConfig::$addons;
-
-		foreach ($form_fields as &$form_field) {
-			$form_field['visibility'] = true;
-		}
-
-		usort($form_fields, function($a){
-			if (isset($a['pro']) && $a['pro']) {
-				return 1;
-			}
-		});
+	if(!file_exists($cache_path)) {
+		JFolder::create($cache_path, 0755);
 	}
-	else
-	{
-		SpPgaeBuilderBase::loadInputTypes();
 
-		if ( $type === 'row' || $type === 'inner_row' ) // Load row settings
-		{
-			require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/settings/row.php';
-			$form_fields = $row_settings;
+	if (file_exists($cache_file) && (filemtime($cache_file) > (time()  - (24 * 60 * 60) ))) {
+		$templatesData = file_get_contents($cache_file);
+	} else {
+		$templateApi = 'https://sppagebuilder.com/api/templates/templates.php';
+
+		if(extension_loaded('curl')){
+			$headers = array();
+			$headers[] = "Content-Type: text/html";
+
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_URL, $templateApi);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+			$templatesData = curl_exec($ch);
+			curl_close($ch);
+		} else if(ini_get('allow_url_fopen')){
+			$opts = array(
+				'http' => array(
+					'method'  => 'GET',
+					'header'  => "Content-Type: text/html",
+					'timeout' => 60
+				)
+			);
+			$context  = stream_context_create($opts);
+			$templatesData = file_get_contents($templateApi, false, $context);
+		} else {
+			$output = array('status' => false, 'data' => 'Please enable \'cURL\' or url_fopen in PHP or contact with your Server or Hosting administrator.');
 		}
-		else if ( $type === 'column' || $type === 'inner_column' ) // Load column settings
-		{
-			require_once JPATH_COMPONENT_ADMINISTRATOR .'/builder/settings/column.php';
-			$form_fields = $column_settings;
-		}
-		else if ( $type === 'addon' || $type === 'inner_addon' ) // Load single addon settings
-		{
-			$addon_name = $_POST['addonName'];
-			SpPgaeBuilderBase::loadSingleAddon( $addon_name );
-			$form_fields = SpAddonsConfig::$addons;
 
-			$first_attr = current($form_fields[$addon_name]['attr']);
-			$options = SpPgaeBuilderBase::addonOptions();
-
-			if(isset($first_attr['type']) && !is_array($first_attr['type'])){
-				$newArry['general'] = $form_fields[$addon_name]['attr'];
-				$form_fields[$addon_name]['attr'] = $newArry;
-			}
-
-			// Merge style
-			if(isset($form_fields[$addon_name]['attr']['style'])) {
-				$options['style'] = array_merge($form_fields[$addon_name]['attr']['style'], $options['style']);
-			}
-
-			foreach ($options as $key => $option) {
-				$form_fields[$addon_name]['attr'][$key] = $option;
-			}
-
+		if (!empty($templatesData)) {
+			file_put_contents($cache_file, $templatesData, LOCK_EX);
 		}
 	}
 
-	$response = new SppbSettingsAjax($_POST, $form_fields);
-	echo $response->get_ajax_request(); die();
-}
+	if (!empty($templatesData)) {
+		$templates = json_decode($templatesData);
 
-// Pre-defined page library
-if ($action === 'page-library') {
-	$page_folder_path = JPATH_COMPONENT_ADMINISTRATOR.'/builder/templates';
-	if (!file_exists($page_folder_path)) {
-		echo json_encode(array('status' => 'false')); die;
-	}
-
-	$files = JFolder::files($page_folder_path,'.json');
-	$pages = array();
-
-	if (count($files)) {
-		foreach ($files as $key => $file) {
-			$pages[$key]['name'] = $file;
-			$pages[$key]['source'] = 'component';
+		if (count($templates)) {
+			$output['status'] = true;
+			$output['data'] = $templates;
+			echo json_encode($output); die();
 		}
 	}
-
-	echo json_encode(array('status' => 'true', 'data' => $pages)); die;
-
-	// add to library from active template
-
+	echo json_encode($output); die();
 }
 
 // Load Page Template List
-if ($action === 'pre-page-list') {
-	$output = array('status' => 'false', 'data' => 'Templates not found.');
-	$templates = array(); // All pre-defined templates list
+if ( $action === 'get-pre-page-data' ) {
 
-	// SPPB Pro Version Templates
-	$sppb_pages_dir_path = JPATH_COMPONENT_ADMINISTRATOR.'/builder/templates';
-	if ( file_exists( $sppb_pages_dir_path ) ) {
-		$folders = JFolder::folders( $sppb_pages_dir_path );
-		if ( count( $folders ) ) {
-			foreach ( $folders as $key => $folder ) {
-				$page = array();
-				$page['name'] 	= $folder;
-				$page['img'] = false;
-				if(file_exists(JPATH_COMPONENT_ADMINISTRATOR . '/builder/templates/' . $folder . '/preview.png')) {
-					$page['img'] 	= JURI::root( true ) . '/administrator/components/com_sppagebuilder/builder/templates/' . $folder . '/preview.png';
-				} else {
-					$page['img'] 	= JURI::root( true ) . '/administrator/components/com_sppagebuilder/assets/img/template-preview.png';
-				}
+	$template = $input->post->get('template', '', 'STRING');
+	$category = $input->post->get('category', '', 'STRING');
 
-				array_push($templates, $page);
-			}
+	$output = array('status' => false, 'data' => 'Page not found.');
+
+	$args = '&email=' . $cParams->get('joomshaper_email') . '&api_key='.$cParams->get('joomshaper_license_key');
+	$pageApi = 'https://sppagebuilder.com/api/templates/data.php?template=' . $template . '&category=' . $category.$args;
+
+	$pageData = '';
+
+	if(extension_loaded('curl')){
+		$headers = array();
+		$headers[] = "Content-Type: text/html";
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_URL, $pageApi);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		$pageData = curl_exec($ch);
+		curl_close($ch);
+	} else if(ini_get('allow_url_fopen')){
+		$opts = array(
+			'http' => array(
+				'method'  => 'GET',
+				'header'  => "Content-Type: text/html",
+				'timeout' => 60
+			)
+		);
+		$context  = stream_context_create($opts);
+		$pageData = file_get_contents($pageApi, false, $context);
+	} else {
+		$output = array('status' => false, 'data' => 'Please enable \'cURL\' or url_fopen in PHP or contact with your Server or Hosting administrator.');
+	}
+
+	if (!empty($pageData)) {
+		$pageData = json_decode($pageData);
+		
+		if(isset($pageData->status) && $pageData->status){
+			$output['status'] = true;
+			$output['data'] = $pageData->content;
+			echo json_encode($output); die();
+		} elseif(isset($pageData->authorised)) {
+			$output['status'] = false;
+			$output['data'] = $pageData->authorised;
+			echo json_encode($output); die();
+		}
+
+	}
+	echo json_encode($output); die();
+}
+
+if ( $action === 'pre-section-list' ) {
+
+	jimport( 'joomla.filesystem.folder' );
+	$cache_path = JPATH_CACHE . '/sppagebuilder';
+	$cache_file = $cache_path . '/sections.json';
+
+	$output = array('status' => false, 'data' => 'Sections not found.');
+	$sections = array(); // All pre-defined templates list
+	$sectionsData = '';
+
+	if(!file_exists($cache_path)) {
+		JFolder::create($cache_path, 0755);
+	}
+
+	if ( file_exists($cache_file ) && ( filemtime($cache_file) > (time()  - (24 * 60 * 60) ))) {
+		$sectionsData = file_get_contents($cache_file);
+	} else {
+		
+		
+		$args = '?email=' . $cParams->get('joomshaper_email') . '&api_key='.$cParams->get('joomshaper_license_key');
+		$sectionApi = 'https://sppagebuilder.com/api/sections/sections.php'. $args;
+
+		if(extension_loaded('curl')){
+			$headers = array();
+	    $headers[] = "Content-Type: text/html";
+
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_URL, $sectionApi);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+			$sectionsData = curl_exec($ch);
+			curl_close($ch);
+		} else if(ini_get('allow_url_fopen')){
+			$opts = array(
+				'http' => array(
+			    'method'  => 'GET',
+			    'header'  => "Content-Type: text/html",
+			    'timeout' => 60
+			  )
+			);
+			$context  = stream_context_create($opts);
+			$sectionsData = file_get_contents($sectionApi, false, $context);
+		} else {
+			$output = array('status' => false, 'data' => 'Please enable \'cURL\' or url_fopen in PHP or contact with your Server or Hosting administrator.');
+		}
+
+		if(!empty($sectionsData)){
+			file_put_contents($cache_file, $sectionsData, LOCK_EX);
 		}
 	}
 
-	// template support
-	// Plugins support
 
-	if (count($templates)) {
-		$output['status'] = 'true';
-		$output['data'] = $templates;
-		echo json_encode($output); die();
+	if (!empty($sectionsData)) {
+		$sections = json_decode($sectionsData);
+
+		if (count($sections)) {
+			$output['status'] = true;
+			$output['data'] = $sections;
+			echo json_encode($output); die();
+		}
 	}
 
 	echo json_encode($output); die();
 }
 
 // Load page from uploaded page
-if ($action === 'upload-page') {
-	if ( isset($_FILES['page']) && $_FILES['page']['error'] === 0 && $_FILES['page']['type'] === 'application/json') {
-		$content = file_get_contents($_FILES['page']['tmp_name']);
-		if (is_array(json_decode($content))) {
+if ( $action === 'upload-page' ) {
+	if ( isset($_FILES['page']) && $_FILES['page']['error'] === 0 ) {
 
-			// Check frontend editing
-			if ($input->get('editarea', '', 'STRING') == 'frontend') {
+		$file_name = $_FILES['page']['name'];
+		$file_extension = substr( $file_name, -5 );
+		$file_extension_lower = strtolower($file_extension);
+
+		if ($file_extension_lower === '.json')
+		{
+			$content = file_get_contents($_FILES['page']['tmp_name']);
+			if (is_array(json_decode($content))) {
+
 				require_once JPATH_COMPONENT_ADMINISTRATOR . '/builder/classes/addon.php';
 				$content = SpPageBuilderAddonHelper::__($content);
-				$content = SpPageBuilderAddonHelper::getFontendEditingPage($content);
-			}
 
-			echo json_encode( array('status' => true, 'data' => $content) ); die;
+				// Check frontend editing
+				if ($input->get('editarea', '', 'STRING') == 'frontend') {
+					$content = SpPageBuilderAddonHelper::getFontendEditingPage($content);
+				}
+				echo json_encode( array('status' => true, 'data' => $content) ); die;
+			}
 		}
+
 	}
 
 	echo json_encode(array('status'=> false, 'data'=>'Something worng there.')); die;

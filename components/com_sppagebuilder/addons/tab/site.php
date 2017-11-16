@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 class SppagebuilderAddonTab extends SppagebuilderAddons {
 
@@ -66,6 +66,73 @@ class SppagebuilderAddonTab extends SppagebuilderAddons {
 		}
 
 		return $css;
+	}
+
+	public static function getTemplate(){
+		$output = '
+		<style type="text/css">
+			<# if(data.style == "pills"){ #>
+				#sppb-addon-{{ data.id }} .sppb-nav-pills > li.active > a,
+				#sppb-addon-{{ data.id }} .sppb-nav-pills > li.active > a:hover,
+				#sppb-addon-{{ data.id }} .sppb-nav-pills > li.active > a:focus{
+					color: {{ data.active_tab_color }};
+					background-color: {{ data.active_tab_bg }};
+				}
+			<# } #>
+
+			<# if(data.style == "lines"){ #>
+				#sppb-addon-{{ data.id }} .sppb-nav-lines > li.active > a,
+				#sppb-addon-{{ data.id }} .sppb-nav-lines > li.active > a:hover,
+				#sppb-addon-{{ data.id }} .sppb-nav-lines > li.active > a:focus{
+					color: {{ data.active_tab_color }};
+					border-bottom-color: {{ data.active_tab_bg }};
+				}
+			<# } #>
+		</style>
+		<div class="sppb-addon sppb-addon-tab {{ data.class }}">
+			<# if( !_.isEmpty( data.title ) ){ #><{{ data.heading_selector }} class="sppb-addon-title">{{{ data.title }}}</{{ data.heading_selector }}><# } #>
+			<div class="sppb-addon-content sppb-tab">
+				<ul class="sppb-nav sppb-nav-{{ data.style }}">
+					<# _.each(data.sp_tab_item, function(tab, key){ #>
+						<#
+							var active = "";
+							if(key == 0){
+								active = "active";
+							}
+
+							var title = tab.title;
+
+							if(tab.icon){
+								title = \'<i class="fa \' + tab.icon + \'"></i> \' + tab.title;
+							}
+						#>
+						<li class="{{ active }}"><a data-toggle="sppb-tab" href="#sppb-tab-{{ data.id }}{{ key }}">{{{ title }}}</a></li>
+					<# }); #>
+				</ul>
+				<div class="sppb-tab-content sppb-nav-{{ data.style }}-content">
+					<# _.each(data.sp_tab_item, function(tab, key){ #>
+						<#
+							var active = "";
+							if(key == 0){
+								active = "active in";
+							}
+						#>
+						<div id="sppb-tab-{{ data.id }}{{ key }}" class="sppb-tab-pane sppb-fade {{ active }}">
+							<#
+							var htmlContent = "";
+							_.each(tab.content, function(content){
+								htmlContent += content;
+							});
+							#>
+							{{{ htmlContent }}}
+						</div>
+					<# }); #>
+				</div>
+			</div>
+		</div>
+		';
+
+		return $output;
 	}
 
 }
