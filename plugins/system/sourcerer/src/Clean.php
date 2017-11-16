@@ -70,11 +70,11 @@ class Clean
 		$spaces     = RL_PluginTag::getRegexSpaces();
 
 		// Remove start tag to end tag
-		$string = RL_RegEx::replace(
+		/*$string = RL_RegEx::replace(
 			$params->regex,
 			'',
 			$string
-		);
+		);*/
 
 		// Remove start tag with optional php stuff after it
 		$string = RL_RegEx::replace(
