@@ -119,6 +119,62 @@ class Get_elements {
         return $usuario;
         
     }
+    
+    /**
+     * @param empty
+     * @return Devuelve Array con todos los programas.
+     */
+    function getProgramas(){
+        /**
+         ################################
+         # Extrae Informacion de fabrik #
+         ################################
+         */
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select('*');
+        $query->from($db->quoteName('tolteca-fabrik.programas'));
+       // $query
+        
+        $db->setQuery($query);
+        // Load the results as a list of stdClass objects (see later for more options on retrieving data).
+        $rows = $db->loadObjectList();
+        
+        $array_programa = array();
+        //Relleno array
+        foreach($rows as $row) {
+                
+            /**
+             ################################
+             # Creo objeto de Programa      #
+             ################################
+             */
+            
+            $p = new Programa();
+            $p->setDenominacion($row->denominacion);
+            $p->setEmail($row->email);
+            $p->setId($row->id);
+            $p->setInteruniversitario($row->interuniversitario);
+            $p->setIsced1($row->isced1);
+            $p->setIsced2($row->isced2);
+            $p->setPlan($row->plan);
+            $p->setWeb($row->web);
+            $p->setCodigo($row->codigo);
+            $p->setRama($row->rama);
+            
+            $p->setArray_plaza( $this->get_Array_Plaza($row->id));
+            
+            array_push ( $array_programa , $p);
+        }
+        
+        
+        
+        return $array_programa;
+    }
+    
+    
+    
+    
    
     /**
      * Apartir de Codigo de Programa, devuelve Programa
@@ -138,7 +194,7 @@ class Get_elements {
         $query->select('*');
         $query->from($db->quoteName('tolteca-fabrik.programas'));
         //$query->from($db->quoteName('eidus-fabrik.t_programas'));
-        $query->where($db->quoteName('codigo')." = ".$db->quote($codigoPrograma));
+        $query->where($db->quoteName('codigo')." = ".$db->quote($codigoPrograma))->order($db->quoteName('rama') . 'DESC');
         
         $db->setQuery($query);
         $row_Programa = $db->loadAssoc();
@@ -204,6 +260,7 @@ class Get_elements {
         $p->setPlan($row_Programa["plan"]);
         $p->setWeb($row_Programa["web"]);
         $p->setCodigo($row_Programa["codigo"]);
+        $p->setRama($row_Programa["rama"]);
         
         $p->setArray_plaza($array_plaza);
         $p->setCoordinador($coordinador);
@@ -258,6 +315,7 @@ class Get_elements {
         $p->setId($row_Profesor['id']);
         $p->setNombre($row_Profesor['nombre']);
         $p->setSexo($row_Profesor['sexo']);
+        $p->setSisiusid($row_Profesor["sisiusid"]);
         
         return $p;
     }
@@ -309,7 +367,7 @@ class Get_elements {
             $p->setIdPrograma($valor->parent_id);
             $p->setNombre($valor->nombre);
             $p->setSexo($valor->sexo);
-            
+            $p->setSisiusid($valor->sisiusid);
             $c->setCargo($valor->cargo);
             $c->setIdPrograma($valor->parent_id);
             $c->setProfesor($p);
@@ -362,7 +420,7 @@ class Get_elements {
                 $p->setIdPrograma($idPrograma);
                 $p->setCurso($curso);
                 $p->setTotal($total);
-                array_push($array_plaza, $p);
+                $array_plaza[$curso] = $p;
 
         }
       
@@ -412,6 +470,7 @@ class Get_elements {
         ->select(array('pr.*', 'l.codigo', 'l.denominacion'))
         ->from($db->quoteName('tolteca-fabrik.profesores', 'pr'))
         ->join('RIGHT', $db->quoteName('tolteca-fabrik.lineas_profesores', 'pl') . ' ON (' . $db->quoteName('pr.id') . ' = ' . $db->quoteName('pl.profesores') . ')')
+        ->join('LEFT', $db->quoteName('tolteca-fabrik.lineas_invitados', 'pi') . ' ON (' . $db->quoteName('pr.id') . ' = ' . $db->quoteName('pi.invitados') . ')')
         ->join('INNER', $db->quoteName('tolteca-fabrik.lineas', 'l') . ' ON (' . $db->quoteName('l.id') . ' = ' . $db->quoteName('pl.parent_id') . ')')
         //->join('INNER', $db->quoteName('eidus-fabrik.t_programas', 'pr') . ' ON (' . $db->quoteName('pr.id') . ' = ' . $db->quoteName('l.programa') . ')')
         ->order($db->quoteName('pl.id') . 'ASC')
@@ -440,6 +499,7 @@ class Get_elements {
             $profesor->setId($row->id);
             $profesor->setIdPrograma($id_programa);
             $profesor->setNombre($row->nombre);
+            $profesor->setSisiusid($row->sisiusid);
             
             try{
                  //Obtengo el Array de Profesores Linea asociado a la línea

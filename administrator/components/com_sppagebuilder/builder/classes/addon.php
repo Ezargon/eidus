@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 require_once __DIR__ .'/base.php';
 require_once __DIR__ .'/config.php';
 
@@ -20,188 +20,172 @@ if ($isSite) {
 
 class SpPageBuilderAddonHelper {
 
-	public static function __( $json = '[]', $frontend = false ) {
-		$datas  = json_decode($json);
-		if (!count($datas)) return $json;
+		public static function __( $json = '[]', $frontend = false ) {
+			$datas  = json_decode($json);
+			if (!count($datas)) return $json;
 
-		$uniqueId 	= strtotime('now');
-		$first_row 	= $datas[0];
+			$uniqueId 	= strtotime('now');
+			$first_row 	= $datas[0];
 
-		if (!isset($first_row->id)) {
-			foreach ($datas as &$row){
-				self::rowFallback($row, $uniqueId);
-				foreach ($row->columns as &$column){
-					self::columnFallback($column, $uniqueId);
-					foreach ($column->addons as &$addon){
-						// Inner Row data regenerate
-						if (isset($addon->type) && $addon->type == 'sp_row') {
-							self::rowFallback($addon, $uniqueId, true);
-							foreach ($addon->columns as &$column) {
-								self::columnFallback($column, $uniqueId);
-								foreach ($column->addons as &$addon) {
-									self::addonFallback($addon, $uniqueId);
+			if (!isset($first_row->id)) {
+				foreach ($datas as &$row){
+					self::rowFallback($row, $uniqueId);
+					foreach ($row->columns as &$column){
+						self::columnFallback($column, $uniqueId);
+						foreach ($column->addons as &$addon){
+							// Inner Row data regenerate
+							if (isset($addon->type) && $addon->type == 'sp_row') {
+								self::rowFallback($addon, $uniqueId, true);
+								foreach ($addon->columns as &$column) {
+									self::columnFallback($column, $uniqueId);
+									foreach ($column->addons as &$addon) {
+										self::addonFallback($addon, $uniqueId);
+									}
 								}
+							} else {
+								self::addonFallback($addon, $uniqueId);
 							}
-						} else {
-							self::addonFallback($addon, $uniqueId);
 						}
-					}
 
+					}
 				}
 			}
-		}
 
-		// Frontend editing
-		if($frontend) {
-			return self::getFontendEditingPage(json_encode($datas));
-		}
-
-		return json_encode($datas);
-	}
-
-	// Row data regenerate for version < 2.0
-	public static function rowFallback( &$row, &$id, $inner = false ) {
-		$row->id = $id;
-		$row->visibility = (isset($row->disable) && $row->disable)?'':1;
-
-		if ($row->layout != '12'){
-			$chars = str_split($row->layout);
-			$row->layout = join(',',$chars);
-		}
-		$row->columns =  $row->attr;
-
-		if (!$inner) {
-			$row->collapse = '';
-			$row->title = 'Row';
-			unset($row->type);
-			unset($row->disable);
-		} else {
-			$row->type = 'inner_row';
-		}
-		$id = $id + 1;
-		unset($row->attr);
-	}
-
-	// Column data regenerate for version < 2.0
-	public static function columnFallback( &$column, &$id ) {
-		$column->id = $id;
-		$column->addons = $column->attr;
-		$column->visibility = 1;
-		$column->class_name = str_replace('column-parent ','', $column->class_name);
-		$id = $id + 1;
-
-		unset($column->settings->sortableitem);
-		unset($column->attr);
-		unset($column->type);
-	}
-
-	// Addon data regenerate for version < 2.0
-	public static function addonFallback( &$addon, &$id ) {
-		$addon->id = $id;
-		$addon->settings = $addon->atts;
-		$addon->visibility = 1;
-
-		if(count($addon->scontent)) {
-
-			$settings = array();
-			foreach ( $addon->scontent as $ops ) {
-				$settings[] = $ops->atts;
+			// Frontend editing
+			if($frontend) {
+				return self::getFontendEditingPage(json_encode($datas));
 			}
 
-			if(isset($form_fields[$addon->name]['attr']['repetable_item']['addon_name'])) {
-				$addon->settings->{$form_fields[$addon->name]['attr']['repetable_item']['addon_name']} = $settings;
-			} else if(isset($addon->scontent[0]->name) && $addon->scontent[0]->name) {
-				$addon->settings->{$addon->scontent[0]->name} = $settings;
-			}
+			return json_encode($datas);
 		}
 
-		$id = $id + 1;
+		// Row data regenerate for version < 2.0
+		public static function rowFallback( &$row, &$id, $inner = false ) {
+			$row->id = $id;
+			$row->visibility = (isset($row->disable) && $row->disable)?'':1;
 
-		unset($addon->atts);
-		unset($addon->scontent);
-	}
+			if ($row->layout != '12'){
+				$chars = str_split($row->layout);
+				$row->layout = join(',',$chars);
+			}
+			$row->columns =  $row->attr;
 
-	public static function getFontendEditingPage($page = []) {
-		$datas  = json_decode($page);
-		if ( !count($datas) ) return $page;
+			if (!$inner) {
+				$row->collapse = '';
+				$row->title = 'Row';
+				unset($row->type);
+				unset($row->disable);
+			} else {
+				$row->type = 'inner_row';
+			}
+			$id = $id + 1;
+			unset($row->attr);
+		}
 
-		foreach ( $datas as &$row ){
-			foreach ( $row->columns as &$column) {
-				foreach ( $column->addons as &$addon ) {
-					if (isset( $addon->type ) && ( $addon->type === 'sp_row' || $addon->type === 'inner_row' ) ) {
-						foreach ( $addon->columns as &$column ) {
-							foreach ( $column->addons as &$addon ) {
-								$addon_data = self::getAddonContent($addon);
-								if( !isset( $addon_data['jsTemplate'] ) ) {
+		// Column data regenerate for version < 2.0
+		public static function columnFallback( &$column, &$id ) {
+			$column->id = $id;
+			$column->addons = $column->attr;
+			$column->visibility = 1;
+			$column->class_name = str_replace('column-parent ','', $column->class_name);
+			$id = $id + 1;
+
+			unset($column->settings->sortableitem);
+			unset($column->attr);
+			unset($column->type);
+		}
+
+		// Addon data regenerate for version < 2.0
+		public static function addonFallback( &$addon, &$id ) {
+			$addon->id = $id;
+			$addon->settings = $addon->atts;
+			$addon->visibility = 1;
+
+			if(count($addon->scontent)) {
+
+				$settings = array();
+				foreach ( $addon->scontent as $ops ) {
+					$settings[] = $ops->atts;
+				}
+
+				if(isset($form_fields[$addon->name]['attr']['repetable_item']['addon_name'])) {
+ 					$addon->settings->{$form_fields[$addon->name]['attr']['repetable_item']['addon_name']} = $settings;
+ 				} else if(isset($addon->scontent[0]->name) && $addon->scontent[0]->name) {
+ 					$addon->settings->{$addon->scontent[0]->name} = $settings;
+ 				}
+			}
+
+			$id = $id + 1;
+
+			unset($addon->atts);
+			unset($addon->scontent);
+		}
+
+		public static function getFontendEditingPage($page = []) {
+			$datas  = json_decode($page);
+			if (!count($datas)) return $page;
+
+			foreach ($datas as &$row){
+				foreach ($row->columns as &$column){
+					foreach ($column->addons as &$addon){
+						if (isset($addon->type) && ($addon->type === 'sp_row' || $addon->type === 'inner_row')) {
+							foreach ($addon->columns as &$column) {
+								foreach ($column->addons as &$addon) {
+									$addon_data = self::getAddonContent($addon);
 									$addon->htmlContent = $addon_data['html'];
 									$addon->assets = $addon_data['assets'];
 								}
 							}
-						}
-					} else {
-						$addon_data = self::getAddonContent($addon);
-						if( !isset( $addon_data['jsTemplate'])){
+						} else {
+							$addon_data = self::getAddonContent($addon);
 							$addon->htmlContent = $addon_data['html'];
 							$addon->assets = $addon_data['assets'];
 						}
 					}
 				}
 			}
+
+			return json_encode($datas);
 		}
 
-		return json_encode( $datas );
-	}
+		public static function getAddonContent($addon) {
 
-	public static function getAddonContent( $addon ) {
+			$addon_name = $addon->name;
+			$class_name = 'SppagebuilderAddon' . ucfirst($addon_name);
+			$addon_path = AddonParser::getAddonPath( $addon_name );
 
-		$addon_name = $addon->name;
-		$class_name = 'SppagebuilderAddon' . ucfirst( $addon_name );
-		$addon_path = AddonParser::getAddonPath( $addon_name );
+			$output = '';
+			$output .= JLayoutHelper::render('addon.start', array('addon' => $addon)); // start addon
 
-		$addonFullPath = $addon_path.'/site.php';
+			require_once $addon_path.'/site.php';
 
-		if(!file_exists($addonFullPath)){
-			return array(
-				'html' => '<div class="remove-addon-notice"><h4>Addon files maybe remove or exists.</h4></div>',
-				'assets' => ''
-			);
-		}
+			$assets = array();
+			$css = JLayoutHelper::render('addon.css', array('addon' => $addon));
 
-		require_once $addonFullPath;
+			if ( class_exists( $class_name ) ) {
+					$addon_obj  = new $class_name($addon);  // initialize addon class
+					$output .= $addon_obj->render();
 
-		if ( class_exists( $class_name ) ) {
-			if ( method_exists( $class_name, 'getTemplate' ) ) {
-				return array( 'jsTemplate' => true );
-			}
-		}
+					// css
+					if (method_exists($class_name, 'css')) {
+						 $css .= $addon_obj->css();
+					}
 
-		$output = '';
-		$output .= JLayoutHelper::render( 'addon.start', array( 'addon' => $addon ) ); // start addon
+					// js
+					if (method_exists($class_name, 'js')) {
+							$assets['js'] = $addon_obj->js();
+					}
 
-		$assets = array();
-		$css = JLayoutHelper::render( 'addon.css', array( 'addon' => $addon ) );
-
-		if ( class_exists( $class_name ) ) {
-			$addon_obj  = new $class_name($addon);  // initialize addon class
-			$output .= $addon_obj->render();
-
-			if (method_exists($class_name, 'css')) {
-				$css .= $addon_obj->css();
+			} else {
+				$output .= AddonParser::spDoAddon( AddonParser::generateShortcode($addon, 0, 0));
 			}
 
-			if (method_exists($class_name, 'js')) {
-				$assets['js'] = $addon_obj->js();
+			$output .= JLayoutHelper::render('addon.end'); // end addon
+
+			if($css) {
+				$assets['css'] = $css;
 			}
-		} else {
-			$output .= AddonParser::spDoAddon( AddonParser::generateShortcode($addon, 0, 0));
+
+			return array('html'=>$output, 'assets'=>$assets);
 		}
-
-		$output .= JLayoutHelper::render('addon.end'); // end addon
-
-		if($css) {
-			$assets['css'] = $css;
-		}
-
-		return array('html'=>$output, 'assets'=>$assets);
-	}
 }

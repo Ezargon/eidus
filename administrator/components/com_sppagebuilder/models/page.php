@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 jimport('joomla.application.component.modeladmin');
 
@@ -61,24 +61,6 @@ class SppagebuilderModelPage extends JModelAdmin {
         return $form;
     }
 
-    public function getItem($pk = NULL) {
-  		$app = JApplication::getInstance('site');
-  		$router = $app->getRouter();
-
-      $item = parent::getItem();
-      $Itemid = SppagebuilderHelper::getMenuId($item->id);
-      $item->link = 'index.php?option=com_sppagebuilder&task=page.edit&id=' . $item->id;
-      $preview = 'index.php?option=com_sppagebuilder&view=page&id=' . $item->id . $Itemid;
-      $sefURI = str_replace('/administrator', '', $router->build($preview));
-      $item->preview = $sefURI;
-
-      $front_link = 'index.php?option=com_sppagebuilder&view=form&tmpl=componenet&layout=edit&id=' . $item->id . $Itemid;
-      $sefURI = str_replace('/administrator', '', $router->build($front_link));
-      $item->frontend_edit = $sefURI;
-
-  		return $item;
-  	}
-
     protected function loadFormData() {
         $data = JFactory::getApplication()->getUserState('com_sppagebuilder.edit.page.data', array());
 
@@ -97,7 +79,9 @@ class SppagebuilderModelPage extends JModelAdmin {
             $data['title'] = $this->pageGenerateNewTitle( $data['title'] );
         }
 
-        $data['created_by'] = $this->checkExistingUser($data['created_by']);
+        if(isset($data['created_by']) && $data['created_by']) {
+          $data['created_by'] = $this->checkExistingUser($data['created_by']);
+        }
 
         parent::save($data);
         return true;
@@ -117,6 +101,13 @@ class SppagebuilderModelPage extends JModelAdmin {
       return $user_id;
     }
 
+    protected function prepareTable($table) {
+        $jform = JRequest::getVar('jform');
+        if (!isset($jform['boxed_layout'])) {
+            $table->boxed_layout = 0;
+        }
+    }
+
     public static function pageGenerateNewTitle($title ) {
         $pageTable = JTable::getInstance('Page', 'SppagebuilderTable');
 
@@ -130,61 +121,5 @@ class SppagebuilderModelPage extends JModelAdmin {
         }
 
         return $title;
-    }
-
-    public static function getPageInfoById($pageId){
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select( array('a.*') );
-		$query->from($db->quoteName('#__sppagebuilder', 'a'));
-		$query->where($db->quoteName('a.id')." = ".$db->quote($pageId));
-		$db->setQuery($query);
-		$result = $db->loadObject();
-		
-		return $result;
-	}
-
-    public function getMySections() {
-      $db = JFactory::getDbo();
-      $query = $db->getQuery(true);
-      $query->select($db->quoteName(array('id', 'title', 'section')));
-      $query->from($db->quoteName('#__sppagebuilder_sections'));
-      //$query->where($db->quoteName('profile_key') . ' LIKE '. $db->quote('\'custom.%\''));
-      $query->order('id ASC');
-      $db->setQuery($query);
-      $results = $db->loadObjectList();
-      return json_encode($results);
-    }
-
-    public function deleteSection($id){
-      $db = JFactory::getDbo();
-
-      $query = $db->getQuery(true);
-
-      // delete all custom keys for user 1001.
-      $conditions = array(
-          $db->quoteName('id') . ' = '.$id
-      );
-
-      $query->delete($db->quoteName('#__sppagebuilder_sections'));
-      $query->where($conditions);
-
-      $db->setQuery($query);
-
-      return $db->execute();
-    }
-
-    public function saveSection($title, $section){
-      $db = JFactory::getDbo();
-      $user = JFactory::getUser();
-      $obj = new stdClass();
-      $obj->title = $title;
-      $obj->section = $section;
-      $obj->created = JFactory::getDate()->toSql();
-      $obj->created_by = $user->get('id');
-
-      $db->insertObject('#__sppagebuilder_sections', $obj);
-
-      return $db->insertid();
     }
 }

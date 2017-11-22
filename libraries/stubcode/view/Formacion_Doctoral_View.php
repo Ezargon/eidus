@@ -71,7 +71,7 @@ class Formacion_Doctoral_View {
                 $print_ .= "<td></td>";
             }else{
 
-                $print_ .= "<td><a href=/". $obj->{'link'}."\">".$obj->{'label'}."</a><br><span style=\"font-size: 10px;\">Fin inscripci&oacute;n: 11-05-2017</span></td>";
+                $print_ .= "<td><a target=\"blank\" href=/".$obj->{'link'}."\">".$obj->{'label'}."</a><br><span style=\"font-size: 10px;\">Fin inscripci&oacute;n: 11-05-2017</span></td>";
             }
            
             $print_ .= "</tr>";

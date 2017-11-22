@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 class SpAddonsConfig {
 
@@ -18,14 +18,11 @@ class SpAddonsConfig {
 	}
 
 	public static function addonConfig( $attributes ) {
-		if (empty($attributes['addon_name']) || empty($attributes)) {
+		if (empty($attributes['addon_name']) || empty($attributes) || empty($attributes['attr']) ) {
 			return false;
 		} else {
 			$addon = self::str_replace_first('sp_', '', $attributes['addon_name']);
-
-			if (!isset($attributes['icon']) || !$attributes['icon']) {
-				$attributes['icon'] = self::getIcon($addon);
-			}
+			$attributes['icon'] = self::getIcon($addon);
 			self::$addons[$addon] = $attributes;
 		}
 	}

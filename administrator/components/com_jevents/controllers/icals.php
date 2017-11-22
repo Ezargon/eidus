@@ -54,7 +54,7 @@ class AdminIcalsController extends JControllerForm {
 		$this->_checkValidCategories();
 
 		$option = JEV_COM_COMPONENT;
-		$db	= JFactory::getDBO();
+		$db	= JFactory::getDbo();
 
 		
 		$catid		= intval( JFactory::getApplication()->getUserStateFromRequest( "catid{$option}", 'catid', 0 ));
@@ -163,7 +163,7 @@ class AdminIcalsController extends JControllerForm {
 		$this->view = $this->getView("icals","html");
 
 		$cid	= JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		if (is_array($cid) && count($cid)>0) $editItem=$cid[0];
 		else $editItem=0;
 
@@ -192,28 +192,46 @@ class AdminIcalsController extends JControllerForm {
 
 	}
 
-        function reloadall(){
-            if (JFactory::getApplication()->isAdmin()){
+    function reloadall(){
+
+		@set_time_limit(1800);
+
+		if (JFactory::getApplication()->isAdmin()){
 			$redirect_task="icals.list";
 		}
-		else {
+		else
+		{
+
 			$redirect_task="day.listevents";
 		}
-              $query = "SELECT icsf.* FROM #__jevents_icsfile as icsf";
-			$db	= JFactory::getDBO();
-			$db->setQuery($query);
-			$allICS = $db->loadObjectList();
-                    foreach ($allICS as $currentICS){
-                    //only update cals from url
-                   if ($currentICS->icaltype=='0' && $currentICS->autorefresh==1){
-                        JRequest::setVar('icsid',$currentICS->ics_id);
-                        $this->save();
-                   }
-                   }
-                $message = JText::_( 'ICS_ALL_FILES_IMPORTED' );
-		$this->setRedirect( "index.php?option=".JEV_COM_COMPONENT."&task=$redirect_task", $message);
-		$this->redirect();
+
+        $query = "SELECT icsf.* FROM #__jevents_icsfile as icsf";
+		$db	= JFactory::getDbo();
+		$db->setQuery($query);
+		$allICS = $db->loadObjectList();
+
+        foreach ($allICS as $currentICS){
+	        //only update cals from url
+	        if ($currentICS->icaltype=='0' && $currentICS->autorefresh==1){
+		        JRequest::setVar('icsid',$currentICS->ics_id);
+		        $this->save();
+	        }
         }
+
+	    $user = JFactory::getUser();
+	    $guest = (int) $user->get('guest');
+
+	    $link = "index.php?option=".JEV_COM_COMPONENT."&task=$redirect_task";
+	    $message = JText::_( 'ICS_ALL_FILES_IMPORTED' );
+
+	    if ($guest === 1) {
+		    $this->setRedirect( $link);
+	    } else {
+		    $this->setRedirect( $link, $message);
+	    }
+
+		$this->redirect();
+    }
 
 	function save($key = null, $urlVar = null){
 
@@ -221,6 +239,9 @@ class AdminIcalsController extends JControllerForm {
 		if (JRequest::getCmd("task") != "icals.reload" && JRequest::getCmd("task") != "icals.reloadall"){
 			JRequest::checkToken() or jexit( 'Invalid Token' );
 		}
+
+		$user = JFactory::getUser();
+		$guest = (int) $user->get('guest');
 
 		$authorised = false;
 		
@@ -247,14 +268,14 @@ class AdminIcalsController extends JControllerForm {
 				}
 			}
 		}
-		$user = JFactory::getUser();				
+
 		if (!($authorised || JEVHelper::isAdminUser($user))) {
 			$this->setRedirect( "index.php?option=".JEV_COM_COMPONENT."&task=$redirect_task", "Not Authorised - must be super admin" );
 			$this->redirect();
 			return;
 		}
 		$cid	= JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		if (is_array($cid) && count($cid)>0) {
 			$cid=$cid[0];
 		} else {
@@ -368,9 +389,16 @@ class AdminIcalsController extends JControllerForm {
 			$icsFileid = $icsFile->store();
 			$message = JText::_( 'ICS_FILE_IMPORTED' );
 		}
-		if (JRequest::getCmd("task") != "icals.reloadall")
+		if (JRequest::getCmd("task") !== "icals.reloadall")
 		{
-			$this->setRedirect("index.php?option=" . JEV_COM_COMPONENT . "&task=$redirect_task", $message);
+			$link = "index.php?option=" . JEV_COM_COMPONENT . "&task=$redirect_task";
+
+			if ($guest === 1) {
+				$this->setRedirect($link);
+			} else
+			{
+				$this->setRedirect($link, $message);
+			}
 			$this->redirect();
 		}
 	}
@@ -380,6 +408,7 @@ class AdminIcalsController extends JControllerForm {
 	 *
 	 */
 	function savedetails(){
+		$user = JFactory::getUser();
 		$authorised = false;
 
 		// Check for request forgeries
@@ -392,7 +421,6 @@ class AdminIcalsController extends JControllerForm {
 			$redirect_task="month.calendar";
 		}
 
-		$user = JFactory::getUser();
 		if (!($authorised || JEVHelper::isAdminUser($user))) {
 			$this->setRedirect( "index.php?option=".JEV_COM_COMPONENT."&task=$redirect_task", "Not Authorised - must be super admin" );
 			$this->redirect();
@@ -401,7 +429,7 @@ class AdminIcalsController extends JControllerForm {
 
 		$icsid = intval(JRequest::getVar('icsid',0));
 		$cid	= JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		if (is_array($cid) && count($cid)>0) {
 			$cid=$cid[0];
 		} else {
@@ -472,13 +500,13 @@ class AdminIcalsController extends JControllerForm {
 
 	function publish(){
 		$cid = JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		$this->toggleICalPublish($cid,1);
 	}
 
 	function unpublish(){
 		$cid = JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		$this->toggleICalPublish($cid,0);
 	}
 
@@ -502,13 +530,13 @@ class AdminIcalsController extends JControllerForm {
 
 	function autorefresh(){
 		$cid = JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		$this->toggleAutorefresh($cid,1);
 	}
 
 	function noautorefresh(){
 		$cid = JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		$this->toggleAutorefresh($cid,0);
 	}
 
@@ -532,13 +560,13 @@ class AdminIcalsController extends JControllerForm {
 
 	function isdefault(){
 		$cid = JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		$this->toggleDefault($cid,1);
 	}
 
 	function notdefault(){
 		$cid = JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 		$this->toggleDefault($cid,0);
 	}
 
@@ -619,7 +647,7 @@ class AdminIcalsController extends JControllerForm {
 		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		$cid	= JRequest::getVar(	'cid',	array(0) );
-		ArrayHelper::toInteger($cid);
+		$cid = ArrayHelper::toInteger($cid);
 
 		$db	= JFactory::getDBO();
 

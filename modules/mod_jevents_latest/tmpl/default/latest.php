@@ -134,7 +134,7 @@ class DefaultModLatestView
 		$this->startNow = intval($myparam->get('startnow', 0));
 		$this->pastOnly = intval($myparam->get('pastonly', 0));
 		$this->rangeDays = intval($myparam->get('modlatest_Days', 30));
-		$this->norepeat = intval($myparam->get('modlatest_NoRepeat', 0));
+		$this->repeatdisplayoptions = intval($myparam->get('modlatest_NoRepeat', 0));
 		$this->multiday = intval($myparam->get('modlatest_multiday', 0));
 		$this->displayLinks = intval($myparam->get('modlatest_DispLinks', 1));
 		$this->displayYear = intval($myparam->get('modlatest_DispYear', 0));
@@ -378,26 +378,24 @@ class DefaultModLatestView
 		JRequest::setVar('published_fv', "0");
 		if ($this->dispMode == 5)
 		{
-			$this->sortReverse = true;
-			$rows = $this->datamodel->queryModel->recentIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->norepeat);
+			$rows = $this->datamodel->queryModel->recentIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->repeatdisplayoptions);
 		}
 		else if ($this->dispMode == 6)
 		{
-			$rows = $this->datamodel->queryModel->popularIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->norepeat, $this->multiday);
+			$rows = $this->datamodel->queryModel->popularIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->repeatdisplayoptions, $this->multiday);
 		}
 		else if ($this->dispMode == 7)
 		{
-			$rows = $this->datamodel->queryModel->randomIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->norepeat);
+			$rows = $this->datamodel->queryModel->randomIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->repeatdisplayoptions);
 			shuffle($rows);
 		}
 		else if ($this->dispMode == 8)
 		{
-			$this->sortReverse = true;
-			$rows = $this->datamodel->queryModel->recentlyModifiedIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->norepeat);
+			$rows = $this->datamodel->queryModel->recentlyModifiedIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->repeatdisplayoptions);
 		}
 		else
 		{
-			$rows = $this->datamodel->queryModel->listLatestIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->norepeat, $this->multiday);
+			$rows = $this->datamodel->queryModel->listLatestIcalEvents($periodStart, $periodEnd, $this->maxEvents, $this->repeatdisplayoptions, $this->multiday);
 		}
 		JRequest::setVar('published_fv', $filter_value);
 		$reg->set("jev.modparams", false);
@@ -437,7 +435,7 @@ class DefaultModLatestView
 				usort($rows, array(get_class($this), "_sortEventsByCreationDate"));
 			else if ($this->dispMode == 6)
 				usort($rows, array(get_class($this), "_sortEventsByHits"));
-			else if ($this->dispMode !== 7)
+			else if ($this->dispMode == 7)
 				usort($rows, array(get_class($this), "_sortEventsByDate"));
 			else if ($this->dispMode == 8)
 				usort($rows, array(get_class($this), "_sortEventsByModificationDate"));
@@ -509,7 +507,7 @@ class DefaultModLatestView
                                                         || ($this->dispMode == 8 && $this->checkModificationDay($date, $row)) 
                                                         || ($this->dispMode != 5 && $this->dispMode != 8 && $row->checkRepeatDay($date, $this->multiday)))
 						{
-							if (($this->norepeat && $row->hasrepetition())
+							if (($this->repeatdisplayoptions && $row->hasrepetition())
 									// use settings from the event - multi day event only show once
 									|| ($this->multiday == 0 && ($row->ddn() != $row->dup() || $row->mdn() != $row->mup() || $row->ydn() != $row->yup()) && $row->multiday() == 0)
 									// override settings from the event - multi day event only show once/on first day
@@ -523,12 +521,12 @@ class DefaultModLatestView
 									foreach ($ebrd as $evt)
 									{
 										// could test on devent detail but would need another config option
-										if ($row->ev_id() == $evt->ev_id() && $this->norepeat)
+										if ($row->ev_id() == $evt->ev_id() && $this->repeatdisplayoptions)
 										{
 											$eventAlreadyAdded = true;
 											break;
 										}
-										else if ($row->rp_id() == $evt->rp_id() && !$this->norepeat)
+										else if ($row->rp_id() == $evt->rp_id() && !$this->repeatdisplayoptions)
 										{
 											$eventAlreadyAdded = true;
 											break;
@@ -562,7 +560,10 @@ class DefaultModLatestView
 						$eventsToAdd = min($this->maxEvents - $events, count($eventsThisDay));
 						$eventsThisDay = array_slice($eventsThisDay, 0, $eventsToAdd);
 						//sort by time on this day
-						usort($eventsThisDay, array(get_class($this), "_sortEventsByTime"));
+						if ($this->dispMode !== 5 && $this->dispMode !== 8) 
+						{
+							usort($eventsThisDay, array(get_class($this), "_sortEventsByTime"));
+						}
 
 						$this->eventsByRelDay[$i] = $eventsThisDay;
 						$events += count($this->eventsByRelDay[$i]);
@@ -609,7 +610,7 @@ class DefaultModLatestView
                                                                 || ($this->dispMode == 8 && $this->checkModificationDay($date, $row)) 
                                                                 || ($this->dispMode != 5 && $this->dispMode != 8 && $row->checkRepeatDay($date, $this->multiday)))
 							{
-								if (($this->norepeat && $row->hasrepetition())
+								if (($this->repeatdisplayoptions && $row->hasrepetition())
 										// use settings from the event - multi day event only show once
 										|| ($this->multiday == 0 && ($row->ddn() != $row->dup() || $row->mdn() != $row->mup() || $row->ydn() != $row->yup()) && $row->multiday() == 0)
 										// override settings from the event - multi day event only show once/on first day
@@ -623,12 +624,12 @@ class DefaultModLatestView
 										foreach ($ebrd as $evt)
 										{
 											// could test on devent detail but would need another config option
-											if ($row->ev_id() == $evt->ev_id() && $this->norepeat)
+											if ($row->ev_id() == $evt->ev_id() && $this->repeatdisplayoptions)
 											{
 												$eventAlreadyAdded = true;
 												break;
 											}
-											else if ($row->rp_id() == $evt->rp_id() && !$this->norepeat)
+											else if ($row->rp_id() == $evt->rp_id() && !$this->repeatdisplayoptions)
 											{
 												$eventAlreadyAdded = true;
 												break;
@@ -644,12 +645,12 @@ class DefaultModLatestView
 										foreach ($eventsThisDay as $evt)
 										{
 											// could test on devent detail but would need another config option
-											if ($row->ev_id() == $evt->ev_id() && $this->norepeat)
+											if ($row->ev_id() == $evt->ev_id() && $this->repeatdisplayoptions)
 											{
 												$eventAlreadyAdded = true;
 												break;
 											}
-											else if ($row->rp_id() == $evt->rp_id() && !$this->norepeat)
+											else if ($row->rp_id() == $evt->rp_id() && !$this->repeatdisplayoptions)
 											{
 												$eventAlreadyAdded = true;
 												break;
@@ -680,7 +681,10 @@ class DefaultModLatestView
 						if (count($eventsThisDay))
 						{
 							//sort by time on this day
-							usort($eventsThisDay, array(get_class($this), "_sortEventsByTime"));
+							if ($this->dispMode !== 5 && $this->dispMode !== 8) 
+							{							
+								usort($eventsThisDay, array(get_class($this), "_sortEventsByTime"));
+							}
 							$this->eventsByRelDay[$i] = $eventsThisDay;
 							$events += count($this->eventsByRelDay[$i]);
 						}
@@ -694,7 +698,7 @@ class DefaultModLatestView
 				}
 			}
 		}
-		if (isset($this->eventsByRelDay) && count($this->eventsByRelDay))
+		if (isset($this->eventsByRelDay) && count($this->eventsByRelDay) && $this->dispMode !== 5 && $this->dispMode !== 8 )
 		{
 
 			// When we display these events, we just start at the smallest index of the $this->eventsByRelDay array
@@ -1248,6 +1252,19 @@ SCRIPT;
 				$dayEvent->text = $dayEvent->contact_info();
 				$dispatcher->trigger('onContentPrepare', array('com_jevents', &$dayEvent, &$this->modparams, 0));
 
+				if (!empty($dateParm))
+				{
+					$parts = explode("|", $dateParm);
+					if (count($parts) > 0 && JString::strlen(strip_tags($dayEvent->text)) > intval($parts[0]))
+					{
+						$dayEvent->text = JString::substr(strip_tags($dayEvent->text), 0, intval($parts[0]));
+						if (count($parts) > 1)
+						{
+							$dayEvent->text .= $parts[1];
+						}
+					}
+				}
+				
 				$dayEvent->contact_info($dayEvent->text);
 				$content .= $dayEvent->contact_info();
 				break;

@@ -121,9 +121,16 @@ class JEventsDBModel
 				$where = " AND 0 ";
 			}
                         // The menu or module may have specified categories but NOT their children 
-                        if (isset($this->datamodel->mmcatids) && count($this->datamodel->mmcatids)>0) {
+                        if (isset($this->datamodel->mmcatids) && count($this->datamodel->mmcatids)>0 && !$this->cfg->get("include_subcats", 1)) {
                             $where .= " AND c.id in (".$this->datamodel->mmcatidList.")";
                         }
+			else {
+				$reg =  JFactory::getConfig();
+				$modparams = $reg->get("jev.modparams", false);
+				if ($modparams && isset($this->datamodel->mmcatids) && count($this->datamodel->mmcatids)>0 && !$modparams->get("include_subcats", 1)) {
+					$where .= " AND c.id in (".$this->datamodel->mmcatidList.")";
+				}
+			}
                         
 			$q_published = JFactory::getApplication()->isAdmin() ? "\n AND c.published >= 0" : "\n AND c.published = 1";
 			$jevtask = JRequest::getString("jevtask");
@@ -296,7 +303,7 @@ class JEventsDBModel
 	 * Fetch recently created events
 	 */
 	// Allow the passing of filters directly into this function for use in 3rd party extensions etc.
-	function recentIcalEvents($startdate, $enddate, $limit = 10, $noRepeats = 0)
+	function recentIcalEvents($startdate, $enddate, $limit = 10, $repeatdisplayoptions = 0)
 	{
 		$user = JFactory::getUser();
 		$db = JFactory::getDBO();
@@ -313,7 +320,7 @@ class JEventsDBModel
 		$rows = array();
 		$skipJEvents=false;
 		$dispatcher = JEventDispatcher::getInstance();
-		$dispatcher->trigger('fetchListRecentIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $noRepeats));
+		$dispatcher->trigger('fetchListRecentIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $repeatdisplayoptions));
 		if ($skipJEvents) {
 			return $rows;
 		}
@@ -357,14 +364,24 @@ class JEventsDBModel
 			$catwhere = "\n WHERE 1 ";
 		}
 
+		// showing NO repeating events - in which case MUST search for events with freq=none
+		if ($repeatdisplayoptions==3) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) = 'none'";
+		}
+		else if ($repeatdisplayoptions==4) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) <> 'none'";
+		}
+
 		$extrajoin = ( count($extrajoin) ? " \n LEFT JOIN " . implode(" \n LEFT JOIN ", $extrajoin) : '' );
 		$extrawhere = ( count($extrawhere) ? ' AND ' . implode(' AND ', $extrawhere) : '' );
 
 		// get the event ids first
 		$query = "SELECT  ev.ev_id FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -390,7 +407,7 @@ class JEventsDBModel
 		$ids = implode(",", $ids);
 
 		$groupby = "\n GROUP BY rpt.rp_id";
-		if ($noRepeats)
+		if ($repeatdisplayoptions)
 			$groupby = "\n GROUP BY ev.ev_id";
 
 		// This version picks the details from the details table
@@ -401,9 +418,9 @@ class JEventsDBModel
 				. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 				. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 				. "\n FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -425,7 +442,11 @@ class JEventsDBModel
 		// do not use foreach incase time limit plugin removes one of the repeats
 		for ($i=0;$i<count($rows); $i++) {
 			$row = $rows[$i];
-			if (strtolower($row->freq())!="none" && $noRepeats){
+			// no repeating events 
+			if (strtolower($row->freq())!="none" && $repeatdisplayoptions==2){
+				continue;
+			}
+			else if (strtolower($row->freq())!="none" && $repeatdisplayoptions==1){
 				$repeat = $row->getFirstRepeat();
 				if ($repeat->rp_id() != $row->rp_id()){
 					$row = $this->listEventsById($repeat->rp_id());
@@ -453,7 +474,7 @@ class JEventsDBModel
 	 * Fetch recently modified events
 	 */
 	// Allow the passing of filters directly into this function for use in 3rd party extensions etc.
-	function recentlyModifiedIcalEvents($startdate, $enddate, $limit = 10, $noRepeats = 0)
+	function recentlyModifiedIcalEvents($startdate, $enddate, $limit = 10, $repeatdisplayoptions = 0)
 	{
 		$user = JFactory::getUser();
 		$db = JFactory::getDBO();
@@ -470,7 +491,7 @@ class JEventsDBModel
 		$rows = array();
 		$skipJEvents=false;
 		$dispatcher = JEventDispatcher::getInstance();
-		$dispatcher->trigger('fetchListRecentlyModifiedIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $noRepeats));
+		$dispatcher->trigger('fetchListRecentlyModifiedIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $repeatdisplayoptions));
 		if ($skipJEvents) {
 			return $rows;
 		}
@@ -514,14 +535,24 @@ class JEventsDBModel
 			$catwhere = "\n WHERE 1 ";
 		}
 
+		// showing NO repeating events - in which case MUST search for events with freq=none
+		if ($repeatdisplayoptions==3) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) = 'none'";
+		}
+		else if ($repeatdisplayoptions==4) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) <> 'none'";
+		}
+				
 		$extrajoin = ( count($extrajoin) ? " \n LEFT JOIN " . implode(" \n LEFT JOIN ", $extrajoin) : '' );
 		$extrawhere = ( count($extrawhere) ? ' AND ' . implode(' AND ', $extrawhere) : '' );
 
 		// get the event ids first
 		$query = "SELECT  det.evdet_id FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -556,9 +587,9 @@ class JEventsDBModel
 				. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 				. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 				. "\n FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -580,7 +611,11 @@ class JEventsDBModel
 		// do not use foreach incase time limit plugin removes one of the repeats
 		for ($i=0;$i<count($rows); $i++) {
 			$row = $rows[$i];
-			if (strtolower($row->freq())!="none" && $noRepeats){
+			// no repeating events 
+			if (strtolower($row->freq())!="none" && $repeatdisplayoptions==2){
+				continue;
+			}
+			if (strtolower($row->freq())!="none" && $repeatdisplayoptions==1){
 				$repeat = $row->getFirstRepeat();
 				if ($repeat->rp_id() != $row->rp_id()){
 					$row = $this->listEventsById($repeat->rp_id());
@@ -609,7 +644,7 @@ class JEventsDBModel
 	 */
 	// Allow the passing of filters directly into this function for use in 3rd party extensions etc.
         // TODO fix multi-day event handling!
-	function popularIcalEvents($startdate, $enddate, $limit = 10, $noRepeats = 0, $multidayTreatment = 0)
+	function popularIcalEvents($startdate, $enddate, $limit = 10, $repeatdisplayoptions = 0, $multidayTreatment = 0)
 	{
 		$user = JFactory::getUser();
 		$db = JFactory::getDBO();
@@ -626,7 +661,7 @@ class JEventsDBModel
 		$rows = array();
 		$skipJEvents=false;
 		$dispatcher = JEventDispatcher::getInstance();
-		$dispatcher->trigger('fetchListPopularIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $noRepeats));
+		$dispatcher->trigger('fetchListPopularIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $repeatdisplayoptions));
 		if ($skipJEvents) {
 			return $rows;
 		}
@@ -670,6 +705,16 @@ class JEventsDBModel
 			$catwhere = "\n WHERE 1 ";
 		}
 
+		// showing NO repeating events - in which case MUST search for events with freq=none
+		if ($repeatdisplayoptions==3) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) = 'none'";
+		}
+		else if ($repeatdisplayoptions==4) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) <> 'none'";
+		}
+				
 		$extrajoin = ( count($extrajoin) ? " \n LEFT JOIN " . implode(" \n LEFT JOIN ", $extrajoin) : '' );
 		$extrawhere = ( count($extrawhere) ? ' AND ' . implode(' AND ', $extrawhere) : '' );
 
@@ -723,16 +768,16 @@ class JEventsDBModel
                 $daterange2 =  "\n rpt2.endrepeat >= '$t_datenowSQL' AND rpt2.startrepeat <= '$enddate'";
                 $multidate2 =  "\n AND ((rpt2.startrepeat >= '$t_datenowSQL' AND det2.multiday=0) OR  det2.multiday=1)";
                 $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "                                
-                        ."\n LEFT JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
+                        ."\n INNER JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
                         ."\n WHERE  $daterange2 "
                         . $multidate2
                         . ")";
                 
 		// get the event ids first
 		$query = "SELECT  ev.ev_id FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -763,7 +808,7 @@ class JEventsDBModel
 		$ids = implode(",", $ids);
 
 		$groupby = "\n GROUP BY rpt.rp_id";
-		if ($noRepeats)
+		if ($repeatdisplayoptions)
 			$groupby = "\n GROUP BY ev.ev_id";
 
                 $daterange =  "\n AND rpt.endrepeat >= '$startdate' AND rpt.startrepeat <= '$enddate'";
@@ -779,9 +824,9 @@ class JEventsDBModel
 				. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 				. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 				. "\n FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -808,7 +853,7 @@ class JEventsDBModel
 
 	/* Special version for Latest events module */
 
-	function listLatestIcalEvents($startdate, $enddate, $limit = 10, $noRepeats = 0, $multidayTreatment = 0)
+	function listLatestIcalEvents($startdate, $enddate, $limit = 10, $repeatdisplayoptions = 0, $multidayTreatment = 0)
 	{
 		//list($usec, $sec) = explode(" ", microtime());
 		//$starttime = (float) $usec + (float) $sec;
@@ -836,7 +881,7 @@ class JEventsDBModel
 		$rows = array();
 		$skipJEvents=false;
 		$dispatcher = JEventDispatcher::getInstance();
-		$dispatcher->trigger('fetchListLatestIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit, $noRepeats, $multidayTreatment ));
+		$dispatcher->trigger('fetchListLatestIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit, $repeatdisplayoptions, $multidayTreatment ));
 		if ($skipJEvents) {
 			return $rows;
 		}
@@ -870,6 +915,16 @@ class JEventsDBModel
 		//list ($usec, $sec) = explode(" ", microtime());
 		//$time_end = (float) $usec + (float) $sec;
 		//echo  "post onListIcalEvents= ".round($time_end - $starttime, 4)."<br/>";
+		
+		// showing NO repeating events - in which case MUST search for events with freq=none
+		if ($repeatdisplayoptions==3) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) = 'none'";
+		}
+		else if ($repeatdisplayoptions==4) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) <> 'none'";
+		}
 		
 		// What if join multiplies the rows?
 		// Useful MySQL link http://forums.mysql.com/read.php?10,228378,228492#msg-228492
@@ -949,7 +1004,7 @@ class JEventsDBModel
 			$multiday3 = "AND det.multiday=1";
 		}
 
-		if ($noRepeats)
+		if ($repeatdisplayoptions)
 		{
 			// Display a repeating event ONCE we group by event id selecting the most appropriate repeat for each one
 			// Find the ones after now (only if not past only)
@@ -967,9 +1022,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. $catwhere
@@ -1018,9 +1073,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. $catwhere
@@ -1065,9 +1120,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. $catwhere
@@ -1165,9 +1220,9 @@ class JEventsDBModel
                                     
 					$query = "SELECT DISTINCT rpt.rp_id"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. $extrajoin
 							. $catwhere
 							// New equivalent but simpler test
@@ -1204,9 +1259,9 @@ class JEventsDBModel
 					// note the order is the ones nearest today
 					$query = "SELECT  DISTINCT rpt.rp_id"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -1242,9 +1297,9 @@ class JEventsDBModel
 					// Mutli day events
 					$query = "SELECT  DISTINCT rpt.rp_id"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -1288,9 +1343,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. " \n WHERE rpt.rp_id IN (" . implode(",", $ids) . ")"
@@ -1326,9 +1381,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -1369,9 +1424,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -1412,9 +1467,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -1543,7 +1598,7 @@ class JEventsDBModel
             
         }
 
-        function randomIcalEvents($startdate, $enddate, $limit = 10, $noRepeats = 0, $multidayTreatment = 0)
+        function randomIcalEvents($startdate, $enddate, $limit = 10, $repeatdisplayoptions = 0, $multidayTreatment = 0)
 	{
 		//list($usec, $sec) = explode(" ", microtime());
 		//$starttime = (float) $usec + (float) $sec;
@@ -1562,7 +1617,7 @@ class JEventsDBModel
 		$rows = array();
 		$skipJEvents=false;
 		$dispatcher = JEventDispatcher::getInstance();
-		$dispatcher->trigger('fetchListRandomIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $noRepeats,$multidayTreatment));
+		$dispatcher->trigger('fetchListRandomIcalEvents', array(&$skipJEvents, &$rows, $startdate, $enddate, $limit , $repeatdisplayoptions,$multidayTreatment));
 		if ($skipJEvents) {
 			return $rows;
 		}
@@ -1593,6 +1648,16 @@ class JEventsDBModel
 		$dispatcher = JEventDispatcher::getInstance();
 		$dispatcher->trigger('onListIcalEvents', array(& $extrafields, & $extratables, & $extrawhere, & $extrajoin, & $needsgroup, & $rptwhere));
 
+		// showing NO repeating events - in which case MUST search for events with freq=none
+		if ($repeatdisplayoptions==3) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) = 'none'";
+		}
+		else if ($repeatdisplayoptions==4) 
+		{
+			$extrawhere[] = "LOWER(rr.freq) <> 'none'";
+		}
+				
 		//list ($usec, $sec) = explode(" ", microtime());
 		//$time_end = (float) $usec + (float) $sec;
 		//echo  "post onListIcalEvents= ".round($time_end - $starttime, 4)."<br/>";
@@ -1668,7 +1733,7 @@ class JEventsDBModel
 			$multiday3 = "AND det.multiday=1";
 		}
 
-		if ($noRepeats)
+		if ($repeatdisplayoptions==1)
 		{
 			// Display a repeating event ONCE we group by event id selecting the most appropriate repeat for each one
 			// Find the ones after now (only if not past only)
@@ -1686,9 +1751,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. $catwhere
@@ -1738,9 +1803,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. $catwhere
@@ -1786,9 +1851,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. $catwhere
@@ -1886,9 +1951,9 @@ class JEventsDBModel
                                     
 					$query = "SELECT DISTINCT rpt.rp_id"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. $extrajoin
 							. $catwhere
 							. ($this->subquery ? $daterange2 : $daterange)
@@ -1923,9 +1988,9 @@ class JEventsDBModel
 					// note the order is the ones nearest today
 					$query = "SELECT  DISTINCT rpt.rp_id"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -1962,9 +2027,9 @@ class JEventsDBModel
 					// Mutli day events
 					$query = "SELECT  DISTINCT rpt.rp_id"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -2007,9 +2072,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. " \n WHERE rpt.rp_id IN (" . implode(",", $ids) . ")"
@@ -2045,9 +2110,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -2088,9 +2153,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -2130,9 +2195,9 @@ class JEventsDBModel
 							. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 							. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 							. "\n FROM #__jevents_repetition as rpt"
-							. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-							. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-							. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+							. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+							. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+							. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 							. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 							. $extrajoin
 							. $catwhere
@@ -2308,16 +2373,16 @@ class JEventsDBModel
                         $daterange =  "\n AND rpt.endrepeat >= '$startdate' AND rpt.startrepeat <= '$enddate'";
                         $daterange2 =  "\n rpt2.endrepeat >= '$startdate' AND rpt2.startrepeat <= '$enddate'";
                         $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "
-                                . "\n LEFT JOIN #__jevents_vevdetail as det2 ON det2.evdet_id = rpt2.eventdetail_id"
+                                . "\n INNER JOIN #__jevents_vevdetail as det2 ON det2.evdet_id = rpt2.eventdetail_id"
                                 . "\n WHERE  $daterange2 "
                                 . "\n AND NOT (rpt2.startrepeat < '$startdate' AND det2.multiday=0) "                                
                                 . ")";
                         
 			$query = "SELECT DISTINCT rpt.rp_id "
 					. "\n FROM #__jevents_repetition as rpt"
-					. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. $newextrajoin
 					. $catwhere
                                         // New equivalent but simpler test
@@ -2357,9 +2422,9 @@ class JEventsDBModel
 						. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 						. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 						. "\n FROM #__jevents_repetition as rpt"
-						. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-						. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-						. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+						. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+						. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+						. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 						. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 						. $extrajoin
 						. "\n WHERE rpt.rp_id in (".implode(",",$rptids).") "
@@ -2391,7 +2456,7 @@ class JEventsDBModel
                         $daterange =  "\n AND rpt.endrepeat >= '$startdate' AND rpt.startrepeat <= '$enddate'";
                         $daterange2 =  "\n rpt2.endrepeat >= '$startdate' AND rpt2.startrepeat <= '$enddate'";
                         $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "
-                                . "\n LEFT JOIN #__jevents_vevdetail as det2 ON det2.evdet_id = rpt2.eventdetail_id"
+                                . "\n INNER JOIN #__jevents_vevdetail as det2 ON det2.evdet_id = rpt2.eventdetail_id"
                                 . "\n WHERE  $daterange2 "
                                 . "\n AND NOT (rpt2.startrepeat < '$startdate' AND det2.multiday=0) "                                
                                 . ")";
@@ -2404,9 +2469,9 @@ class JEventsDBModel
 					. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 					. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 					. "\n FROM #__jevents_repetition as rpt"
-					. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 					. $extrajoin
 					. $catwhere
@@ -2722,9 +2787,9 @@ select @@sql_mode;
                 $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "
                         ."\n WHERE  $daterange2 )";
                 
-		$query .=  "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+		$query .=  "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -2792,6 +2857,14 @@ select @@sql_mode;
 			if (!$user)
 				$user = JFactory::getUser();
 		}
+		// remote module loader uses this too
+		else if (JFactory::getApplication()->input->getInt("rau"))
+		{
+			$registry = JRegistry::getInstance("jevents");
+			$user = $registry->get("jevents.icaluser", false);
+			if (!$user)
+				$user = JFactory::getUser();			
+		}
 		else
 		{
 			$user = JFactory::getUser();
@@ -2803,7 +2876,9 @@ select @@sql_mode;
 		// process the new plugins
 		// get extra data and conditionality from plugins
 		$extrawhere = array();
+		$extrawhere2 = array();
 		$extrajoin = array();
+		$extrajoin2 = array();
 		$extrafields = "";  // must have comma prefix
 		$needsgroup = false;
 
@@ -2826,17 +2901,27 @@ select @@sql_mode;
 		if ($params->get("multicategory", 0))
 		{
 			$extrajoin[] = "\n #__jevents_catmap as catmap ON catmap.evid = rpt.eventid";
+			$extrajoin2[] = "\n #__jevents_catmap as catmap ON catmap2.evid = rpt2.eventid";
 			$extrajoin[] = "\n #__categories AS catmapcat ON catmap.catid = catmapcat.id";
 			$extrafields .= ", GROUP_CONCAT(DISTINCT catmap.catid SEPARATOR ',') as catids";
 			// accessibleCategoryList handles access checks on category
 			//$extrawhere[] = " catmapcat.access IN (" . JEVHelper::getAid($user) . ")";
-			$extrawhere[] = " catmap.catid IN(" . $this->accessibleCategoryList() . ")";
+			if ($this->subquery)
+			{
+				$extrawhere2[] = " catmap.catid IN(" . $this->accessibleCategoryList() . ")";
+			}
+			else 
+			{
+				$extrawhere[] = " catmap.catid IN(" . $this->accessibleCategoryList() . ")";
+			}
 			$needsgroup = true;
 			$catwhere = "\n WHERE 1 ";
 		}
 
 		$extrajoin = ( count($extrajoin) ? " \n LEFT JOIN " . implode(" \n LEFT JOIN ", $extrajoin) : '' );
 		$extrawhere = ( count($extrawhere) ? ' AND ' . implode(' AND ', $extrawhere) : '' );
+		$extrajoin2 = ( count($extrajoin2) ? " \n LEFT JOIN " . implode(" \n LEFT JOIN ", $extrajoin2) : '' );
+		$extrawhere2 = ( count($extrawhere2) ? ' AND ' . implode(' AND ', $extrawhere2) : '' );
 
 		// Do we want to only use start or end dates in the range?
 		$usedates = $params->get("usedates","both");
@@ -2848,7 +2933,7 @@ select @@sql_mode;
                         $daterange2 =  "\n rpt2.endrepeat >= '$startdate' AND rpt2.startrepeat <= '$enddate'";
 			$multidate2 =  "\n AND NOT (rpt2.startrepeat < '$startdate' AND det2.multiday=0) ";
                         $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "                                
-                                ."\n LEFT JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
+                                ."\n INNER JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
                                 ."\n WHERE  $daterange2 "
                                 . $multidate2
                                 . ")";
@@ -2861,7 +2946,7 @@ select @@sql_mode;
 			$daterange2 =  "\n rpt2.endrepeat >= '$startdate' ";
 			$multidate2 =  "\n AND NOT (rpt2.startrepeat < '$startdate' AND det2.multiday=0) ";
                         $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "
-                                ."\n LEFT JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
+                                ."\n INNER JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
                                 ."\n WHERE  $daterange2 "
                                 . $multidate2
                                 . ")";
@@ -2874,7 +2959,7 @@ select @@sql_mode;
                         $daterange2 =  "\n rpt2.startrepeat <= '$enddate' ";
 			$multidate2 =  "\n AND NOT (rpt2.endrepeat > '$enddate' AND det2.multiday=0) ";
                         $daterange2 =  "\n AND rpt.rp_id in (SELECT rp_id FROM #__jevents_repetition as rpt2 "
-                                ."\n LEFT JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
+                                ."\n INNER JOIN #__jevents_vevdetail as det2  ON det2.evdet_id = rpt2.eventdetail_id"
                                 ."\n WHERE  $daterange2 "
                                 . $multidate2
                                 . ")";
@@ -2891,7 +2976,7 @@ select @@sql_mode;
 		}
 		else
 		{
-			$query = "SELECT ev.*, rpt.*, rr.*, det.*, ev.state as published $extrafields"
+			$query = "SELECT ev.*, rpt.*, rr.*, det.*, ev.state as published, ev.created as created $extrafields"
 					. "\n , YEAR(rpt.startrepeat) as yup, MONTH(rpt.startrepeat ) as mup, DAYOFMONTH(rpt.startrepeat ) as dup"
 					. "\n , YEAR(rpt.endrepeat  ) as ydn, MONTH(rpt.endrepeat   ) as mdn, DAYOFMONTH(rpt.endrepeat   ) as ddn"
 					. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
@@ -2905,9 +2990,9 @@ select @@sql_mode;
                 else {
                     $query .= "\n FROM #__jevents_repetition as rpt ";                                    
                 }
-                $query .=    "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+                $query .=    "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = rpt.eventid"
 				. $extrajoin
 				. $catwhere
@@ -3048,10 +3133,10 @@ select @@sql_mode;
 					. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 					." \n , ev.state as state "
 					. "\n FROM (#__jevents_vevent as ev $extratables)"
-					. "\n LEFT JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
 					. $extrajoin
 					. $catwhere
 					. ($checkAccess?  "\n AND ev.access IN (" . JEVHelper::getAid($user) . ")" : "")
@@ -3174,10 +3259,10 @@ select @@sql_mode;
 					. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 					. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 					. "\n FROM (#__jevents_vevent as ev $extratables)"
-					. "\n LEFT JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid "
 					. $extrajoin
 					. $catwhere
 					. ($checkAccess? "\n AND ev.access IN (" . JEVHelper::getAid($user) . ")" : "")
@@ -3315,10 +3400,10 @@ select @@sql_mode;
 				. "\n , HOUR(dtstart) as hup, MINUTE(dtstart) as minup, SECOND(dtstart   ) as sup"
 				. "\n , HOUR(dtend  ) as hdn, MINUTE(dtend  ) as mindn, SECOND(dtend     ) as sdn"
 				. "\n FROM #__jevents_vevent as ev"
-				. "\n LEFT JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = ev.detail_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
+				. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = ev.detail_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
 				. $extrajoin
 				. $catwhere
 				. $extrawhere
@@ -3443,10 +3528,10 @@ select @@sql_mode;
 			// TODO fine a single query way of doing this !!!
 			$query = "SELECT rp_id"
 					. "\n FROM #__jevents_repetition as rpt "
-					. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
+					. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. $extrajoin
 					. $catwhere
 					. $extrawhere
@@ -3687,8 +3772,8 @@ select @@sql_mode;
 
 		$query = "SELECT rpt.rp_id, ev.catid"
 				. "\n FROM #__jevents_repetition as rpt "
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-				. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
 				. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
 				. $extrajoin
 				. $catwhere
@@ -3803,10 +3888,10 @@ select @@sql_mode;
 					. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 					. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 					. "\n FROM #__jevents_vevent as ev"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
-					. "\n LEFT JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
+					. "\n INNER JOIN #__jevents_repetition as rpt ON rpt.eventid = ev.ev_id"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. $extrajoin
 					//. "\n WHERE ev.catid IN(".$this->accessibleCategoryList($aid,$catids,$catidlist).")"
 					. $catwhere
@@ -3822,10 +3907,10 @@ select @@sql_mode;
 		{
 			// TODO find a single query way of doing this !!!
 			$query = "SELECT MIN(rpt.rp_id) as rp_id FROM #__jevents_repetition as rpt "
-					. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf  ON icsf.ics_id=ev.icsid"
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf  ON icsf.ics_id=ev.icsid"
 					. $extrajoin
 					. $catwhere
 					. $extrawhere
@@ -3847,10 +3932,10 @@ select @@sql_mode;
 					. "\n , HOUR(rpt.startrepeat) as hup, MINUTE(rpt.startrepeat ) as minup, SECOND(rpt.startrepeat ) as sup"
 					. "\n , HOUR(rpt.endrepeat  ) as hdn, MINUTE(rpt.endrepeat   ) as mindn, SECOND(rpt.endrepeat   ) as sdn"
 					. "\n FROM #__jevents_repetition as rpt  "
-					. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
+					. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf ON icsf.ics_id=ev.icsid"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
 					. $extrajoin
 					//. "\n WHERE ev.catid IN(".$this->accessibleCategoryList($aid,$catids,$catidlist).")"
 					. $catwhere
@@ -3950,10 +4035,10 @@ select @@sql_mode;
 		{
 			// TODO fine a single query way of doing this !!!
 			$query = "SELECT MIN(rpt.rp_id) as rp_id FROM #__jevents_repetition as rpt "
-					. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+					. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
 					. "\n LEFT JOIN #__jevents_rrule as rr ON rr.eventid = ev.ev_id"
-					. "\n LEFT JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
-					. "\n LEFT JOIN #__jevents_icsfile as icsf  ON icsf.ics_id=ev.icsid "
+					. "\n INNER JOIN #__jevents_vevdetail as det ON det.evdet_id = rpt.eventdetail_id"
+					. "\n INNER JOIN #__jevents_icsfile as icsf  ON icsf.ics_id=ev.icsid "
 					. $extrajoin
 					//. "\n WHERE ev.catid IN(".$this->accessibleCategoryList($aid,$catids,$catidlist).")"
 					. $catwhere
@@ -4153,6 +4238,7 @@ select @@sql_mode;
 			//echo $db->explain();
 		}
 		//echo $db->explain();
+		
 		$details = $db->loadColumn();
 
 		$icalrows = array();
@@ -4245,7 +4331,7 @@ select @@sql_mode;
 		$db = JFactory::getDBO();
 		$query = "SELECT ev.*, rpt.*, abs(datediff(rpt.startrepeat," . $db->Quote($start) . ")) as diff "
 				. "\n FROM #__jevents_repetition as rpt"
-				. "\n LEFT JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
+				. "\n INNER JOIN #__jevents_vevent as ev ON rpt.eventid = ev.ev_id"
 				. "\n WHERE ev.uid = " . $db->Quote($uid)
 				. "\n ORDER BY diff asc LIMIT 3"
 		;

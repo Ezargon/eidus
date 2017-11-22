@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 jimport('joomla.application.component.view');
 
@@ -20,10 +20,6 @@ class SppagebuilderViewPages extends JViewLegacy {
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->state		= $this->get('State');
-
-		//Joomla Component Helper
-		jimport('joomla.application.component.helper');
-		$this->params = JComponentHelper::getParams('com_sppagebuilder');
 
 		if(count( $errors = $this->get('Errors'))) {
 			JError::raiseError(500,implode('<br />',$errors));
@@ -51,18 +47,6 @@ class SppagebuilderViewPages extends JViewLegacy {
 			'<i class="fa fa-plug"></i> ' . JText::_('COM_SPPAGEBUILDER_INTEGRATIONS'),
 			'index.php?option=com_sppagebuilder&view=integrations',
 			$vName == 'integrations'
-		);
-
-		JHtmlSidebar::addEntry(
-			'<i class="fa fa-globe"></i> ' . JText::_('COM_SPPAGEBUILDER_LANGUAGES'),
-			'index.php?option=com_sppagebuilder&view=languages',
-			$vName == 'languages'
-		);
-
-		JHtmlSidebar::addEntry(
-			'<i class="fa fa-info-circle"></i> ' . JText::_('COM_SPPAGEBUILDER_ABOUT_SPPB'),
-			'index.php?option=com_sppagebuilder&view=about',
-			$vName == 'about'
 		);
 
 		JHtmlSidebar::addEntry(

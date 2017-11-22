@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 jimport('joomla.form.formfield');
 
@@ -39,7 +39,7 @@ class JFormFieldSpmedia extends JFormField
 			$html .= '<input class="sp-media-input" type="text" name="'. $this->name .'" id="'. $this->id .'" value="'. $this->value .'">';
 		}
 
-		$html .= '<a href="#" id="media-upload-button" class="sp-pagebuilder-btn sp-pagebuilder-btn-primary sp-pagebuilder-btn-media-manager" data-support="' . $media_format . '"><i class="fa fa-spinner fa-spin" style="margin-right: 5px; display: none;"></i>'. JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_UPLOAD_' . strtoupper($media_format)) .'</a> <a href="#" class="sp-pagebuilder-btn sp-pagebuilder-btn-danger sp-pagebuilder-btn-clear-media"><i class="fa fa-times"></i></a>';
+		$html .= '<a href="#" class="sp-pagebuilder-btn sp-pagebuilder-btn-primary sp-pagebuilder-btn-media-manager" data-support="' . $media_format . '"><i class="fa fa-spinner fa-spin" style="margin-right: 5px; display: none;"></i>'. JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_UPLOAD_' . strtoupper($media_format)) .'</a> <a href="#" class="sp-pagebuilder-btn sp-pagebuilder-btn-danger sp-pagebuilder-btn-clear-media"><i class="fa fa-times"></i></a>';
 
 		return $html;
 	}

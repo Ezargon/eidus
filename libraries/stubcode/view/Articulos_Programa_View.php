@@ -29,7 +29,7 @@ class Articulos_Programa_View {
         $print_ .= "<li><a href='#acceso' data-toggle='tab'>Acceso al programa</a></li>";
         $print_ .= "<li><a href='#lineas' data-toggle='tab'>L&iacute;neas de investigaci&oacute;n y profesores</a></li>";
         $print_ .= "<li><a href='#contacto' data-toggle='tab'>Contacto</a></li>";
-        $print_ .= "<li><a href='#reglamento' data-toggle='tab'>Reglamento relativo a la Tesis Doctoral</a></li>";
+        //$print_ .= "<li><a href='#reglamento' data-toggle='tab'>Reglamento relativo a la Tesis Doctoral</a></li>";
         $print_ .= "</ul>";
         $print_ .= "<div class='tab-content pill-content'>";
         /**
@@ -58,11 +58,11 @@ class Articulos_Programa_View {
         $print_ .="</div>";
         /**
          * Tab #reglamento
-         */
+        
         $print_ .="<div id='reglamento' class='tab-pane fade'>";
         $print_ .=$this->print_tab_reglamento();
         $print_ .="</div>";
-        
+         */
         $print_ .="</div>";
         
         return $print_;
@@ -83,7 +83,7 @@ class Articulos_Programa_View {
             $print_ .=$this->printTablaOrganosParticipantes();
             // $print_ .=printCentroAdministrativo($id_programa);
             $print_ .=$this->printRegimenPermanencia();
-            $print_ .=$this->printPlazas();
+        //    $print_ .=$this->printPlazas();
         }catch(Exception $e){
             echo 'Excepción capturada articulos-programa·php print_tab_descripcion:: ',  $e->getMessage(), "\n";
         }finally{
@@ -120,7 +120,7 @@ class Articulos_Programa_View {
         $nivel="Doctorado";
         
         try{
-            
+            $rama = $this->programa->getRama();
             $isced1=$this->programa->getIsced1();
             $isced2=$this->programa->getIsced2();
             $codigo=$this->programa->getCodigo();
@@ -164,6 +164,14 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
+        $print_ .= "<h5>Rama</h5>";
+        $print_ .= "</td>";
+        $print_ .= "<td>".$rama."</td>";
+        $print_ .= "</tr>";
+        
+        
+        $print_ .= "<tr>";
+        $print_ .= "<td>";
         $print_ .= "<h5>C&oacute;digo UXXI</h5>";
         $print_ .= "</td>";
         $print_ .= "<td>".$codigo."</td>";
@@ -180,7 +188,7 @@ class Articulos_Programa_View {
         $print_ .= "<td>";
         $print_ .= "<h5>Email</h5>";
         $print_ .= "</td>";
-        $print_ .= "<td>".$email."</td>";
+        $print_ .= "<td>".$this->fix_email($email)."</td>";
         $print_ .= "</tr>";
         
         
@@ -220,7 +228,10 @@ class Articulos_Programa_View {
             $apellido1 = mb_convert_encoding(mb_convert_case($c->getProfesor()->getApellido1(), MB_CASE_TITLE), "UTF-8");
             $apellido2 = mb_convert_encoding(mb_convert_case($c->getProfesor()->getApellido2(), MB_CASE_TITLE), "UTF-8");
             $email = mb_convert_encoding(mb_convert_case($c->getProfesor()->getEmail(), MB_CASE_TITLE), "UTF-8");
-            
+            $sisius_id = $c->getProfesor()->getSisiusid();
+          
+            //$sisius_id = "3885";
+            /**
             $sexo = $c->getProfesor()->getSexo();
             $titulo = "";
             if(strcmp($sexo, "H")){
@@ -228,30 +239,65 @@ class Articulos_Programa_View {
             }else{
                 $titulo = mb_convert_encoding(mb_convert_case('Don', MB_CASE_TITLE), "UTF-8");;
             }
-            
+            */
             
             $print_ .= "<tr>";
             $print_ .= "<td>";
             $print_ .= "<h5>".$cargo."</h5>";
             $print_ .= "</td>";
-            $print_ .= "<td>".$titulo. " ". $nombre." ".$apellido1." ". $apellido2 ;
             
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $e =  JHtml::_('email.cloak',   $email);
+            
+            
+            if (strcmp($sisius_id, "") !== 0) {
+            $print_ .= "<td><a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_showpub.php?idpers=".$sisius_id."\">".$nombre." ".$apellido1." ".$apellido2."</a></td>";
+            $print_ .= "<td><a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_solmail.php?idpers=".$sisius_id."\">Solicitar correo</a></td>";
+            }else{
+            $print_ .= "<td>". " ". $nombre." ".$apellido1." ". $apellido2 . "</td>";
+            }
+          /*  if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $e =  JHtml::_('email.cloak',   strtolower($email));
+      
                 $print_ .= " (".$e.")"; ;
             }else{
                 $print_ .= "";
-            }
+            }*/
          
-            $print_ .= "</td></tr>";
+            
+            $print_ .= "</tr>";
         }
         $print_ .= "</tbody>";
         $print_ .= "</table>";
         $print_ .= "</div>";
         $print_ .= "<!--tabla participantes-->";
+        
+        
+        
+        
         return $print_;
     }
+
+        
     
+    private function fix_email($email){
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+           // $e =  JHtml::_('email.cloak',   strtolower($email));
+            $pos = strpos($email, '@');
+            $email_ = substr($email, 0, $pos);
+            $dominio = substr($email, $pos+1);
+            
+            $pos = strpos($dominio, '.');
+            $dominio = str_replace('.', " <i>'punto'</i> ",  strtolower($dominio));
+            
+            $ret = "".strtolower($email_) . " <i>'arroba'</i> " . $dominio;
+            
+            return $ret;
+            
+        }else{
+            return "";
+        }
+    }
+    
+
     
     /**
      * Imprime tabla de Plazas del programa
@@ -407,40 +453,45 @@ class Articulos_Programa_View {
             foreach($codigosLinea as $codigoLinea) {
                 $print_ .= "<div class='panel panel-default accordion-group'>";
                 $print_ .= "<div class='panel-heading accordion-heading'>";
-                $print_ .= "<h4 class='panel-title'><a href='#".$codigoLinea."' data-toggle='collapse' data-parent='#accordion'>".$codigoLinea." - ".strtoupper($map_codigoLineas_denominacion[$codigoLinea])."</a></h4>";
+                $print_ .= "<h4 class='panel-title'><a href='#".$codigoLinea."' data-toggle='collapse' data-parent='#accordion'>".$codigoLinea." - ".($map_codigoLineas_denominacion[$codigoLinea])."</a></h4>";
                 $print_ .= "</div>";
                 $print_ .= "<div id='".$codigoLinea."' class='panel-collapse collapse'>";
                 $print_ .= "<div class='panel-body accordion-inner'>";
                 
-                $print_ .= "<ul>";
+                $print_ .= "<ol>";
                 $array_profesores = $elements[$codigoLinea];
                 
-                
+    
                 foreach ($array_profesores as $profesor){
                     $sexo = $profesor->getSexo();
-                    $titulo = "";
+                  /*  $titulo = "";
                     if(strcmp($sexo, "H")){
                         $titulo = mb_convert_encoding(mb_convert_case('Do&ntilde;a', MB_CASE_TITLE), "UTF-8");;
                     }else{
                         $titulo = mb_convert_encoding(mb_convert_case('Don', MB_CASE_TITLE), "UTF-8");;
-                    }
+                    }*/
                     $nombre = mb_convert_encoding(mb_convert_case($profesor->getNombre(), MB_CASE_TITLE), "UTF-8");
                     $apellido1 = mb_convert_encoding(mb_convert_case($profesor->getApellido1(), MB_CASE_TITLE), "UTF-8");
                     $apellido2 = mb_convert_encoding(mb_convert_case($profesor->getApellido2(), MB_CASE_TITLE), "UTF-8");
                     $apellidos = $apellido1. " ".$apellido2;
                     //$id = $element->id;
-                    $email = $profesor->getEmail();
+                    $email = $this->fix_email($profesor->getEmail());
+                    $sisius_id = $profesor->getSisiusid();
                     
-                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $e =  JHtml::_('email.cloak',   $email);
-                        $print_ .= "<li>".$titulo. " ".$apellidos.", ".$nombre." (".$e .")</li>";
+                    $email = "<a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_solmail.php?idpers=".$sisius_id."\">Solicitar correo</a>";
+                    
+                    if (strcmp($sisius_id, "") !== 0) {
+                        $print_ .= "<li><a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_showpub.php?idpers=".$sisius_id."\">".$apellidos.", ".$nombre." (".$email .")</a></li>";
+                    //    $print_ .= "<li value=\"".$li_value."\">".$apellidos.", ".$nombre." (".$email .")</li>";
                     }else{
-                        $print_ .= "<li>".$titulo. " ".$apellidos.", ".$nombre."</li>";
+                        $print_ .= "<li><a>".$apellidos.", ".$nombre."</a></li>";
+                 //       $print_ .= "<li value=\"".$li_value."\">".$apellidos.", ".$nombre."</li>";
                     }
-                   
                   
+                    
+             
                 }
-                $print_ .= "</ul>";
+                $print_ .= "</ol>";
                 $print_ .= "</div></div></div>";
                 
             }

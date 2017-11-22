@@ -10,10 +10,29 @@ class Profesor
     private $sexo;
     private $externo;
     private $idPrograma;
+    private $sisiusid;
     
     public function __construct()
     {
     }
+    
+    
+    /**
+     * @return the $sisiusid
+     */
+    public function getSisiusid()
+    {
+        return $this->sisiusid;
+    }
+
+    /**
+     * @param field_type $sisiusid
+     */
+    public function setSisiusid($sisiusid)
+    {
+        $this->sisiusid = $sisiusid;
+    }
+
     /**
      * @return the $id
      */

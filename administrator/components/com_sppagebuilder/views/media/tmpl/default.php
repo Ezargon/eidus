@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined('_JEXEC') or die ('restricted aceess');
+defined('_JEXEC') or die ('restricted access');
 
 JHtml::_('formbehavior.chosen', '.sp-pagebuilder-media-toolbar select');
 
@@ -41,15 +41,15 @@ JText::script('COM_SPPAGEBUILDER_MEDIA_MANAGER_ENTER_DIRECTORY_NAME');
 				<div id="sp-pagebuilder-media-tools" class="pull-left clearfix">
 					<div>
 						<input type="file" id="sp-pagebuilder-media-input-file" multiple="multiple" style="display:none">
-						<a href="#" id="sp-pagebuilder-upload-media" class="sp-pagebuilder-btn sp-pagebuilder-btn-success"><i class="fa fa-upload"></i><span class="hidden-phone hidden-xs"> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_UPLOAD_FILES'); ?></span></a>
+						<a href="#" id="sp-pagebuilder-upload-media" class="sp-pagebuilder-btn sp-pagebuilder-btn-success sp-pagebuilder-btn-lg"><i class="fa fa-upload"></i><span class="hidden-phone hidden-xs"> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_UPLOAD_FILES'); ?></span></a>
 					</div>
 
 					<div style="display: none;">
-						<a href="#" id="sp-pagebuilder-cancel-media" class="sp-pagebuilder-btn sp-pagebuilder-btn-default"><i class="fa fa-times"></i> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_CANCEL'); ?></a>
+						<a href="#" id="sp-pagebuilder-cancel-media" class="sp-pagebuilder-btn sp-pagebuilder-btn-default sp-pagebuilder-btn-lg"><i class="fa fa-times"></i> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_CANCEL'); ?></a>
 					</div>
 
 					<div style="display: none;">
-						<a href="#" id="sp-pagebuilder-media-create-folder" class="sp-pagebuilder-btn sp-pagebuilder-btn-primary"><i class="fa fa-plus"></i> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_CREATE_FOLDER'); ?></a>
+						<a href="#" id="sp-pagebuilder-media-create-folder" class="sp-pagebuilder-btn sp-pagebuilder-btn-primary sp-pagebuilder-btn-lg"><i class="fa fa-plus"></i> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_CREATE_FOLDER'); ?></a>
 					</div>
 
 					<div>
@@ -72,7 +72,7 @@ JText::script('COM_SPPAGEBUILDER_MEDIA_MANAGER_ENTER_DIRECTORY_NAME');
 						</div>
 
 						<div style="display: none;">
-							<a href="#" id="sp-pagebuilder-delete-media" class="sp-pagebuilder-btn sp-pagebuilder-btn-danger hidden-phone hidden-xs"><i class="fa fa-minus-circle"></i> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_DELETE'); ?></a>
+							<a href="#" id="sp-pagebuilder-delete-media" class="sp-pagebuilder-btn sp-pagebuilder-btn-danger sp-pagebuilder-btn-lg hidden-phone hidden-xs"><i class="fa fa-minus-circle"></i> <?php echo JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_DELETE'); ?></a>
 						</div>
 					</div>
 				</div><!--/.page-builder-pages-toolbar-->

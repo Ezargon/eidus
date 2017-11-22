@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 jimport('joomla.application.component.modellist');
 
@@ -193,27 +193,4 @@ class SppagebuilderModelPages extends JModelList
 
 		return $query;
 	}
-
-	public function getItems() {
-		$app = JApplication::getInstance('site');
-		$router = $app->getRouter();
-
-		$items = parent::getItems();
-		if(count($items)) {
-			foreach ($items as $key => &$item) {
-				$Itemid = SppagebuilderHelper::getMenuId($item->id);
-				$item->link = 'index.php?option=com_sppagebuilder&task=page.edit&id=' . $item->id;
-				$preview = 'index.php?option=com_sppagebuilder&view=page&id=' . $item->id . $Itemid;
-				$sefURI = str_replace('/administrator', '', $router->build($preview));
-				$item->preview = $sefURI;
-
-				$front_link = 'index.php?option=com_sppagebuilder&view=form&tmpl=componenet&layout=edit&id=' . $item->id . $Itemid;
-				$sefURI = str_replace('/administrator', '', $router->build($front_link));
-				$item->frontend_edit = $sefURI;
-			}
-		}
-
-		return $items;
-	}
-
 }

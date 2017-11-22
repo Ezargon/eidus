@@ -61,7 +61,7 @@ $doc->addStylesheet( JURI::base(true) . '/components/com_sppagebuilder/assets/cs
 							<div class="sppb-about-view-jed">
 								<span class="fa fa-thumbs-o-up"></span>
 								<h3><a href="https://extensions.joomla.org/extension/sp-page-builder/" target="_blank" style="color:#fff;">Rate us on JED</a></h3>
-								<p>If you foud this product useful for you then please rate this product on <a href="https://extensions.joomla.org/extension/sp-page-builder/" target="_blank">Joomla Extension Directory</a>.</p>
+								<p>If you found this product useful for you then please rate this product on <a href="https://extensions.joomla.org/extension/sp-page-builder/" target="_blank">Joomla Extension Directory</a>.</p>
 							</div>
 						</div>
 						<div class="sppb-about-view-footer">

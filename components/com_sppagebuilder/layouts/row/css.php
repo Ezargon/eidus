@@ -73,56 +73,81 @@ if (isset($options->overlay) && $options->overlay) {
 
 // Row Title
 if ( (isset($options->title) && $options->title) || (isset($options->subtitle) && $options->subtitle) ) {
-
+	
 	if(isset($options->title) && $options->title) {
 		$title_style = '';
-    	//Title Font Size
+		$title_style_sm = '';
+		$title_style_xs = '';
+		//Title Font Size
 		if(isset($options->title_fontsize)) {
-			if($options->title_fontsize != '') {
-				$title_style .= 'font-size:'.$options->title_fontsize.'px;line-height: '.$options->title_fontsize.'px;';
+			if(is_object($options->title_fontsize)) {
+				$title_style .= (isset($options->title_fontsize->md) && $options->title_fontsize->md != '') ? 'font-size:'.$options->title_fontsize->md.'px;line-height: '.$options->title_fontsize->md.'px;' : '';
+				$title_style_sm .= (isset($options->title_fontsize->sm) && $options->title_fontsize->sm != '') ? 'font-size:'.$options->title_fontsize->sm.'px;line-height: '.$options->title_fontsize->sm.'px;' : '';
+				$title_style_xs .= (isset($options->title_fontsize->xs) && $options->title_fontsize->xs != '') ? 'font-size:'.$options->title_fontsize->xs.'px;line-height: '.$options->title_fontsize->xs.'px;' : '';
+			} else {
+				$title_style .= (isset($options->title_fontsize) && $options->title_fontsize != '') ? 'font-size:'.$options->title_fontsize.'px;line-height: '.$options->title_fontsize.'px;' : '';
 			}
 		}
 
-    	//Title Font Weight
+		//Title Font Weight
 		if(isset($options->title_fontweight)) {
 			if($options->title_fontweight != '') {
 				$title_style .= 'font-weight:'.$options->title_fontweight.';';
 			}
 		}
 
-        //Title Text Color
+		//Title Text Color
 		if(isset($options->title_text_color)) {
 			if($options->title_text_color != '') {
 				$title_style .= 'color:'.$options->title_text_color. ';';
 			}
 		}
 
-        //Title Margin Top
+		//Title Margin Top
 		if(isset($options->title_margin_top)) {
-			if($options->title_margin_top != '') {
-				$title_style .= 'margin-top:' . $options->title_margin_top . 'px;';
+			if(is_object($options->title_margin_top)) {
+				$title_style .= (isset($options->title_margin_top->md) && $options->title_margin_top->md != '') ? 'margin-top:' . $options->title_margin_top->md . 'px;' : '';
+				$title_style_sm .= (isset($options->title_margin_top->sm) && $options->title_margin_top->sm != '') ? 'margin-top:' . $options->title_margin_top->sm . 'px;' : '';
+				$title_style_xs .= (isset($options->title_margin_top->xs) && $options->title_margin_top->xs != '') ? 'margin-top:' . $options->title_margin_top->xs . 'px;' : '';
+			} else {
+				$title_style .= (isset($options->title_margin_top) && $options->title_margin_top != '') ? 'margin-top:' . $options->title_margin_top . 'px;' : '';
 			}
 		}
 
-        //Title Margin Bottom
+		//Title Margin Bottom
 		if(isset($options->title_margin_bottom)) {
-			if($options->title_margin_bottom != '') {
-				$title_style .= 'margin-bottom:' . $options->title_margin_bottom . 'px;';
+			if(is_object($options->title_margin_bottom)) {
+				$title_style .= (isset($options->title_margin_bottom->md) && $options->title_margin_bottom->md != '') ? 'margin-bottom:' . $options->title_margin_bottom->md . 'px;' : '';
+				$title_style_sm .= (isset($options->title_margin_bottom->sm) && $options->title_margin_bottom->sm != '') ? 'margin-bottom:' . $options->title_margin_bottom->sm . 'px;' : '';
+				$title_style_xs .= (isset($options->title_margin_bottom->xs) && $options->title_margin_bottom->xs != '') ? 'margin-bottom:' . $options->title_margin_bottom->xs . 'px;' : '';
+			} else {
+				$title_style .= (isset($options->title_margin_bottom) && $options->title_margin_bottom != '') ? 'margin-bottom:' . $options->title_margin_bottom . 'px;' : '';
 			}
 		}
 
-		$row_styles .= '.sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-heading {'. $title_style .'}';
+		$row_styles .= ($title_style) ? '.sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-heading {'. $title_style .'}' : '';
+		$row_styles .= ($title_style_sm) ? '@media (min-width: 768px) and (max-width: 991px) { .sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-heading {'. $title_style_sm .'}}' : '';
+		$row_styles .= ($title_style_xs) ? '@media (max-width: 767px) { .sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-heading {'. $title_style_xs .'}}' : '';
 
 	}
 
 	// Subtitle font size
 	if( isset( $options->subtitle ) && $options->subtitle ) {
-		$subtitle_fontsize = '';
 		if( isset( $options->subtitle_fontsize ) ) {
-			if( $options->subtitle_fontsize != '' ) {
-				$subsubtitle_fontsize = 'font-size:' . (int) $options->subtitle_fontsize . 'px;';
-				$row_styles .= '.sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-subheading {'. $subsubtitle_fontsize .'}';
+			$subtitle_fontsize = '';
+			$subtitle_fontsize_sm = '';
+			$subtitle_fontsize_xs = '';
+
+			if(is_object($options->subtitle_fontsize)) {
+				$subtitle_fontsize = (isset($options->subtitle_fontsize->md) && $options->subtitle_fontsize->md != '') ? 'font-size:'.$options->subtitle_fontsize->md.'px;' : '';
+				$subtitle_fontsize_sm = (isset($options->subtitle_fontsize->sm) && $options->subtitle_fontsize->sm != '') ? 'font-size:'.$options->subtitle_fontsize->sm.'px;' : '';
+				$subtitle_fontsize_xs = (isset($options->subtitle_fontsize->xs) && $options->subtitle_fontsize->xs != '') ? 'font-size:'.$options->subtitle_fontsize->xs.'px;' : '';
+			} else {
+				$subtitle_fontsize = (isset($options->subtitle_fontsize) && $options->subtitle_fontsize != '') ? 'font-size:'.$options->subtitle_fontsize.'px;' : '';
 			}
+			$row_styles .= ($subtitle_fontsize) ? '.sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-subheading {'. $subtitle_fontsize .'}' : '';
+			$row_styles .= ($subtitle_fontsize_sm) ? '@media (min-width: 768px) and (max-width: 991px) {.sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-subheading {'. $subtitle_fontsize_sm .'}}' : '';
+			$row_styles .= ($subtitle_fontsize_xs) ? '@media (max-width: 767px) {.sp-page-builder .page-content #' . $row_id . ' .sppb-section-title .sppb-title-subheading {'. $subtitle_fontsize_xs .'}}' : '';
 		}
 	}
 }

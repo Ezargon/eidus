@@ -10,6 +10,7 @@ class Programa
     private $web;
     private $plan;
     private $interuniversitario;
+    private $rama;
     //TIPO 'Profesor'
     private $coordinador;
     //ARRAY de 'Comision'
@@ -40,6 +41,22 @@ class Programa
     }
 
 /**
+     * @return the $rama
+     */
+    public function getRama()
+    {
+        return $this->rama;
+    }
+
+    /**
+     * @param field_type $rama
+     */
+    public function setRama($rama)
+    {
+        $this->rama = $rama;
+    }
+
+    /**
      * @return the $organos_participantes
      */
     public function getOrganos_participantes()

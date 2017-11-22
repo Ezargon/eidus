@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 abstract class SppagebuilderHelper {
 
@@ -29,19 +29,7 @@ abstract class SppagebuilderHelper {
 				'<i class="fa fa-plug"></i> ' . JText::_('COM_SPPAGEBUILDER_INTEGRATIONS'),
 				'index.php?option=com_sppagebuilder&view=integrations',
 				$vName == 'integrations'
-	  );
-
-		JHtmlSidebar::addEntry(
-			'<i class="fa fa-globe"></i> ' . JText::_('COM_SPPAGEBUILDER_LANGUAGES'),
-			'index.php?option=com_sppagebuilder&view=languages',
-			$vName == 'languages'
-		);
-
-		JHtmlSidebar::addEntry(
-			'<i class="fa fa-info-circle"></i> ' . JText::_('COM_SPPAGEBUILDER_ABOUT_SPPB'),
-			'index.php?option=com_sppagebuilder&view=about',
-			$vName == 'about'
-		);
+			);
 
 		JHtmlSidebar::addEntry(
 			JText::_('COM_SPPAGEBUILDER_MEDIA'),
@@ -110,34 +98,18 @@ abstract class SppagebuilderHelper {
 		return true;
 	}
 
-	public static function onIntegrationPrepareContent($text, $option, $view, $id = 0) {
+	public static function onIntegrationPrepareContent($text, $option, $view, $id) {
 
 		if(!self::getIntegration($option)) return $text;
 
-		$pageName = $view . '-' . $id;
-
 		$page_content = self::getPageContent($option, $view, $id);
 		if($page_content) {
-			jimport('joomla.application.component.helper');
 			require_once JPATH_ROOT .'/components/com_sppagebuilder/parser/addon-parser.php';
-			JHtml::_('jquery.framework');
 			$doc = JFactory::getDocument();
-			$params = JComponentHelper::getParams('com_sppagebuilder');
-			if ($params->get('fontawesome',1)) {
-				$doc->addStyleSheet(JUri::base(true) . '/components/com_sppagebuilder/assets/css/font-awesome.min.css');
-			}
-			if (!$params->get('disableanimatecss',0)) {
-				$doc->addStyleSheet(JUri::base(true) . '/components/com_sppagebuilder/assets/css/animate.min.css');
-			}
-			if (!$params->get('disablecss',0)) {
-				$doc->addStyleSheet(JUri::base(true) . '/components/com_sppagebuilder/assets/css/sppagebuilder.css');
-			}
+			$doc->addStyleSheet(JUri::base(true).'/components/com_sppagebuilder/assets/css/sppagebuilder.css');
 			$doc->addScript(JUri::base(true).'/components/com_sppagebuilder/assets/js/sppagebuilder.js');
-
-			return '<div id="sp-page-builder" class="sp-page-builder"><div class="page-content">' . AddonParser::viewAddons(json_decode($page_content->text),0,$pageName) . '</div></div>';
+			return AddonParser::viewAddons(json_decode($page_content->text));
 		}
-
-		return $text;
 	}
 
 	public static function getPageContent($extension, $extension_view, $view_id = 0) {
@@ -147,7 +119,7 @@ abstract class SppagebuilderHelper {
 		$query->from($db->quoteName('#__sppagebuilder'));
 		$query->where($db->quoteName('extension') . ' = '. $db->quote($extension));
 		$query->where($db->quoteName('extension_view') . ' = '. $db->quote($extension_view));
-		$query->where($db->quoteName('view_id') . ' = '. $db->quote($view_id));
+		$query->where($db->quoteName('view_id') . ' = '. $view_id);
 		$query->where($db->quoteName('active') . ' = 1');
 		$db->setQuery($query);
 		$result = $db->loadObject();
@@ -159,14 +131,14 @@ abstract class SppagebuilderHelper {
 		return false;
 	}
 
-	private static function checkPage($extension, $extension_view, $view_id = 0) {
+	private static function checkPage($extension, $extension_view, $view_id) {
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName(array('id')));
 		$query->from($db->quoteName('#__sppagebuilder'));
 		$query->where($db->quoteName('extension') . ' = '. $db->quote($extension));
 		$query->where($db->quoteName('extension_view') . ' = '. $db->quote($extension_view));
-		$query->where($db->quoteName('view_id') . ' = '. $db->quote($view_id));
+		$query->where($db->quoteName('view_id') . ' = '. $view_id);
 		$db->setQuery($query);
 
 		return $db->loadResult();
@@ -203,7 +175,7 @@ abstract class SppagebuilderHelper {
 	private static function updatePage($view_id, $content) {
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$condition = array($db->quoteName('view_id') . ' = ' . $db->quote($view_id));
+		$condition = array($db->quoteName('view_id') . ' = ' . $view_id);
 		$query->update($db->quoteName('#__sppagebuilder'))->set($content)->where($condition);
 		$db->setQuery($query);
 		$db->execute();
@@ -223,21 +195,4 @@ abstract class SppagebuilderHelper {
 
 		return $result;
   }
-
-	public static function getMenuId($pageId) {
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('id')));
-		$query->from($db->quoteName('#__menu'));
-		$query->where($db->quoteName('link') . ' LIKE '. $db->quote('%option=com_sppagebuilder&view=page&id='. $pageId .'%'));
-		$query->where($db->quoteName('published') . ' = '. $db->quote('1'));
-		$db->setQuery($query);
-		$result = $db->loadResult();
-
-		if($result) {
-			return '&Itemid=' . $result;
-		}
-
-		return '';
-	}
 }

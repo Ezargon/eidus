@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted aceess');
+defined ('_JEXEC') or die ('restricted access');
 
 jimport('joomla.application.component.modellist');
 jimport('joomla.filesystem.folder');
@@ -23,7 +23,7 @@ class SppagebuilderModelMedia extends JModelList
 		$date 	= $input->post->get('date', NULL, 'STRING');
 		$start 	= $input->post->get('start', 0, 'INT');
 		$search = $input->post->get('search', NULL, 'STRING');
-		$limit 	= 28;
+		$limit 	= 20;
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);

@@ -34,7 +34,6 @@ $doc->addScript( JURI::base(true) . '/administrator/components/com_sppagebuilder
 $doc->addScript( JUri::base(true). '/components/com_sppagebuilder/assets/js/actions.js' );
 $doc->addScript( JURI::base(true) . '/components/com_sppagebuilder/assets/js/sppagebuilder.js' );
 $doc->addScript( JURI::base(true) . '/components/com_sppagebuilder/assets/js/jquery.vide.js' );
-$doc->addScript( JURI::base(true) . '/components/com_sppagebuilder/assets/js/jquery.parallax-1.1.3.js' );
 
 $menus = $app->getMenu();
 $menu = $menus->getActive();
