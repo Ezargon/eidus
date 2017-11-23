@@ -197,7 +197,6 @@ class Articulos_Programa_View {
         $print_ .="</table>";
         $print_ .="</div>";
         
-        $print_ .="<br />";
         return $print_;
     }
     
