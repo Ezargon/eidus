@@ -30,7 +30,7 @@ class Articulos_Programa_View {
         $print_ .= "<li><a href='#acceso' data-toggle='tab'>Acceso al programa</a></li>";
         $print_ .= "<li><a href='#lineas' data-toggle='tab'>L&iacute;neas de investigaci&oacute;n y profesores</a></li>";
         $print_ .= "<li><a href='#contacto' data-toggle='tab'>Contacto</a></li>";
-        $print_ .= "<li><a href='#reglamento' data-toggle='tab'>Reglamento relativo a la Tesis Doctoral</a></li>";
+        //$print_ .= "<li><a href='#reglamento' data-toggle='tab'>Reglamento relativo a la Tesis Doctoral</a></li>";
         $print_ .= "</ul>";
         $print_ .= "<div class='tab-content pill-content'>";
         /**
@@ -59,11 +59,11 @@ class Articulos_Programa_View {
         $print_ .="</div>";
         /**
          * Tab #reglamento
-         */
+         
         $print_ .="<div id='reglamento' class='tab-pane fade'>";
         $print_ .=$this->print_tab_reglamento();
         $print_ .="</div>";
-        
+        */
         $print_ .="</div>";
         
         return $print_;
@@ -80,10 +80,11 @@ class Articulos_Programa_View {
         $print_ = "";
         try {
             $print_ .=$this->printTablaDescripcionMain();
-            $print_ .=$this->printTablaComision();
             $print_ .=$this->printTablaOrganosParticipantes();
+            $print_ .=$this->printTablaComision();
+            //$print_ .=$this->printRegimenPermanencia();
             // $print_ .=printCentroAdministrativo($id_programa);
-            $print_ .=$this->printRegimenPermanencia();
+            
         //    $print_ .=$this->printPlazas();
         }catch(Exception $e){
             echo 'Excepci贸n capturada articulos-programa路php print_tab_descripcion:: ',  $e->getMessage(), "\n";
@@ -143,14 +144,14 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Nivel</h5>";
+        $print_ .= "<b>Nivel</b>";
         $print_ .= "</td>";
         $print_ .= "<td>Doctorado</td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>C&oacute;digo ISCED1</h5>";
+        $print_ .= "<b>C&oacute;digo ISCED1</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$isced1."</td>";
         $print_ .= "</tr>";
@@ -158,14 +159,14 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>C&oacute;digo ISCED2</h5>";
+        $print_ .= "<b>C&oacute;digo ISCED2</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$isced2."</td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Rama</h5>";
+        $print_ .= "<b>Rama</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$rama."</td>";
         $print_ .= "</tr>";
@@ -173,31 +174,36 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>C&oacute;digo UXXI</h5>";
+        $print_ .= "<b>C&oacute;digo UXXI</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$codigo."</td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Web oficial</h5>";
+        $print_ .= "<b>Web oficial</b>";
         $print_ .= "</td>";
-        $print_ .= "<td><a href='".$web."' title='".$web."'>".$web."</a></td>";
+        $print_ .= "<td><a target='_blank' rel='nofollo' href='".$web."' title='".$web."'>".$web."</a></td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Email</h5>";
+        $print_ .= "<b>Email</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$this->fix_email($email)."</td>";
         $print_ .= "</tr>";
         
+        $print_ .= "<tr>";
+        $print_ .= "<td>";
+        $print_ .= "<b>Dedicaci&oacute;n</b>";
+        $print_ .= "</td>";
+        $print_ .= "<td>Tiempo completo y tiempo parcial <i>(<a href='../../estudios/acceso/regimen-permanencia'>m&aacute;s informaci&oacute;n</a>)</i></td>";
+        $print_ .= "</tr>";
         
         $print_ .="</tbody>";
         $print_ .="</table>";
         $print_ .="</div>";
         
-        $print_ .="<br />";
         return $print_;
     }
     
@@ -244,7 +250,7 @@ class Articulos_Programa_View {
             
             $print_ .= "<tr>";
             $print_ .= "<td>";
-            $print_ .= "<h5>".$cargo."</h5>";
+            $print_ .= "<b>".$cargo."</b>";
             $print_ .= "</td>";
             
             
@@ -373,7 +379,7 @@ class Articulos_Programa_View {
         $print_ = "";
         try {
             $print_ .=$this->printPlazas();
-            $print_ .=$this->printCentroAdministrativo();
+            //$print_ .=$this->printCentroAdministrativo();
             $print_ .=$this->printEnlacePDF();
          //   $print_ .=$this->printPerfilIngreso();
             
@@ -389,9 +395,9 @@ class Articulos_Programa_View {
      */
     private function printEnlacePDF(){
         $print_ = "";
-        $print_ .= "<h3>Ficha formato PDF</h3>";
+        $print_ .= "<h3>Perfil de ingreso, requisitos y criterios de admisi&oacute;n</h3>";
         $uxxi = $this->programa->getCodigo();
-        $print_ .= "<p><span><a href=\"".HREF_IMPRESO_ADMISION.$uxxi.".pdf\" target='_blank' class='pdf'>Descargar</a></span></p>";
+        $print_ .= "<p>Para m&aacute;s informaci&oacute;n sobre perfil de ingreso, requisitos y criterios de admisi&oacute;n, documentaci&oacute;n espec&iacute;fica y complementos de formaci&oacute;n descargar la siguiente ficha: <span><a href=\"".HREF_IMPRESO_ADMISION.$uxxi.".pdf\" target='_blank' class='pdf'>Descargar ficha admisi&oacute;n (PDF)</a></span></p>";
         $print_ .= "<br/>";
         return $print_;
     }
@@ -535,14 +541,12 @@ class Articulos_Programa_View {
         $print_ = "";
         $print_ .= "<h3>Contacto Administrativo</h3>";
         $print_ .= "<div>".$this->programa->getContacto_administrativo()."</div>";
-        $print_ .= "<br/>";
-        return $print_;
+          return $print_;
     }
     function print_Contacto_Academico(){
         $print_ = "";
         $print_ .= "<h3>Contacto Acad&eacute;mico</h3>";
         $print_ .= "<div>".$this->programa->getContacto_academico()."</div>";
-        $print_ .= "<br/>";
         return $print_;
     }
     
