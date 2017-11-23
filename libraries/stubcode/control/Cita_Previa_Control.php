@@ -17,16 +17,24 @@ include JPATH_BASE.'/libraries/stubcode/ddbb/Get_CitaPrevia.php';
  ?>
  <p>{/source}</p>
  */
-function ___controlCitaPrevia(){
-    //Fecha de cita previa
-    $fecha = "2016-07-06";
 
+
+function ___controlCitaPrevia(){
+    
+    if(isset($_POST['name'])){
+        $fecha = $_POST['name'];
+      
+    }else{
+        //Fecha de hoy.
+        $fecha = date("Y-m-d");
+    }
+    
+    
     $bbdd = new Get_CitaPrevia();
     $array_cita_previas = $bbdd->getCitasPrevias($fecha);
     
-    $view = new Cita_Previa_Administrador_View($array_cita_previas);
+    $view = new Cita_Previa_Administrador_View($array_cita_previas, $fecha);
     $view->__print();
-   
 }
 
 

@@ -4,19 +4,42 @@ namespace libraries\stubcode\view;
 class Cita_Previa_Administrador_View
 {
     private $array_cita_previa;
+    private $fecha;
     
-    public function __construct($array_cita_previa){
+    public function __construct($array_cita_previa, $fecha){
         $this->array_cita_previa = $array_cita_previa;
+        $this->fecha = $fecha;
     }
     
     public function __print(){
         //print_r($this->array_cita_previa);
         $print_ = "";
+        
+        
+        $print_ .= $this->crearDateInput();
         $print_ .= $this->creartabla();
+        $print_ .=  $this->scripts();
         
         echo $print_;
     }
+    private function scripts(){
+        $print_ = "";
+        $print_.= "<script>";
+        $print_.= "function post(path, params, method) {method = method || \"post\"; var form = document.createElement(\"form\");form.setAttribute(\"method\", method);form.setAttribute(\"action\", path);for(var key in params) {if(params.hasOwnProperty(key)) {var hiddenField = document.createElement(\"input\");hiddenField.setAttribute(\"type\", \"hidden\");hiddenField.setAttribute(\"name\", key);hiddenField.setAttribute(\"value\", params[key]);form.appendChild(hiddenField);}}document.body.appendChild(form);form.submit();}";
+        $print_.= "</script>";
+        return $print_;
+    }
     
+    private function crearDateInput(){
+        $print_ = "";
+        $print_.= "<div id='fecha_cita_previa'><label>Selecciona fecha <input type=\"date\" onchange=\"post('', {name: this.value});\" id=\"fecha\" name=\"fecha\" value=\"".$this->fecha."\"></label></div>";
+        return $print_;
+    }
+    private function test($clicked){
+        $print_ = "";
+        $print_ .= "<div>".$clicked."</div>" ;
+        return $print_;
+    }
     private function creartabla(){
         $TABLA_HEAD = ['Inicio', 'Fin', 'Nombre', 'Apellidos', 'Email', 'Telefono', 'Validada'];
         $print_ = "";
