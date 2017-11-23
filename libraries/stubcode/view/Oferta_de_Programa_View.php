@@ -108,7 +108,7 @@ class Oferta_de_Programa_View {
                 $plaza = $plaza__[$curso];
     
                 $print_.="<tr>";
-                $print_.="<td width=\"70%\">"."<a href=\"/eidus/estudios/oferta-programas/".ENLACES[$codigo]."\">".$denominacion."</a>"."</td>";
+                $print_.="<td width=\"70%\">"."<a href=\"/eidus/estudios/programas-de-doctorado/".ENLACES[$codigo]."\">".$denominacion."</a>"."</td>";
                 $print_.="<td width=\"30%\">".$plaza->getTotal()." plazas</td>";
                 $print_.="</tr>";
              
