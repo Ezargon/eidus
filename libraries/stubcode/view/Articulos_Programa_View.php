@@ -535,14 +535,12 @@ class Articulos_Programa_View {
         $print_ = "";
         $print_ .= "<h3>Contacto Administrativo</h3>";
         $print_ .= "<div>".$this->programa->getContacto_administrativo()."</div>";
-        $print_ .= "<br/>";
-        return $print_;
+          return $print_;
     }
     function print_Contacto_Academico(){
         $print_ = "";
         $print_ .= "<h3>Contacto Acad&eacute;mico</h3>";
         $print_ .= "<div>".$this->programa->getContacto_academico()."</div>";
-        $print_ .= "<br/>";
         return $print_;
     }
     
