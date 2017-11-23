@@ -182,7 +182,7 @@ class Articulos_Programa_View {
         $print_ .= "<td>";
         $print_ .= "<b>Web oficial</b>";
         $print_ .= "</td>";
-        $print_ .= "<td><a href='".$web."' title='".$web."'>".$web."</a></td>";
+        $print_ .= "<td><a target='_blank' rel='nofollo' href='".$web."' title='".$web."'>".$web."</a></td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
