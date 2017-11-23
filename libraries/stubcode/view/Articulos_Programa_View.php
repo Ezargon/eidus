@@ -80,10 +80,11 @@ class Articulos_Programa_View {
         $print_ = "";
         try {
             $print_ .=$this->printTablaDescripcionMain();
-            $print_ .=$this->printTablaComision();
             $print_ .=$this->printTablaOrganosParticipantes();
+            $print_ .=$this->printTablaComision();
+            //$print_ .=$this->printRegimenPermanencia();
             // $print_ .=printCentroAdministrativo($id_programa);
-            $print_ .=$this->printRegimenPermanencia();
+            
         //    $print_ .=$this->printPlazas();
         }catch(Exception $e){
             echo 'Excepci贸n capturada articulos-programa路php print_tab_descripcion:: ',  $e->getMessage(), "\n";
@@ -192,6 +193,12 @@ class Articulos_Programa_View {
         $print_ .= "<td>".$this->fix_email($email)."</td>";
         $print_ .= "</tr>";
         
+        $print_ .= "<tr>";
+        $print_ .= "<td>";
+        $print_ .= "<b>Dedicaci&oacute;n</b>";
+        $print_ .= "</td>";
+        $print_ .= "<td>Tiempo completo y tiempo parcial <i>(<a href='../../estudios/acceso/regimen-permanencia'>m&aacute;s informaci&oacute;n</a>)</i></td>";
+        $print_ .= "</tr>";
         
         $print_ .="</tbody>";
         $print_ .="</table>";
