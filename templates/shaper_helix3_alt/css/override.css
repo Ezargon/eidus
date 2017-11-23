@@ -182,3 +182,13 @@ div.modbpcounter span.label
 {
 	padding:10px 0px !important;
 }
+.panel-heading
+{
+	padding: 5px 15px !important;
+	color:#444 !important;
+}
+.accordion-heading h4 a
+{
+	font-size:15px !important;
+	line-height:21px !important;
+}
