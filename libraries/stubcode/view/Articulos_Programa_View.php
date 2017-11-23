@@ -143,14 +143,14 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Nivel</h5>";
+        $print_ .= "<b>Nivel</b>";
         $print_ .= "</td>";
         $print_ .= "<td>Doctorado</td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>C&oacute;digo ISCED1</h5>";
+        $print_ .= "<b>C&oacute;digo ISCED1</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$isced1."</td>";
         $print_ .= "</tr>";
@@ -158,14 +158,14 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>C&oacute;digo ISCED2</h5>";
+        $print_ .= "<b>C&oacute;digo ISCED2</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$isced2."</td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Rama</h5>";
+        $print_ .= "<b>Rama</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$rama."</td>";
         $print_ .= "</tr>";
@@ -173,21 +173,21 @@ class Articulos_Programa_View {
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>C&oacute;digo UXXI</h5>";
+        $print_ .= "<b>C&oacute;digo UXXI</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$codigo."</td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Web oficial</h5>";
+        $print_ .= "<b>Web oficial</b>";
         $print_ .= "</td>";
         $print_ .= "<td><a href='".$web."' title='".$web."'>".$web."</a></td>";
         $print_ .= "</tr>";
         
         $print_ .= "<tr>";
         $print_ .= "<td>";
-        $print_ .= "<h5>Email</h5>";
+        $print_ .= "<b>Email</b>";
         $print_ .= "</td>";
         $print_ .= "<td>".$this->fix_email($email)."</td>";
         $print_ .= "</tr>";
@@ -244,7 +244,7 @@ class Articulos_Programa_View {
             
             $print_ .= "<tr>";
             $print_ .= "<td>";
-            $print_ .= "<h5>".$cargo."</h5>";
+            $print_ .= "<b>".$cargo."</b>";
             $print_ .= "</td>";
             
             
