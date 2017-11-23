@@ -1,7 +1,7 @@
 <?php
 
 const TABLA_ID = "cursos_";
-const HREF_IMPRESO = "impresos/Instrucciones_formacion_doctoral.pdf";
+const HREF_IMPRESO = "impresos/Instrucciones_formacion_doctoral.pdf"; 
 const HREF_AFOROS = "https://sfep.us.es/wsfep/sfep/cursos_aforos.html";
 
 const TABLA_HEAD = ['Inicio', 'Fin', 'Nombre de la acci&oacute;n formativa', 'Localizaci&oacute;n', 'Gestion', 'Enlace'];

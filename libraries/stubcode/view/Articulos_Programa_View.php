@@ -1,6 +1,6 @@
 <?php
 require_once('libraries/stubcode/model/Programa.php');
-
+const HREF_IMPRESO_ADMISION = "impresos/admision/"; 
 class Articulos_Programa_View {
 
     
@@ -374,7 +374,8 @@ class Articulos_Programa_View {
         try {
             $print_ .=$this->printPlazas();
             $print_ .=$this->printCentroAdministrativo();
-            $print_ .=$this->printPerfilIngreso();
+            $print_ .=$this->printEnlacePDF();
+         //   $print_ .=$this->printPerfilIngreso();
             
         }catch(Exception $e){
             echo 'Excepci贸n capturada articulos-programa路php print_tab_acceso:: ',  $e->getMessage(), "\n";
@@ -382,6 +383,17 @@ class Articulos_Programa_View {
             return $print_;
         }
         
+    }
+    /**
+     * Imprime el enlace donde se encuentra el documento de Acceso.
+     */
+    private function printEnlacePDF(){
+        $print_ = "";
+        $print_ .= "<h3>Ficha formato PDF</h3>";
+        $uxxi = $this->programa->getCodigo();
+        $print_ .= "<p><span><a href=\"".HREF_IMPRESO_ADMISION.$uxxi.".pdf\" target='_blank' class='pdf'>Descargar</a></span></p>";
+        $print_ .= "<br/>";
+        return $print_;
     }
     
     /**
