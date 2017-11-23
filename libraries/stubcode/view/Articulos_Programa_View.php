@@ -373,7 +373,7 @@ class Articulos_Programa_View {
         $print_ = "";
         try {
             $print_ .=$this->printPlazas();
-            $print_ .=$this->printCentroAdministrativo();
+            //$print_ .=$this->printCentroAdministrativo();
             $print_ .=$this->printEnlacePDF();
          //   $print_ .=$this->printPerfilIngreso();
             
