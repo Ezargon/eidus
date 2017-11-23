@@ -41,7 +41,7 @@ class Cita_Previa_Administrador_View
         return $print_;
     }
     private function creartabla(){
-        $TABLA_HEAD = ['Inicio', 'Fin', 'Nombre', 'Apellidos', 'Email', 'Telefono', 'Validada'];
+        $TABLA_HEAD = ['Hora', 'Nombre', 'Apellidos', 'Email', 'Telefono', 'Validada'];
         $print_ = "";
         $print_ .= "<table class=\"table table-hover\">";
         $print_.="<thead>";
@@ -60,8 +60,7 @@ class Cita_Previa_Administrador_View
             }
             
            
-            $print_.="<td>".$cita->getDstart()."</td>";
-            $print_.="<td>".$cita->getDtend()."</td>";
+            $print_.="<td>".substr($cita->getDstart(),10,-3)."</td>";
             $print_.="<td>".$cita->getNombre()."</td>";
             $print_.="<td>".$cita->getApellidos()."</td>";
             $print_.="<td>".$cita->getEmail()."</td>";
