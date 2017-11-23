@@ -43,9 +43,11 @@ class Pbbookinghelper
             if (isset($calendar->email)) $bcc[] = $calendar->email;
         }
         if (\JURI::base(true) != '') {
-            $url = str_replace(\JURI::base(true).'/','',\JURI::base()).\JRoute::_('index.php?option=com_pbbooking&task=pbbooking.validate&id='.$event->id.'&email='.$event->email);
+           // $url = str_replace(\JURI::base(true).'/','',\JURI::base()).\JRoute::_('index.php?option=com_pbbooking&task=pbbooking.validate&id='.$event->id.'&email='.$event->email);
+        	$url = str_replace(\JURI::base(true).'/','',\JURI::base()).\JRoute::_('/eidus/secretaria/cita-previa/pbbooking?task=pbbooking.validate&id='.$event->id.'&email='.$event->email);
         } else {
-            $url = preg_replace('/(.*)\/$/','$1',\JURI::base()).\JRoute::_('index.php?option=com_pbbooking&task=pbbooking.validate&id='.$event->id.'&email='.$event->email);
+            //$url = preg_replace('/(.*)\/$/','$1',\JURI::base()).\JRoute::_('index.php?option=com_pbbooking&task=pbbooking.validate&id='.$event->id.'&email='.$event->email);
+        	$url = preg_replace('/(.*)\/$/','$1',\JURI::base()).\JRoute::_('/eidus/secretaria/cita-previa/pbbooking?task=pbbooking.validate&id='.$event->id.'&email='.$event->email);
         }
 
         $urlstring = '<a href="'.$url.'">'.\JText::_('COM_PBBOOKING_VALIDATE_ANCHOR_TEXT')."</a>";
