@@ -1,5 +1,7 @@
 <?php
+defined('_JEXEC') or die('resticted aceess');
 require_once('libraries/stubcode/model/Programa.php');
+
 
 class Articulos_Programa_View {
 
