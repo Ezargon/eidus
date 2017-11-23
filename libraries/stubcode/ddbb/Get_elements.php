@@ -270,10 +270,6 @@ class Get_elements {
            
         $p->setContacto_administrativo($row_Programa["contacto_administrativo"]);
         $p->setOrganos_participantes($row_Programa["organos_participantes"]);
-        $p->setPerifl_ingreso($row_Programa["perfil_ingreso"]);
-        $p->setRequisitos_criterios($row_Programa["requisitos_criterios"]);
-        $p->setDoc_especifica($row_Programa["doc_especifica"]);
-        $p->setComplementos_formativos($row_Programa["complementos_formativos"]);
         $p->setContacto_academico($row_Programa["contacto_academico"]);
         
     
