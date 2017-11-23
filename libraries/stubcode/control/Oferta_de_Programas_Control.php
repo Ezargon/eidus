@@ -1,5 +1,5 @@
 <?php
-
+defined('_JEXEC') or die('resticted aceess');
 include JPATH_BASE.'/libraries/stubcode/view/Oferta_de_Programa_View.php';
 include JPATH_BASE.'/libraries/stubcode/ddbb/Get_elements.php';
 

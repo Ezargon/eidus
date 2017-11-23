@@ -44,7 +44,7 @@ class Oferta_de_Programa_View {
     private $array_ramas = array();
     
     public function __construct($programas){
-        $array_rama = array();
+        
         $this->programas = $programas;
         //INICIZA
         foreach($programas as $programa){
@@ -53,17 +53,14 @@ class Oferta_de_Programa_View {
             if (!in_array($rama, $this->array_ramas)) {
                 array_push ( $this->array_ramas ,$rama );
             }
+            $array_rama__ = array();
             
             if(isset($this->array_programa_ramas[$rama])){
-                $array_rama = $this->array_programa_ramas[$rama];
+                $array_rama__ = $this->array_programa_ramas[$rama];
             }
-            
-            
-            if($array_rama === null){
-                $array_rama = array();
-            }
-            array_push ($array_rama ,$programa );
-            $this->array_programa_ramas[$rama] = $array_rama;  
+        
+            array_push ($array_rama__ ,$programa );
+            $this->array_programa_ramas[$rama] = $array_rama__;  
          
         }
     
@@ -74,9 +71,7 @@ class Oferta_de_Programa_View {
         $print_ = "";
         $print_ .= $this->cabecera($curso);
         $print_ .= $this->createTable($curso);
-      
-        
-        
+
         echo  $print_;
     }
     
@@ -97,6 +92,7 @@ class Oferta_de_Programa_View {
         $print_.="</tr>";
         $print_.="</thead>";
         $print_.="</table>";*/
+        asort($this->array_ramas);
         foreach ($this->array_ramas as $rama){
             $print_ .= "<h2>".$rama."</h2>";
             $array_programas = $this->array_programa_ramas[$rama];
@@ -112,7 +108,7 @@ class Oferta_de_Programa_View {
                 $plaza = $plaza__[$curso];
     
                 $print_.="<tr>";
-                $print_.="<td width=\"70%\">"."<a href=\"/eidus/estudios/oferta-programas/".ENLACES[$codigo]."\">".$denominacion."</a>"."</td>";
+                $print_.="<td width=\"70%\">"."<a href=\"/eidus/estudios/programas-de-doctorado/".ENLACES[$codigo]."\">".$denominacion."</a>"."</td>";
                 $print_.="<td width=\"30%\">".$plaza->getTotal()." plazas</td>";
                 $print_.="</tr>";
              

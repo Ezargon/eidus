@@ -133,7 +133,7 @@ class Get_elements {
         $db = JFactory::getDbo();
         $query = $db->getQuery(true);
         $query->select('*');
-        $query->from($db->quoteName('tolteca-fabrik.programas'));
+        $query->from($db->quoteName('tolteca-fabrik.programas'))->order($db->quoteName('denominacion') . 'ASC');
        // $query
         
         $db->setQuery($query);

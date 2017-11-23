@@ -29,7 +29,7 @@ class Articulos_Programa_View {
         $print_ .= "<li><a href='#acceso' data-toggle='tab'>Acceso al programa</a></li>";
         $print_ .= "<li><a href='#lineas' data-toggle='tab'>L&iacute;neas de investigaci&oacute;n y profesores</a></li>";
         $print_ .= "<li><a href='#contacto' data-toggle='tab'>Contacto</a></li>";
-        //$print_ .= "<li><a href='#reglamento' data-toggle='tab'>Reglamento relativo a la Tesis Doctoral</a></li>";
+        $print_ .= "<li><a href='#reglamento' data-toggle='tab'>Reglamento relativo a la Tesis Doctoral</a></li>";
         $print_ .= "</ul>";
         $print_ .= "<div class='tab-content pill-content'>";
         /**
@@ -58,11 +58,11 @@ class Articulos_Programa_View {
         $print_ .="</div>";
         /**
          * Tab #reglamento
-        
+         */
         $print_ .="<div id='reglamento' class='tab-pane fade'>";
         $print_ .=$this->print_tab_reglamento();
         $print_ .="</div>";
-         */
+        
         $print_ .="</div>";
         
         return $print_;
