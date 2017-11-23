@@ -389,9 +389,9 @@ class Articulos_Programa_View {
      */
     private function printEnlacePDF(){
         $print_ = "";
-        $print_ .= "<h3>M&aacute;s informaci&oacute;n admisi&oacute;n</h3>";
+        $print_ .= "<h3>Perfil de ingreso, requisitos y criterios de admisi&oacute;n</h3>";
         $uxxi = $this->programa->getCodigo();
-        $print_ .= "<p>Descargar la siguiente ficha para m&aacute;s información sobre perfil de ingreso, requisitos y criterios de admisión, documentación específica y complementos de formación: <span><a href=\"".HREF_IMPRESO_ADMISION.$uxxi.".pdf\" target='_blank' class='pdf'>Descargar</a></span></p>";
+        $print_ .= "<p>Para m&aacute;s informaci&oacute;n sobre perfil de ingreso, requisitos y criterios de admisi&oacute;n, documentaci&oacute;n espec&iacute;fica y complementos de formaci&oacute;n descargar la siguiente ficha: <span><a href=\"".HREF_IMPRESO_ADMISION.$uxxi.".pdf\" target='_blank' class='pdf'>Descargar ficha admisi&oacute;n (PDF)</a></span></p>";
         $print_ .= "<br/>";
         return $print_;
     }
