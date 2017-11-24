@@ -161,12 +161,13 @@ div.modbpcounter span.label
 }
 .sppb-carousel-text
 {
-	color:white;
+	color:white !important;
 	text-shadow:2px 2px #333;
 
 }
 .sppb-carousel-text h2
 {
+	color:white !important;
 	font-size:42px;
 }
 .sppb-carousel-text div
