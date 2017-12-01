@@ -108,9 +108,7 @@ class FlatModLatestView extends DefaultModLatestView
 			$content .=$this->modparams->get("modlatest_templatebottom") ? $this->modparams->get("modlatest_templatebottom") : "</table>\n";
 		}
 
-		$callink_HTML = '<div class="mod_events_latest_callink">'
-		.$this->getCalendarLink()
-		. '</div>';
+		$callink_HTML = '<center><a class="boton-noticias sppb-btn sppb-btn-default sppb-btn-md" href="/eidus/secretaria/calendario">Ver el Calendario Completo</a></center>';
 
 		if ($this->linkToCal == 1) $content = $callink_HTML . $content;
 		if ($this->linkToCal == 2) $content .= $callink_HTML;
