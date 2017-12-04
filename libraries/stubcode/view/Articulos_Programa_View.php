@@ -497,10 +497,10 @@ class Articulos_Programa_View {
                     $email = $this->fix_email($profesor->getEmail());
                     $sisius_id = $profesor->getSisiusid();
                     
-                    $email = "<a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_solmail.php?idpers=".$sisius_id."\">Solicitar correo</a>";
-                    
+                                  
                     if (strcmp($sisius_id, 0) !== 0) {
-                        $print_ .= "<li><a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_showpub.php?idpers=".$sisius_id."\">".$apellidos.", ".$nombre." (".$email .")</a></li>";
+                    	$email = "<i>(<a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_solmail.php?idpers=".$sisius_id."\">Solicitar email</a>)</i>";
+                        $print_ .= "<li><a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_showpub.php?idpers=".$sisius_id."\">".$apellidos.", ".$nombre."</a> - ".$email ."</li>";
                     //    $print_ .= "<li value=\"".$li_value."\">".$apellidos.", ".$nombre." (".$email .")</li>";
                     }else{
                         $print_ .= "<li>".$apellidos.", ".$nombre."</li>";
