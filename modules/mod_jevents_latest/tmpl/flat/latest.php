@@ -79,22 +79,24 @@ class FlatModLatestView extends DefaultModLatestView
 							}
 							else if (strpos($token,'${')!==false){
 								$match = $token;
+								
 							}
 							else {
 								$eventcontent .= $token;
 								continue;
 							}
-
-							$this->processMatch($eventcontent, $match, $dayEvent, $dateParm,$relDay);
+							$this->processMatch($eventcontent, $match, $dayEvent, $dateParm, $relDay);
+							//$this->processMatch($eventcontent, $match, $dayEvent, $dateParm, $relDay);
 						} // end of foreach
 					} // end of foreach
 
 					$dst = "border-color:".$dayEvent->bgcolor();
-					if($firstTime) $eventrow = '<tr><td class="mod_events_latest_first" style="'.$dst.'">%s'."</td></tr>\n";
+					if($firstTime) $eventrow = '<ul class="category-module"><li><i class="fa fa-angle-right fa-2x pull-left" style="margin:10px 10px 20px 0px;"></i><div>%s'."</div></li></ul>";
 					else $eventrow = '<tr><td class="mod_events_latest" style="'.$dst.'">%s'."</td></tr>\n";
 
 					$templaterow = $this->modparams->get("modlatest_templaterow") ? $this->modparams->get("modlatest_templaterow")  : $eventrow;
 					$content .= str_replace("%s", $eventcontent , $templaterow);
+					//echo $eventcontent;
 
 					$firstTime=false;
 				} // end of foreach

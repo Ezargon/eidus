@@ -1141,7 +1141,7 @@ SCRIPT;
 				if (!$this->disableDateStyle)
 					$content .= '<span class="mod_events_latest_date">';
 
-				if (!$dayEvent->alldayevent() && $match == "endDate" && (($dayEvent->noendtime() && ($dayEvent->getUnixStartDate() == $dayEvent->getUnixEndDate())) || $dayEvent->getUnixStartTime() == $dayEvent->getUnixEndTime()))
+				if (!$dayEvent->alldayevent() && $match == "duration" && (($dayEvent->noendtime() && ($dayEvent->getUnixStartDate() == $dayEvent->getUnixEndDate())) || $dayEvent->getUnixStartTime() == $dayEvent->getUnixEndTime()))
 				{
 					$time_fmt = "";
 				}
@@ -1209,7 +1209,7 @@ SCRIPT;
 					}
 				}
 				if (!$this->disableTitleStyle)
-					$content .= '<span class="mod_events_latest_content">';
+					$content .= '<br><a class="mod-articles-category-title" href="%s"'.">";
 				if ($this->displayLinks)
 				{
 					$link = $dayEvent->viewDetailLink($ev_year, $ev_month, $ev_day, false, $this->myItemid);
@@ -1228,7 +1228,10 @@ SCRIPT;
 					$content .= JEventsHTML::special($title);
 				}
 				if (!$this->disableTitleStyle)
-					$content .= '</span>';
+					//echo $link;
+					//$content .= 'Hola';
+					//echo $content;
+					$content .= '</a>';
 				break;
 
 			case 'category':
@@ -1648,7 +1651,7 @@ SCRIPT;
 		{
 			$task = "month.calendar";
 		}
-		return $this->_htmlLinkCloaking(JRoute::_("index.php?option=" . JEV_COM_COMPONENT . "&Itemid=" . $this->myItemid . "&task=" . $task . $this->catout, true), JText::_('JEV_CLICK_TOCOMPONENT'));
+		return $this->_htmlLinkCloaking(JRoute::_("index.php?option=" . JEV_COM_COMPONENT . "&Itemid=" . $this->myItemid . "&task=" . $task . $this->catout, true), 'Ver el Calendario Completo');
 
 	}
 
