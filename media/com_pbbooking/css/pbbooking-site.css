@@ -1,10 +1,14 @@
 /** jpdm-i */
 #pbbooking th{
-	background-color: #881435;
+	background-color: #666;
 	 border: 1px solid black;
+	 color:#fff;
 }
 /** jpdm-f */
-
+#pbbooking th a
+{
+	color:#fff;
+}
 .pbbooking.singlepage table#pbbooking {
 	border-spacing: 0px;
 	border-collapse: collapse;
@@ -209,7 +213,7 @@
 }
 
 .pbbooking.singlepage #pbbooking td.fully-booked {
-	background-color: #881435;
+	background-color: #9D2235;
 }
 
 .pbbooking.singlepage table#pbbooking-survey-table {
@@ -262,10 +266,10 @@
 
 .pbbooking.multipage table#pbbooking td, .pbbooking.multipage table#pbbooking th
 	{
-	height: 2em;
-	padding: 1em;
+	height: 20px;
+	padding: 5px;
 	text-align: center;
-	line-height: 2em
+	line-height: 20px;
 
 }
 

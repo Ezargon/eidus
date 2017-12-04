@@ -503,7 +503,7 @@ class Articulos_Programa_View {
                         $print_ .= "<li><a rel=\"nofollow\" target= \"blank\" href=\"https://investigacion.us.es/sisius/sis_showpub.php?idpers=".$sisius_id."\">".$apellidos.", ".$nombre." (".$email .")</a></li>";
                     //    $print_ .= "<li value=\"".$li_value."\">".$apellidos.", ".$nombre." (".$email .")</li>";
                     }else{
-                        $print_ .= "<li><a>".$apellidos.", ".$nombre."</a></li>";
+                        $print_ .= "<li>".$apellidos.", ".$nombre."</li>";
                  //       $print_ .= "<li value=\"".$li_value."\">".$apellidos.", ".$nombre."</li>";
                     }
                   
