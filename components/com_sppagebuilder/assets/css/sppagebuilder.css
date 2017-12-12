@@ -1186,7 +1186,7 @@ a.sppb-btn.disabled,fieldset[disabled] a.sppb-btn {pointer-events: none}
 .sppb-btn-default {
 	color: #010101;
 	background-color: #eff1f4;
-	border-color: #eff1f4
+	/*border-color: #eff1f4*/
  }
  
 	.sppb-btn-default.sppb-btn-3d {border-bottom-color: #d7dadd}
