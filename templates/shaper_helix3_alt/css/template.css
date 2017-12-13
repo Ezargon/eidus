@@ -2164,7 +2164,7 @@ ul.social-icons >li a {
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 #sp-main-body {
-  padding: 0px;
+  padding: 15px 0;
 }
 .com-sppagebuilder #sp-main-body {
   padding: 0;
@@ -3434,3 +3434,13 @@ table.category tbody >tr td {
     font-size: 90%;
   }
 }
+
+a[href$=".doc"], a[href$=".docx"], a[href$=".pdf"]
+{
+   background-position: left center;
+   background-repeat: no-repeat;
+   height: 18px;
+   line-height: 20px;
+   padding: 5px 5px 5px 20px;}
+a[href$=".doc"], a[href$=".docx"]{background-image: url("../images/word.gif");}
+a[href$=".pdf"]{background-image: url("../images/pdf.gif");}
