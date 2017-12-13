@@ -226,10 +226,10 @@ class DefaultModLatestView
 		else
 		{
 			if (strpos($link, "tmpl=component")){
-				return '<a href="' . $link . '" ' . $class . '  >' . $text . '</a>';
+				return '<a class="mod-articles-category-title" href="' . $link . '" ' . $class . '  >' . $text . '</a>';
 			}
 			else {
-				return '<a href="' . $link . '" ' . $class . ' target="_top" >' . $text . '</a>';
+				return '<a class="mod-articles-category-title" href="' . $link . '" ' . $class . ' target="_top" >' . $text . '</a>';
 			}
 		}
 
@@ -1139,7 +1139,7 @@ SCRIPT;
 				// necessary.  Do this later when script is debugged.
 
 				if (!$this->disableDateStyle)
-					$content .= '<span class="mod_events_latest_date">';
+					$content .= '<span class="mod-articles-category-date">';
 
 				if (!$dayEvent->alldayevent() && $match == "duration" && (($dayEvent->noendtime() && ($dayEvent->getUnixStartDate() == $dayEvent->getUnixEndDate())) || $dayEvent->getUnixStartTime() == $dayEvent->getUnixEndTime()))
 				{
@@ -1209,7 +1209,7 @@ SCRIPT;
 					}
 				}
 				if (!$this->disableTitleStyle)
-					$content .= '<br><a class="mod-articles-category-title" href="%s"'.">";
+					//$content .= '<br><a class="mod-articles-category-title" href="%s"'.">";
 				if ($this->displayLinks)
 				{
 					$link = $dayEvent->viewDetailLink($ev_year, $ev_month, $ev_day, false, $this->myItemid);
