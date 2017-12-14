@@ -469,7 +469,7 @@ class Get_elements {
         ->join('LEFT', $db->quoteName('tolteca-fabrik.lineas_invitados', 'pi') . ' ON (' . $db->quoteName('pr.id') . ' = ' . $db->quoteName('pi.invitados') . ')')
         ->join('INNER', $db->quoteName('tolteca-fabrik.lineas', 'l') . ' ON (' . $db->quoteName('l.id') . ' = ' . $db->quoteName('pl.parent_id') . ')')
         //->join('INNER', $db->quoteName('eidus-fabrik.t_programas', 'pr') . ' ON (' . $db->quoteName('pr.id') . ' = ' . $db->quoteName('l.programa') . ')')
-        ->order($db->quoteName('pl.id') . 'ASC')
+        //->order($db->quoteName('pr.id') . 'ASC')
         ->order($db->quoteName('pr.apellido1') . 'ASC')
         ->where($db->quoteName('l.programa') .'='.$id_programa);
         
