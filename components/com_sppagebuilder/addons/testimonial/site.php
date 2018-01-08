@@ -193,7 +193,9 @@ class SppagebuilderAddonTestimonial extends SppagebuilderAddons {
 						<a {{ link_target }} href=\'{{{ reviewer_link }}}\'>
 					<# } #>
 
-					<# if (avatar) { #>
+					<# if (avatar && avatar.indexOf("https://") == -1 && avatar.indexOf("http://") == -1) { #>
+						<img class="{{ avatar_shape }} sppb-addon-testimonial-avatar" src=\'{{ pagebuilder_base + data.avatar }}\' width="{{ data.avatar_width }}" height="{{ data.avatar_width }}" alt="{{ data.name }}">
+					<# } else if(avatar){ #>
 						<img class="{{ avatar_shape }} sppb-addon-testimonial-avatar" src=\'{{ data.avatar }}\' width="{{ data.avatar_width }}" height="{{ data.avatar_width }}" alt="{{ data.name }}">
 					<# } #>
 

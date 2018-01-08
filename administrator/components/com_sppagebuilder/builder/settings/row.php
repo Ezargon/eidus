@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 $row_settings = array(
 	'type' 	=> 'content',
@@ -52,12 +52,14 @@ $row_settings = array(
 			),
 
 			'title_fontsize'=>array(
-				'type'=>'number',
+				'type'=>'slider',
 				'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_TITLE_FONT_SIZE'),
 				'std'=>'',
 				'depends' => array(
 					array('title', '!=', ''),
 				),
+				'responsive' => true,
+				'max'=>500
 			),
 
 			'title_fontweight'=>array(
@@ -84,6 +86,7 @@ $row_settings = array(
 				'depends' => array(
 					array('title', '!=', ''),
 				),
+				'responsive' => true
 			),
 
 			'title_margin_bottom'=>array(
@@ -93,6 +96,7 @@ $row_settings = array(
 				'depends' => array(
 					array('title', '!=', ''),
 				),
+				'responsive' => true
 			),
 
 			'separator2'=>array(
@@ -108,10 +112,10 @@ $row_settings = array(
 			),
 
 			'subtitle_fontsize'=>array(
-				'type'=>'number',
+				'type'=>'slider',
 				'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SUB_TITLE_FONT_SIZE'),
 				'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_SUB_TITLE_FONT_SIZE_DESC'),
-				'std'=>'',
+				'responsive'=>true,
 				'depends' => array(
 					array('subtitle', '!=', ''),
 				),
@@ -129,11 +133,11 @@ $row_settings = array(
 				'std'=>'sppb-text-center',
 			),
 
-			'columns_equal_height'=>array(
+			'columns_align_center'=>array(
 				'type'=>'checkbox',
-				'title'=>JText::_('COM_SPPAGEBUILDER_ROW_COLUMNS_EQUAL_HEIGHT'),
-				'desc'=>JText::_('COM_SPPAGEBUILDER_ROW_COLUMNS_EQUAL_HEIGHT_DESC'),
-				'std'=>0,
+				'title'=>JText::_('COM_SPPAGEBUILDER_ROW_COLUMNS_ALIGN_CENTER'),
+				'desc'=>JText::_('COM_SPPAGEBUILDER_ROW_COLUMNS_ALIGN_CENTER_DESC'),
+				'std'=>0
 			),
 
 			'fullscreen'=>array(
@@ -172,6 +176,7 @@ $row_settings = array(
 				'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_PADDING_DESC'),
 				'std'=>'50px 0px 50px 0px',
 				'placeholder'=>'10px 10px 10px 10px',
+				'responsive' => true
 			),
 
 			'margin'=>array(
@@ -180,6 +185,7 @@ $row_settings = array(
 				'desc'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_MARGIN_DESC'),
 				'std'=>'0px 0px 0px 0px',
 				'placeholder'=>'10px 10px 10px 10px',
+				'responsive' => true
 			),
 
 			'color'=>array(
@@ -197,6 +203,7 @@ $row_settings = array(
 				'format'=>'image',
 				'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BACKGROUND_IMAGE'),
 				'std'=>'',
+				'show_input' => true
 			),
 
 			'overlay'=>array(
@@ -277,18 +284,23 @@ $row_settings = array(
 				'std'=>'0',
 			),
 
+
 			'background_video_mp4'=>array(
 				'type'=>'media',
 				'format'=>'video',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ROW_BACKGROUND_VIDEO_MP4'),
-				'depends'=>array('background_video'=>1)
+				'depends'=>array(
+					array('background_video','=',1),
+				)
 			),
 
 			'background_video_ogv'=>array(
 				'type'=>'media',
 				'format'=>'video',
 				'title'=>JText::_('COM_SPPAGEBUILDER_ROW_BACKGROUND_VIDEO_OGV'),
-				'depends'=>array('background_video'=>1)
+				'depends'=>array(
+					array('background_video','=',1),
+				)
 			),
 
 		),

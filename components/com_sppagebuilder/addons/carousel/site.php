@@ -655,7 +655,9 @@ class SppagebuilderAddonCarousel extends SppagebuilderAddons {
 						classNames += " sppb-item-"+data.id+""+key;
 					#>
 					<div class="sppb-item {{ classNames }}">
-						<# if(carousel_item.bg){ #>
+						<# if(carousel_item.bg && carousel_item.bg.indexOf("http://") == -1 && carousel_item.bg.indexOf("https://") == -1){ #>
+							<img src=\'{{ pagebuilder_base + carousel_item.bg }}\' alt="{{ carousel_item.title }}">
+						<# } else if(carousel_item.bg){ #>
 							<img src=\'{{ carousel_item.bg }}\' alt="{{ carousel_item.title }}">
 						<# } #>
 						<div class="sppb-carousel-item-inner">

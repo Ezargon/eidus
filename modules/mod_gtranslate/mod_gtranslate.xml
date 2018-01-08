@@ -7,7 +7,7 @@
     <license>GNU/GPL v3 http://www.gnu.org/licenses/gpl.html</license>
     <authorEmail>edo888@gmail.com</authorEmail>
     <authorUrl>https://gtranslate.io</authorUrl>
-    <version>3.7.3</version>
+    <version>3.7.4</version>
     <description>
     <![CDATA[
     <span style='font-weight:normal;text-align:left;font-size:120%;line-height:1.5;'>
@@ -29,7 +29,7 @@
     </ul>
 
     <p><a href='https://gtranslate.io/?xyz=997#pricing' target='_blank' class='btn btn-large btn-success'><i class='icon-info-2'></i> Plans &amp; Pricing</a> &nbsp; <a href='https://gtranslate.io/?xyz=997#faq' target='_blank' class='btn btn-large btn-primary'><i class='icon-info'></i> FAQ</a> &nbsp; <a href='https://gtranslate.io/docs/54-joomla-module-documentation' target='_blank' class='btn btn-large btn-info'><i class='icon-support'></i> Documentation</a> &nbsp; <a href='http://extensions.joomla.org/extensions/extension/languages/automatic-translations/gtranslate#reviews' target='_blank' class='btn btn-large btn-warning'><i class='icon-comments'></i> Reviews</a></p>
-    <p><b>Version: 3.7.3</b><br/>Copyright &copy; 2008 - 2017 Edvard Ananyan, All rights reserved. <a href='https://gtranslate.io/?xyz=997' target='_blank'><b>http://gtranslate.io</b></a></p>
+    <p><b>Version: 3.7.4</b><br/>Copyright &copy; 2008 - 2017 Edvard Ananyan, All rights reserved. <a href='https://gtranslate.io/?xyz=997' target='_blank'><b>http://gtranslate.io</b></a></p>
     </span>
     ]]>
     </description>
@@ -55,10 +55,11 @@
                     <option value="flags">Flags</option>
                     <option value="dropdown">Drop down list</option>
                     <option value="dropdown_with_flags">Nice dropdown with flags</option>
-                    <option value="flags_name">(new) Flags with language name</option>
-                    <option value="flags_code">(new) Flags with language code</option>
-                    <option value="lang_names">(new) Language names</option>
-                    <option value="lang_codes">(new) Language codes</option>
+                    <option value="flags_name">Flags with language name</option>
+                    <option value="flags_code">Flags with language code</option>
+                    <option value="lang_names">Language names</option>
+                    <option value="lang_codes">Language codes</option>
+                    <option value="popup">(beta) Popup</option>
                 </field>
                 <field name="language" type="list" default="en" label="Site Language" description="Your site's native language">
                     <option value="af">Afrikaans</option>

@@ -11,7 +11,7 @@
  *
  * @since version 2.0
  */
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 class SppbSettingsAjax {
 

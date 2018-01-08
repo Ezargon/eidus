@@ -7,17 +7,14 @@
 	<authorUrl>http://www.joomshaper.com</authorUrl>
 	<copyright>Copyright @ 2010 - 2017 JoomShaper. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later</license>
-	<version>2.5.4</version>
+	<version>3.0.4</version>
 	<scriptfile>installer.script.php</scriptfile>
-
-	<updateservers>
-		<server type="extension" priority="1" name="SP Page Builder">http://www.joomshaper.com/updates/com-sp-page-builder-free.xml</server>
-	</updateservers>
 
 	<install>
 		<sql>
 			<file driver="mysql" charset="utf8">sql/install/mysql/install.mysql.utf8.sql</file>
 			<file driver="mysql">sql/install/mysql/install.mysql.utf8.sql</file>
+
 			<file driver="mysqli" charset="utf8">sql/install/mysql/install.mysql.utf8.sql</file>
 			<file driver="mysqli">sql/install/mysql/install.mysql.utf8.sql</file>
 		</sql>
@@ -44,13 +41,13 @@
 		<folder>layouts</folder>
 	</files>
 
-	<media destination="com_sppagebuilder" folder="media">
-		<folder>images</folder>
-	</media>
-
 	<languages folder="language/site">
 		<language tag="en-GB">en-GB/en-GB.com_sppagebuilder.ini</language>
 	</languages>
+
+    <modules>
+		<module module="mod_sppagebuilder" client="site" />
+	</modules>
 
 	<administration>
 		<menu>COM_SPPAGEBUILDER</menu>

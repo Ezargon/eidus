@@ -140,7 +140,11 @@ class SppagebuilderAddonImage extends SppagebuilderAddons{
 							<a target="{{ data.target }}" href=\'{{ data.link }}\'>
 						<# } #>
 
-						<img class="sppb-img-responsive" src=\'{{ data.image }}\' alt="{{ alt_text }}" title="{{ data.title }}">
+						<# if(data.image.indexOf("http://") == -1 && data.image.indexOf("https://") == -1){ #>
+							<img class="sppb-img-responsive" src=\'{{ pagebuilder_base + data.image }}\' alt="{{ alt_text }}" title="{{ data.title }}">
+						<# } else { #>
+							<img class="sppb-img-responsive" src=\'{{ data.image }}\' alt="{{ alt_text }}" title="{{ data.title }}">
+						<# } #><img class="sppb-img-responsive" src=\'{{ data.image }}\' alt="{{ alt_text }}" title="{{ data.title }}">
 
 						<# if(!open_lightbox) { #>
 							</a>

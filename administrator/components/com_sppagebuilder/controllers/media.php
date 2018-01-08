@@ -6,7 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
 //no direct accees
-defined ('_JEXEC') or die ('restricted access');
+defined ('_JEXEC') or die ('restricted aceess');
 
 jimport('joomla.application.component.controllerform');
 jimport( 'joomla.application.component.helper' );
@@ -88,6 +88,8 @@ class SppagebuilderControllerMedia extends JControllerForm {
                 $folder_root = 'media/attachments/';
               }
 
+              $report['type'] = $media_type;
+
               $folder = $folder_root . JHtml::_('date', $date, 'Y') . '/' . JHtml::_('date', $date, 'm') . '/' . JHtml::_('date', $date, 'd');
 
               if($dir != '') {
@@ -130,11 +132,13 @@ class SppagebuilderControllerMedia extends JControllerForm {
                   } else {
                     $image = new SppagebuilderHelperImage($dest);
                     if( ($image->width > 300) || ($image->height > 225) ) {
-                      $image->createThumb(array('300', '225'), '_spmedia_thumbs', $base_name, $ext);
+                      $image->createThumb(array('300', '300'), '_spmedia_thumbs', $base_name, $ext);
                       $report['src'] = JURI::root(true) . '/' . $folder . '/_spmedia_thumbs/' . $base_name . '.' . $ext;
                       $thumb = $folder . '/_spmedia_thumbs/'  . $base_name . '.' . $ext;
+                      $report['thumb'] = $thumb;
                     } else {
                       $report['src'] = JURI::root(true) . '/' . $src;
+                      $report['thumb'] = $src;
                     }
                   }
                 }
@@ -261,27 +265,17 @@ class SppagebuilderControllerMedia extends JControllerForm {
     $folder = $input->post->get('folder', '', 'STRING');
     $report = array();
     $report['status'] = false;
-    $report['output'] = JPATH_ROOT . $folder;
+    $fullname = JPATH_ROOT . $folder;
 
     if(!JFolder::exists(JPATH_ROOT . $folder)) {
       if(JFolder::create(JPATH_ROOT . $folder, 0755)) {
         $report['status'] = true;
-        $report['output']  = '<li class="sp-pagebuilder-media-folder sp-pagebuilder-media-to-folder" data-path="'. $folder .'">';
-        $report['output'] .= '<div>';
-        $report['output'] .= '<div>';
-        $report['output'] .= '<div>';
-        $report['output'] .= '<div>';
-        $report['output'] .= '<div>';
-        $report['output'] .= '<div>';
-        $report['output'] .= '<i class="fa fa-folder"></i>';
-        $report['output'] .= '</div>';
-        $report['output'] .= '</div>';
-        $report['output'] .= '</div>';
-        $report['output'] .= '</div>';
-        $report['output'] .= '</div>';
-        $report['output'] .= '<span class="sp-pagebuilder-media-title">' . basename($folder)  .'</span>';
-        $report['output'] .= '</div>';
-        $report['output'] .= '</li>';
+
+        $folder_info['name'] = basename($folder);
+        $folder_info['relname'] = $folder;
+        $folder_info['fullname'] = $fullname;
+        $report['output'] = $folder_info;
+
       } else {
         $report['output'] = JText::_('COM_SPPAGEBUILDER_MEDIA_MANAGER_FOLDER_CREATION_FAILED');
       }

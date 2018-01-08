@@ -70,9 +70,11 @@ class SppagebuilderAddonFeature extends SppagebuilderAddons {
 				$heading_class = ' sppb-media-heading';
 			}
 
+			$feature_title .= '<'.$heading_selector.' class="sppb-addon-title sppb-feature-box-title'. $heading_class .'">';
 			if( ($title_url && $url_appear == 'title') || ($title_url && $url_appear == 'both' ) ) $feature_title .= '<a href="'. $title_url .'">';
-			$feature_title .= '<'.$heading_selector.' class="sppb-addon-title sppb-feature-box-title'. $heading_class .'">' . $title . '</'.$heading_selector.'>';
+			$feature_title .= $title;
 			if(($title_url && $url_appear == 'title') || ($title_url && $url_appear == 'both' )) $feature_title .= '</a>';
+			$feature_title .= '</'.$heading_selector.'>';
 		}
 
 		//Feature Text
@@ -346,7 +348,11 @@ class SppagebuilderAddonFeature extends SppagebuilderAddons {
 					if( (data.title_url && data.url_appear == "icon") || (data.title_url && data.url_appear == "both" ) ){
 						media += \'<a href="\'+data.title_url+\'">\';
 					}
-					media  = \'<img class="sppb-img-responsive" src="\'+data.feature_image+\'" alt="\'+data.title+\'">\';
+					if(data.feature_image.indexOf("http://") != -1 || data.feature_image.indexOf("https://") != -1){
+						media  = \'<img class="sppb-img-responsive" src="\'+data.feature_image+\'" alt="\'+data.title+\'">\';
+					} else {
+						media  = \'<img class="sppb-img-responsive" src="\'+pagebuilder_base+data.feature_image+\'" alt="\'+data.title+\'">\';
+					}
 					if( (data.title_url && data.url_appear == "icon") || (data.title_url && data.url_appear == "both" ) ){
 						media += \'</a>\';
 					}
@@ -360,14 +366,15 @@ class SppagebuilderAddonFeature extends SppagebuilderAddons {
 				if( ( icon_image_position == "left" ) || ( icon_image_position == "right" ) ) {
 					heading_class = " sppb-media-heading";
 				}
-
-				if( (data.title_url && data.url_appear == "icon") || (data.title_url && data.url_appear == "both" ) ){
+				feature_title += \'<\'+data.heading_selector+\' class="sppb-addon-title sppb-feature-box-title  \'+heading_class+\'">\';
+				if( (data.title_url && data.url_appear == "title") || (data.title_url && data.url_appear == "both" ) ){
 					feature_title += \'<a href="\'+data.title_url+\'">\';
 				}
-				feature_title += \'<\'+data.heading_selector+\' class="sppb-addon-title sppb-feature-box-title  \'+heading_class+\'">\'+data.title+\'</\'+data.heading_selector+\'>\';
-				if( (data.title_url && data.url_appear == "icon") || (data.title_url && data.url_appear == "both" ) ){
+				feature_title += data.title;
+				if( (data.title_url && data.url_appear == "title") || (data.title_url && data.url_appear == "both" ) ){
 					feature_title += \'</a>\';
 				}
+				feature_title += \'</\'+data.heading_selector+\'>\';
 			}
 
 			var feature_text  = \'<div class="sppb-addon-text">\';
@@ -591,6 +598,15 @@ class SppagebuilderAddonFeature extends SppagebuilderAddons {
 					<# if(media) { #>
 						<div class="sppb-media">
 							<div class="pull-{{ icon_image_position }}">{{{ media }}}</div>
+							<div class="sppb-media-body">
+								<# if(data.title){ #>
+									{{{ feature_title }}}
+								<# } #>
+								{{{ feature_text }}}
+							</div>
+						</div>
+					<# } else { #>
+						<div class="sppb-media">
 							<div class="sppb-media-body">
 								<# if(data.title){ #>
 									{{{ feature_title }}}

@@ -113,7 +113,7 @@ class SppagebuilderAddonDivider extends SppagebuilderAddons {
 					border-bottom-color: {{ data.border_color }};
 				<# } else { #>
 					height: {{ data.divider_height }}px;
-					background-image: url({{ data.divider_image }});
+					background-image: url({{ pagebuilder_base + data.divider_image }});
 					background-repeat: {{ data.background_repeat }};
 				<# } #>
 			}

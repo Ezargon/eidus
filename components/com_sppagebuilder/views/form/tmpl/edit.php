@@ -244,7 +244,17 @@ if ($editor == 'jce') {
 			</div>
 		</div>
 	</div>
-	<iframe name="sp-pagebuilder-view" id="sp-pagebuilder-view" data-url="<?php echo JURI::base(true); ?>/index.php?option=com_sppagebuilder&amp;view=form&amp;id=<?php echo $this->item->id; ?>&amp;layout=edit-iframe&amp;Itemid=<?php echo $Itemid; ?>"></iframe>
+	<?php
+		$lang = '';
+		if (isset($this->item->language) && $this->item->language != '*') {
+			$lang_array = explode('-',$this->item->language);
+			$lang = '&lang='.$lang_array[0];
+		}
+
+		$iframe_url = JURI::root(true) . '/index.php?option=com_sppagebuilder&amp;view=form&amp;id=' . $this->item->id .'&amp;layout=edit-iframe&amp;Itemid='.$Itemid.$lang;
+		$iframe_sef_url = JRoute::_($iframe_url);
+	?>
+	<iframe name="sp-pagebuilder-view" id="sp-pagebuilder-view" data-url="<?php echo $iframe_sef_url; ?>"></iframe>
 	<div id="sp-pagebuilder-page-tools" class="sp-pagebuilder-page-tools"></div>
 </div>
 <div class="sp-pagebuilder-media-modal-overlay" style="display:none">
@@ -282,8 +292,10 @@ foreach ($newAddonList as $addon) {
 			}
 
 			var backgroundImage = '';
-			if(data.global_use_background && data.global_background_image){
+			if(data.global_use_background && data.global_background_image  && (data.global_background_image.indexOf('http://') != -1 || data.global_background_image.indexOf('https://') != -1)){
 				backgroundImage = 'url('+data.global_background_image+')';
+			} else if(data.global_use_background && data.global_background_image){
+				backgroundImage = 'url('+pagebuilder_base+data.global_background_image+')';
 			}
 
 			let borderWidth = '';

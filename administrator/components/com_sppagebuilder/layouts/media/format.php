@@ -41,7 +41,7 @@ if($item->type == 'image') {
 	$media .= '</div>';
 	$media .= '</div>';
 	$media .= '</div>';
-	$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-picture-o"></i> ' . $item->title . '.' . $ext .'</span>';
+	$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-picture-o"></i> ' . $item->title . '.' . $ext .'</span></span>';
 	$media .= '</div>';
 } else {
 
@@ -53,13 +53,13 @@ if($item->type == 'image') {
 		$media .= '<div>';
 		$media .= '<div class="sp-pagebuilder-media-video">';
 		$media .= '<i class="fa fa-film"></i>';
-		$media .= '<span>' . $ext . '</span>';
+		//$media .= '<span>' . $ext . '</span>';
 		$media .= '</div>';
 		$media .= '</div>';
 		$media .= '</div>';
 		$media .= '</div>';
 		$media .= '</div>';
-		$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-film"></i> ' . $item->title . '.' . $ext .'</span>';
+		$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-film"></i> ' . $item->title . '.' . $ext .'</span></span>';
 		$media .= '</div>';
 	} else if ($item->type == 'audio') {
 		$media .= '<div>';
@@ -69,13 +69,13 @@ if($item->type == 'image') {
 		$media .= '<div>';
 		$media .= '<div class="sp-pagebuilder-media-audio">';
 		$media .= '<i class="fa fa-music"></i>';
-		$media .= '<span>' . $ext . '</span>';
+		//$media .= '<span>' . $ext . '</span>';
 		$media .= '</div>';
 		$media .= '</div>';
 		$media .= '</div>';
 		$media .= '</div>';
 		$media .= '</div>';
-		$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-music"></i> ' . $item->title . '.' . $ext .'</span>';
+		$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-music"></i> ' . $item->title . '.' . $ext .'</span></span>';
 		$media .= '</div>';
 	} else if ($item->type == 'attachment') {
 
@@ -87,13 +87,12 @@ if($item->type == 'image') {
 			$media .= '<div>';
 			$media .= '<div class="sp-pagebuilder-media-attachment-document">';
 			$media .= '<i class="fa fa-file-word-o"></i>';
-			$media .= '<span>' . $ext . '</span>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
-			$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-file-word-o"></i> ' . $item->title . '.' . $ext .'</span>';
+			$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-file-word-o"></i> ' . $item->title . '.' . $ext .'</span></span>';
 			$media .= '</div>';
 		} elseif(($ext == 'key') || ($ext == 'ppt') || ($ext == 'pptx') || ($ext == 'pps') || ($ext == 'ppsx')) {
 			$media .= '<div>';
@@ -103,13 +102,12 @@ if($item->type == 'image') {
 			$media .= '<div>';
 			$media .= '<div class="sp-pagebuilder-media-attachment-presentation">';
 			$media .= '<i class="fa fa-file-powerpoint-o"></i>';
-			$media .= '<span>' . $ext . '</span>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
-			$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-file-powerpoint-o"></i> ' . $item->title . '.' . $ext .'</span>';
+			$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-file-powerpoint-o"></i> ' . $item->title . '.' . $ext .'</span></span>';
 			$media .= '</div>';
 		} elseif(($ext == 'xls') || ($ext == 'xlsx')) {
 			$media .= '<div>';
@@ -119,13 +117,12 @@ if($item->type == 'image') {
 			$media .= '<div>';
 			$media .= '<div class="sp-pagebuilder-media-attachment-excel">';
 			$media .= '<i class="fa fa-file-excel-o"></i>';
-			$media .= '<span>' . $ext . '</span>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
-			$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-file-excel-o"></i> ' . $item->title . '.' . $ext .'</span>';
+			$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-file-excel-o"></i> ' . $item->title . '.' . $ext .'</span></span>';
 			$media .= '</div>';
 		} elseif(($ext == 'pdf')) {
 			$media .= '<div>';
@@ -135,13 +132,12 @@ if($item->type == 'image') {
 			$media .= '<div>';
 			$media .= '<div class="sp-pagebuilder-media-attachment-pdf">';
 			$media .= '<i class="fa fa-file-pdf-o"></i>';
-			$media .= '<span>' . $ext . '</span>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
-			$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-file-pdf-o"></i> ' . $item->title . '.' . $ext .'</span>';
+			$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-file-pdf-o"></i> ' . $item->title . '.' . $ext .'</span></span>';
 			$media .= '</div>';
 		} elseif(($ext == 'zip')) {
 			$media .= '<div>';
@@ -151,13 +147,12 @@ if($item->type == 'image') {
 			$media .= '<div>';
 			$media .= '<div class="sp-pagebuilder-media-attachment-zip">';
 			$media .= '<i class="fa fa-file-archive-o"></i>';
-			$media .= '<span>' . $ext . '</span>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
 			$media .= '</div>';
-			$media .= '<span class="sp-pagebuilder-media-title"><i class="fa fa-file-archive-o"></i> ' . $item->title . '.' . $ext .'</span>';
+			$media .= '<span class="sp-pagebuilder-media-title"><span><i class="fa fa-file-archive-o"></i> ' . $item->title . '.' . $ext .'</span></span>';
 			$media .= '</div>';
 		}
 	}

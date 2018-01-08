@@ -41,22 +41,6 @@ $addon_global_settings = array(
 			'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BACKGROUND_IMAGE'),
 			'depends'=>array('global_use_background'=>1)
 		),
-		'global_use_overlay'=>array(
-			'type'=>'checkbox',
-			'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_ENABLE_BACKGROUND_OVERLAY'),
-			'std'=>0,
-			'depends'=>array(
-				array('global_use_background', '=', 1)
-			)
-		),
-		'global_background_overlay'=>array(
-			'type'=>'color',
-			'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BACKGROUND_OVERLAY'),
-			'depends'=>array(
-				array('global_use_background', '=', 1),
-				array('global_use_overlay', '=', 1)
-			)
-		),
 		'global_background_repeat'=>array(
 			'type'=>'select',
 			'title'=>JText::_('COM_SPPAGEBUILDER_GLOBAL_BACKGROUND_REPEAT'),
