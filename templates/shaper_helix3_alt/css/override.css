@@ -79,7 +79,7 @@ div.modbpcounter span.label
 .sppb-icon-container:hover, .sppb-addon-content > a:hover
 {
 	color:#9D2235 !important;
-	transition: color 300ms ease 0s, background-color 300ms ease 0s;
+	transition: color 200ms ease 0s, background-color 200ms ease 0s;
 }
 .sp-module ul > li.active > a::before
 {
@@ -88,12 +88,9 @@ div.modbpcounter span.label
 }
 .sp-module ul > li.active > a
 {
-	font-weight:600;
+	color: #9D2235;
 }
-.sp-module ul > li.active
-{
-	background:#f6f6f6;
-}
+
 .sppb-btn-default
 {
 	background-color:#9D2235;
