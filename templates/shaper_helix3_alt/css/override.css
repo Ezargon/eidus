@@ -134,12 +134,19 @@ div.modbpcounter span.label
 }
 .col-icono {
     text-align: center;
-    padding:10px;
+    padding:20px;
+    width:120px;
+    float:left;
 }
 .col-icono a,.col-icono h3
 {
 	color:#333;
 }
+.col-icono i
+{
+	font-size:52px;
+}
+
 .icons
 {
 	/*display:none;*/
