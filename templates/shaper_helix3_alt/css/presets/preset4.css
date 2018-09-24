@@ -91,7 +91,9 @@ blockquote {
   background: #9D2235;
 }
 #sp-footer {
-  background: #9D2235;
+  /*background: #9D2235;*/
+  background-color: #f5f5f5;
+
 }
 .sp-comingsoon body {
   background-color: #9D2235;

@@ -827,7 +827,7 @@ dl.article-info dd.hits span[class*=" icon-"] {
   display: inline-block;
   padding: 0 15px;
   line-height: 100px;
-  font-size: 17px;
+  font-size: 16px;
   /* text-transform: uppercase; */
  /* letter-spacing: 1px; */
   color: #000;
@@ -2167,6 +2167,7 @@ ul.social-icons >li a {
 }
 #sp-main-body {
   padding: 15px 0;
+
 }
 .com-sppagebuilder #sp-main-body {
   padding: 0;
@@ -2445,6 +2446,11 @@ article.item {
 .entry-header h2 a {
   color: #000;
 }
+article h2
+{
+	color:#9D2235;
+	font-size:24px !important;
+}
 .entry-link {
   padding: 100px 50px;
   position: relative;
@@ -2611,10 +2617,11 @@ article.item {
   font-size: 24px;
 }
 #sp-footer {
-  color: #fff;
+  color: #999999;  ;
   text-align: center;
   padding: 20px 0;
   background-position: 50px 50% !important;
+
 }
 #sp-footer a {
   color: rgba(255,255,255,0.9);
