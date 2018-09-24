@@ -2215,7 +2215,7 @@ ul.social-icons >li a {
 .sp-module:first-child {
   margin-top: 0;
 }
-.sp-module .sp-module-title {
+.sp-module .sp-module-title { 
   margin: 0 0 20px;
   font-size: 14px;
   line-height: 1;
