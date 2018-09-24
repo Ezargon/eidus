@@ -2238,7 +2238,7 @@ ul.social-icons >li a {
   padding: 5px 0;
   line-height: 36px;
   padding: 2px 0;
-  -webkit-transition: 300ms;
+  -webkit-transition: 300ms; 
   transition: 300ms;
 }
 .sp-module ul >li >a:hover {
