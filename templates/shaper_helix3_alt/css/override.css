@@ -69,13 +69,21 @@ span.nr
 }
 div.modbpcounter
 {
-	padding:15px;
 	text-align:center;
+	padding: 15px 0px;
+	
+	
 }
 div.modbpcounter span.label
 {
-	font-size:18px;
+	font-size:16px;
+	white-space: pre;
+	margin:0;
+	padding:0;
+
 }
+
+
 .sppb-icon-container:hover, .sppb-addon-content > a:hover
 {
 	color:#9D2235 !important;
