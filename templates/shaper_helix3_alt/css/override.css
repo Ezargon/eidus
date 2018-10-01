@@ -179,6 +179,10 @@ div.modbpcounter span.label
 	font-size:22px;
 		margin-bottom:15px;
 }
+.sppb-carousel-arrow i.fa
+{
+	font-size:65px !important;
+}
 .sp-page-title h2 {
     font-size: 24px !Important;
     line-height: 1;
