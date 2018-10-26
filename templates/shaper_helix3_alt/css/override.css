@@ -192,12 +192,17 @@ div.modbpcounter span.label
 	font-size:65px !important;
 }
 .sp-page-title h2 {
-    font-size: 24px !Important;
+    font-size: 36px !important;
     line-height: 1;
+}
+.breadcrumb
+{
+	font-size:20px !important;
+	margin-top:20px !important;
 }
 .sp-page-title
 {
-	padding:10px 0px !important;
+	padding:100px 0px !important;
 }
 .panel-heading
 {
