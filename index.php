@@ -20,6 +20,8 @@ if (version_compare(PHP_VERSION, JOOMLA_MINIMUM_PHP, '<'))
 $startTime = microtime(1);
 $startMem  = memory_get_usage();
 
+
+
 /**
  * Constant that is checked in included files to prevent direct access.
  * define() is used in the installation folder rather than "const" to not error for PHP 5.2 and lower
