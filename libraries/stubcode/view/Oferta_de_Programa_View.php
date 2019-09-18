@@ -76,7 +76,7 @@ class Oferta_de_Programa_View {
     }
     
     private function cabecera($curso){
-        return "<p>Los programas de doctorado regulados por el RD 99/2011 constituyen la oferta para estudiantes de nuevo ingreso para el <strong>curso ".$curso."</strong>&nbsp;en estudios de doctorado en la Universidad de Sevilla.</p>";
+        return "<p>Oferta de estudios de doctorado para estudiantes de nuevo ingreso para el <strong>curso ".$curso."</strong>.</p>";
     }
     private function createTable($curso){
         $TABLA_HEAD = ['Programa', 'Plazas '.$curso];
