@@ -28,7 +28,7 @@ function ___print(){
        //Creo la vista del Objeto de Actividades
     $view = new Oferta_de_Programa_View($programas);
     //Curso
-     $view->__print("2017/18");
+     $view->__print("2019/20");
   
    //  $view->__print("2015/16");
      

@@ -22,10 +22,10 @@ class Formacion_Doctoral_View {
     }
     
     private function print_head(){
-        $print_ = "";
+      /*  $print_ = "";
         $print_ .= "<p>La Escuela Internacional de Doctorado de la Universidad de Sevilla (EIDUS) oferta en este a&ntilde;o la posibilidad de acceder a las acciones formativas organizadas por el Secretariado de Formaci&oacute;n y Evaluaci&oacute;n (SFE) a trav&eacute;s del ICE (Instituto de Ciencias de la Educaci&oacute;n) dentro del III Plan Propio de Docencia a los estudiantes de doctorado. Esta colaboraci&oacute;n se inici&oacute; en el a&ntilde;o 2016 y este a&ntilde;o se vuelve a poner a disposici&oacute;n de los estudiantes de doctorado de la Universidad de Sevilla.</p>";
         $print_ .= "<p><a href=\"".HREF_IMPRESO."\" target=\"_blank\">Informaci&oacute;n: Inscripci&oacute;n e instrucciones</a></p>";
-        return $print_;
+        return $print_;*/
     }
     private function print_Oferta_Formativa(){
      
