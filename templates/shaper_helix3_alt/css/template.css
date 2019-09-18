@@ -2449,8 +2449,15 @@ article.item {
 }
 article h2
 {
-	color:#9D2235;
+	/*color:#9D2235;*/
+	color:#111;
 	font-size:24px !important;
+}
+article h3
+{
+	/*color:#9D2235;*/
+	color: #9D2235;
+	font-size:22px !important;
 }
 .entry-link {
   padding: 100px 50px;
