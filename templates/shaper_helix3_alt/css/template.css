@@ -2451,13 +2451,25 @@ article h2
 {
 	/*color:#9D2235;*/
 	color:#111;
-	font-size:24px !important;
+	font-size:26px !important;
 }
 article h3
 {
 	/*color:#9D2235;*/
 	color: #9D2235;
-	font-size:22px !important;
+	font-size:23px !important;
+}
+article h4
+{
+	/*color:#9D2235;*/
+	color:#333;
+	font-size:20px !important;
+}
+article h5
+{
+	/*color:#9D2235;*/
+	color: #333;
+	font-size:18px !important;
 }
 .entry-link {
   padding: 100px 50px;
