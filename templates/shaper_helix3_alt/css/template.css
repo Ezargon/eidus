@@ -2471,6 +2471,12 @@ article h5
 	color: #333;
 	font-size:18px !important;
 }
+ul.indice li
+{
+	font-size: 20px;
+	list-style-type:square;
+}
+
 .entry-link {
   padding: 100px 50px;
   position: relative;
