@@ -113,6 +113,11 @@ div.modbpcounter span.label
 {
 	text-shadow: 0px 0px 5px #000;
 }
+.pie-portada .sppb-addon-content ul > li > a
+{
+	color:#ddd;
+	font-size:16px;
+}
 .sppb-addon .sp-copyright
 {
 	font-size:18px;
