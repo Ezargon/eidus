@@ -827,9 +827,9 @@ dl.article-info dd.hits span[class*=" icon-"] {
   display: inline-block;
   padding: 0 15px;
   line-height: 100px;
-  font-size: 16px;
-  /* text-transform: uppercase; */
- /* letter-spacing: 1px; */
+  font-size: 12px;
+  text-transform: uppercase; 
+  letter-spacing: 1px;
   color: #000;
   margin: 0;
 }

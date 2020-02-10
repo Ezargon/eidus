@@ -1313,10 +1313,11 @@ a.sppb-text-danger:hover {
  user-select:none;
  border:1px solid transparent;
  padding:8px 12px;
- font-size:16px;
+ font-size:12px;
  line-height:1.25;
- border-radius:4px;
- transition:all .15s ease-in-out
+ border-radius:24px;
+ transition:all .15s ease-in-out;
+ text-transform: uppercase;
 }
 .sppb-btn.sppb-btn-3d {
  border-bottom-width:3px;
