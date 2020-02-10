@@ -908,6 +908,7 @@ dl.article-info dd.hits span[class*=" icon-"] {
   padding: 10px;
   color: #333333;
   cursor: pointer;
+  text-transform: uppercase;
 }
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item >a.sp-group-title,
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item span.sp-group-title {
@@ -2069,7 +2070,9 @@ ul.social-icons >li a {
 .sp-contact-info li {
   display: inline-block;
   margin: 0 10px;
-  font-size: 90%;
+  font-size: 75%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .sp-contact-info li i {
   margin: 0 3px;

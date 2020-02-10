@@ -257,3 +257,8 @@ div.normativa br
 {
 	margin:7px 0px; 
 }
+a.menu-laescuela + div.sp-dropdown
+{
+	background-color: #BE0F2E;
+	color: #fff;
+}
