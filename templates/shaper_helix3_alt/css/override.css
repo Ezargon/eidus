@@ -3,6 +3,8 @@
 .sp-contact-phone a, .sp-contact-email a
 {
 	color:#fff;
+	text-transform:uppercase;
+	letter-spacing:1px;
 }
 .sppb-carousel-caption
 {
@@ -24,7 +26,7 @@
 	color:#fff;
 	font-size:36px;
 	line-height:52px;
-/*    text-transform:uppercase;	*/
+    text-transform:uppercase;
     text-shadow: 1px 1px 4px #000;    
 }
 .secretaria-banner
