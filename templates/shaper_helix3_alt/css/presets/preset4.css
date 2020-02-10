@@ -16,6 +16,7 @@ a:hover {
 .sp-megamenu-parent >li.active>a,
 .sp-megamenu-parent >li:hover>a {
   color: #BE0F2E;
+  text-decoration:none;
 }
 .sp-megamenu-parent .sp-dropdown li.sp-menu-item >a:hover {
   background: #BE0F2E;

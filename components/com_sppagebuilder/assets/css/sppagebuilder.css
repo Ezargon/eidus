@@ -1318,8 +1318,9 @@ a.sppb-text-danger:hover {
  border-radius:24px;
  transition:all .15s ease-in-out;
  text-transform: uppercase;
+ text-decoration:none;
  font-family: Raleway, sans-serif;
- letter-spacing:1px;
+ 
 }
 .sppb-btn.sppb-btn-3d {
  border-bottom-width:3px;
