@@ -1343,6 +1343,8 @@ a.sppb-btn.disabled,fieldset[disabled] a.sppb-btn {
 .sppb-btn-default {
  color:#010101;
  background-color:#eff1f4;
+ text-shadow:none;
+ font-family: Raleway, sans-serif;
  /*border-color:#eff1f4*/
 }
 .sppb-btn-default.sppb-btn-3d {
