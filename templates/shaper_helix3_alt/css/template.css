@@ -1763,7 +1763,7 @@ body {
   -webkit-transition: all 400ms ease;
   transition: all 400ms ease;
   background-color: #ffffff;
-  color:#666;
+  color:#3f3f3f;
 }
 a,
 a:hover,
@@ -2070,9 +2070,9 @@ ul.social-icons >li a {
 .sp-contact-info li {
   display: inline-block;
   margin: 0 10px;
-  font-size: 75%;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  font-weight:500;
   font-family: Raleway, sans-serif;
 }
 .sp-contact-info li i {

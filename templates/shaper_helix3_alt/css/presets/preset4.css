@@ -7,7 +7,8 @@ h1,h2,h3,h4,h5
 	display:none !important;
 }
 a {
-  color: #BE0F2E;
+  text-decoration: underline;
+  color: rgba(190, 15, 46, 1);
 }
 a:hover {
   color: #5c0d24;
