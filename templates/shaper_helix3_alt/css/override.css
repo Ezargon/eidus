@@ -257,7 +257,7 @@ div.normativa br
 {
 	margin:7px 0px; 
 }
-a.menu-laescuela + div.sp-dropdown
+a.menu-laescuela + div.sp-dropdown > div.sp-megamenu-parent
 {
 	background-color: #FCBB37;
 	color: #fff;
