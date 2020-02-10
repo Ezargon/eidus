@@ -1819,7 +1819,7 @@ a.sppb-btn.disabled,fieldset[disabled] a.sppb-btn {
  padding:8px 16px;
  font-size:20px;
  line-height:1.5;
- border-radius:5px
+ border-radius:30px
 }
 .sppb-btn-lg.sppb-btn.sppb-btn-3d {
  border-bottom-width:5px;
