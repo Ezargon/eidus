@@ -832,6 +832,7 @@ dl.article-info dd.hits span[class*=" icon-"] {
   letter-spacing: 1px;
   color: #000;
   margin: 0;
+  text-decoration:none;
 }
 .sp-megamenu-parent >li.sp-has-child>a:after,
 .sp-megamenu-parent >li.sp-has-child>span:after {
@@ -2369,6 +2370,10 @@ ul.social-icons >li a {
 }
 article.item {
   margin-bottom: 50px;
+}
+article.item a
+{
+	text-decoration: underline;
 }
 .tags {
   margin-top: 20px;

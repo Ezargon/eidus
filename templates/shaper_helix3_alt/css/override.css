@@ -61,7 +61,8 @@ div.noticia-icon i {
 }
 .mod-articles-category-title 
 {
-	font-size:18px;	
+	font-size:16px;	
+	text-decoration:none;
 }	
 .sppb-addon-container .titulo
 {text-align:center}
