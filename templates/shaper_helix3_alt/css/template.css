@@ -2373,7 +2373,7 @@ article.item {
 }
 article.item a
 {
-	text-decoration: underline;
+	text-decoration: none;
 }
 .tags {
   margin-top: 20px;

@@ -92,7 +92,7 @@ class Oferta_de_Programa_View {
         $print_.="</tr>";
         $print_.="</thead>";
         $print_.="</table>";*/
-        asort($this->array_ramas);
+        sort($this->array_ramas);
         foreach ($this->array_ramas as $rama){
             $print_ .= "<h2>".$rama."</h2>";
             $array_programas = $this->array_programa_ramas[$rama];
