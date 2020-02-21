@@ -209,7 +209,8 @@
 input,
 textarea,
 .uneditable-input {
-  width: 206px;
+  /*width: 206px;*/
+  width:100%;
 }
 textarea {
   height: auto;
