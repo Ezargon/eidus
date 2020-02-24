@@ -76,7 +76,8 @@ class Oferta_de_Programa_View {
     }
     
     private function cabecera($curso){
-        return "<p>Oferta de estudios de doctorado para estudiantes de nuevo ingreso para el <strong>curso ".$curso."</strong>.</p>";
+        return "<p>Los siguientes programas componen la oferta formativa en estudios de doctorado de la Universidad de Sevilla. Se indica el n&uacute;mero de plazas para estudiantes de nuevo ingreso ofertadas por programa para el <b><a href='/secretaria/calendario-academico'>segundo plazo de admisi&oacute;n </a>del ".$curso."</b></p>";
+        /*return "<p>Oferta de estudios de doctorado para estudiantes de nuevo ingreso para el <strong>curso ".$curso."</strong>.</p>";*/
     }
     private function createTable($curso){
         $TABLA_HEAD = ['Programa', 'Plazas '.$curso];
@@ -92,7 +93,7 @@ class Oferta_de_Programa_View {
         $print_.="</tr>";
         $print_.="</thead>";
         $print_.="</table>";*/
-        sort($this->array_ramas);
+        asort($this->array_ramas);
         foreach ($this->array_ramas as $rama){
             $print_ .= "<h2>".$rama."</h2>";
             $array_programas = $this->array_programa_ramas[$rama];
@@ -108,7 +109,7 @@ class Oferta_de_Programa_View {
                 $plaza = $plaza__[$curso];
     
                 $print_.="<tr>";
-                $print_.="<td width=\"70%\">"."<a href=\"/eidus/estudios/programas-de-doctorado/".ENLACES[$codigo]."\">".$denominacion."</a>"."</td>";
+                $print_.="<td width=\"70%\">"."<a href=\"estudios/programas-de-doctorado/".ENLACES[$codigo]."\">".$denominacion."</a>"."</td>";
                 $print_.="<td width=\"30%\">".$plaza->getTotal()." plazas</td>";
                 $print_.="</tr>";
              
