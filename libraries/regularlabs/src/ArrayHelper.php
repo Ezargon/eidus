@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -40,12 +40,21 @@ class ArrayHelper
 			return (array) $data;
 		}
 
-		if ($separator == '')
+		if ($data === '' || is_null($data))
+		{
+			return [];
+		}
+
+		if ($separator === '')
 		{
 			return [$data];
 		}
 
-		$array = explode($separator, $data);
+		// explode on separator, but keep escaped separators
+		$splitter = uniqid('RL_SPLIT');
+		$data     = str_replace($separator, $splitter, $data);
+		$data     = str_replace('\\' . $splitter, $separator, $data);
+		$array    = explode($splitter, $data);
 
 		if ($trim)
 		{
@@ -61,6 +70,24 @@ class ArrayHelper
 	}
 
 	/**
+	 * Join array elements with a string
+	 *
+	 * @param string $glue
+	 * @param array  $pieces
+	 *
+	 * @return array
+	 */
+	public static function implode($pieces, $glue = '')
+	{
+		if ( ! is_array($pieces))
+		{
+			$pieces = self::toArray($pieces, $glue);
+		}
+
+		return implode($glue, $pieces);
+	}
+
+	/**
 	 * Clean array by trimming values and removing empty/false values
 	 *
 	 * @param array $array
@@ -69,13 +96,81 @@ class ArrayHelper
 	 */
 	public static function clean($array)
 	{
-		// trim all values
-		self::trim($array);
+		if ( ! is_array($array))
+		{
+			return $array;
+		}
 
-		// remove duplicates
-		$array = array_unique($array);
-		// remove empty (or false) values
-		$array = array_filter($array);
+		$array = self::trim($array);
+		$array = self::unique($array);
+		$array = self::removeEmpty($array);
+
+		return $array;
+	}
+
+	/**
+	 * Removes empty values from the array
+	 *
+	 * @param array $array
+	 *
+	 * @return array
+	 */
+	public static function removeEmpty($array)
+	{
+		if ( ! is_array($array))
+		{
+			return $array;
+		}
+
+		foreach ($array as $key => &$value)
+		{
+			if ($key && ! is_numeric($key))
+			{
+				continue;
+			}
+
+			if ($value !== '')
+			{
+				continue;
+			}
+
+			unset($array[$key]);
+		}
+
+		return $array;
+	}
+
+	/**
+	 * Removes duplicate values from the array
+	 *
+	 * @param array $array
+	 *
+	 * @return array
+	 */
+	public static function unique($array)
+	{
+		if ( ! is_array($array))
+		{
+			return $array;
+		}
+
+		$values = [];
+
+		foreach ($array as $key => $value)
+		{
+			if ( ! is_numeric($key))
+			{
+				continue;
+			}
+
+			if ( ! in_array($value, $values))
+			{
+				$values[] = $value;
+				continue;
+			}
+
+			unset($array[$key]);
+		}
 
 		return $array;
 	}
@@ -89,9 +184,91 @@ class ArrayHelper
 	 */
 	public static function trim($array)
 	{
-		// trim all values
-		$array = array_map('trim', $array);
+		if ( ! is_array($array))
+		{
+			return $array;
+		}
+
+		foreach ($array as &$value)
+		{
+			if ( ! is_string($value))
+			{
+				continue;
+			}
+
+			$value = trim($value);
+		}
 
 		return $array;
+	}
+
+	/**
+	 * Check if any of the given values is found in the array
+	 *
+	 * @param array $needles
+	 * @param array $haystack
+	 *
+	 * @return boolean
+	 */
+	public static function find($needles, $haystack)
+	{
+		if ( ! is_array($haystack) || empty($haystack))
+		{
+			return false;
+		}
+
+		$needles = self::toArray($needles);
+
+		foreach ($needles as $value)
+		{
+			if (in_array($value, $haystack))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Sorts the array by keys based on the values of another array
+	 *
+	 * @param array $array
+	 * @param array $order
+	 *
+	 * @return array
+	 */
+	public static function sortByOtherArray($array, $order)
+	{
+		uksort($array, function ($key1, $key2) use ($order) {
+			return (array_search($key1, $order) > array_search($key2, $order));
+		});
+
+		return $array;
+	}
+
+	/**
+	 * Flatten an array of nested arrays, keeping the order
+	 *
+	 * @param array $array
+	 *
+	 * @return array
+	 */
+	public static function flatten($array)
+	{
+		$flattened = [];
+
+		foreach ($array as $nested)
+		{
+			if ( ! is_array($nested))
+			{
+				$flattened[] = $nested;
+				continue;
+			}
+
+			$flattened = array_merge($flattened, self::flatten($nested));
+		}
+
+		return $flattened;
 	}
 }

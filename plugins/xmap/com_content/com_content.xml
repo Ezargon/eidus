@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>guille@vargas.co.cr</authorEmail>
     <authorUrl>joomla.vargas.co.cr</authorUrl>
-    <version>3.0 rev 302</version>
+    <version>3.0 3.0.0</version>
     <description>PLG_XMAP_COM_CONTENT_DESC</description>
     <files>
         <filename plugin="com_content">com_content.php</filename>

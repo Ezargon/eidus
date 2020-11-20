@@ -1,19 +1,23 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\CMS\Plugin\CMSPlugin as JPlugin;
+
 $app = JFactory::getApplication();
 
-if ($app->isAdmin())
+if ($app->isClient('administrator'))
 {
 	// load the NoNumber Framework language file
 	require_once __DIR__ . '/helpers/functions.php';
@@ -21,7 +25,7 @@ if ($app->isAdmin())
 }
 
 if (
-	$app->isAdmin()
+	$app->isClient('administrator')
 	&& JFactory::getUser()->id
 	&& ! $app->input->get('tmpl')
 	&& $app->input->get('task') != 'preview'

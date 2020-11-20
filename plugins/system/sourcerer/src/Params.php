@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Sourcerer
- * @version         7.1.9
+ * @version         8.4.2
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ namespace RegularLabs\Plugin\System\Sourcerer;
 
 defined('_JEXEC') or die;
 
-use JFactory;
+use Joomla\CMS\Factory as JFactory;
 use RegularLabs\Library\Parameters as RL_Parameters;
 use RegularLabs\Library\PluginTag as RL_PluginTag;
 use RegularLabs\Library\RegEx as RL_RegEx;
@@ -24,8 +24,13 @@ class Params
 	protected static $regexes = null;
 	protected static $areas   = null;
 
-	public static function get()
+	public static function get($key = '', $default = '')
 	{
+		if ($key != '')
+		{
+			return self::getByKey($key, $default);
+		}
+
 		if ( ! is_null(self::$params))
 		{
 			return self::$params;
@@ -47,6 +52,13 @@ class Params
 		return self::$params;
 	}
 
+	private static function getByKey($key, $default = '')
+	{
+		$params = self::get();
+
+		return ! empty($params->{$key}) ? $params->{$key} : $default;
+	}
+
 	public static function getTags($only_start_tags = false)
 	{
 		$params = self::get();
@@ -62,7 +74,7 @@ class Params
 			],
 		];
 
-		return $only_start_tags ? $tags['0'] : $tags;
+		return $only_start_tags ? $tags[0] : $tags;
 	}
 
 	public static function getRegex($type = 'tag')

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,17 +13,17 @@
 
 defined('_JEXEC') or die;
 
-if (is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
-{
-	require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
-}
-
 use RegularLabs\Library\Document as RL_Document;
 use RegularLabs\Library\Extension as RL_Extension;
 use RegularLabs\Library\File as RL_File;
 use RegularLabs\Library\Http as RL_Http;
 use RegularLabs\Library\Language as RL_Language;
 use RegularLabs\Library\Xml as RL_Xml;
+
+if (is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+{
+	require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
+}
 
 /**
  * Framework Functions
@@ -61,7 +61,7 @@ class RLFunctions
 
 		$version = '';
 
-		if (JFile::exists(JPATH_SITE . $url))
+		if (file_exists(JPATH_SITE . $url))
 		{
 			$version = filemtime(JPATH_SITE . $url);
 		}
@@ -75,7 +75,7 @@ class RLFunctions
 
 		$version = '';
 
-		if (JFile::exists(JPATH_SITE . $url))
+		if (file_exists(JPATH_SITE . $url))
 		{
 			$version = filemtime(JPATH_SITE . $url);
 		}

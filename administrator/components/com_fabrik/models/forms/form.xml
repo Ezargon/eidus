@@ -6,10 +6,10 @@
 		<field name="id"
 		       type="text"
 		       default="0"
-		       readonly="false"
+		       readonly="true"
 		       class="readonly input-mini"
-		       label="JGLOBAL_FIELD_ID_LABEL"
-		       description="JGLOBAL_FIELD_ID_DESC"/>
+		       label="COM_FABRIK_ID_LABEL"
+		       description="COM_FABRIK_FIELD_FORM_ID_DESC"/>
 
 		<field name="label"
 		       type="text"
@@ -70,7 +70,8 @@
 		       class="input-medium"
 		       label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
 		       description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
-		       format="%Y-%m-%d %H:%M:%S"
+			   translateformat="true"
+			   showtime="true"
 		       size="22"
 		       filter="user_utc"
 		/>
@@ -80,7 +81,8 @@
 		       class="input-medium"
 		       label="JGLOBAL_FIELD_PUBLISH_DOWN_LABEL"
 		       description="JGLOBAL_FIELD_PUBLISH_DOWN_DESC"
-		       format="%Y-%m-%d %H:%M:%S"
+			   translateformat="true"
+			   showtime="true"
 		       size="22"
 		       filter="user_utc"
 		/>
@@ -142,6 +144,13 @@
 			       description="COM_FABRIK_FIELD_RESET_BUTTON_LABEL_DESC"
 			       label="COM_FABRIK_FIELD_RESET_BUTTON_LABEL_LABEL"/>
 
+			<field name="reset_button_class"
+			       type="text"
+			       default="btn-warning"
+			       description="COM_FABRIK_FIELD_RESET_CLASS_DESC"
+			       label="COM_FABRIK_FIELD_RESET_CLASS_LABEL">
+			</field>
+
 			<field name="reset_icon"
 			       type="text"
 			       label="COM_FABRIK_FIELD_RESET_ICON_LABEL"
@@ -177,6 +186,12 @@
 			       translate_default="true"
 			       description="COM_FABRIK_FIELD_COPY_BUTTON_LABEL_DESC"
 			       label="COM_FABRIK_FIELD_COPY_BUTTON_LABEL_LABEL"/>
+
+			<field name="copy_button_class"
+			       type="text"
+			       description="COM_FABRIK_FIELD_COPY_CLASS_DESC"
+			       label="COM_FABRIK_FIELD_COPY_CLASS_LABEL">
+			</field>
 
 			<field name="copy_icon"
 			       type="text"
@@ -214,6 +229,12 @@
 			       description="COM_FABRIK_FIELD_GO_BACK_BUTTON_LABEL_DESC"
 			       label="COM_FABRIK_FIELD_GO_BACK_BUTTON_LABEL_LABEL"/>
 
+			<field name="goback_button_class"
+			       type="text"
+			       description="COM_FABRIK_FIELD_GO_BACK_CLASS_DESC"
+			       label="COM_FABRIK_FIELD_GO_BACK_CLASS_LABEL">
+			</field>
+
 			<field name="goback_icon"
 			       type="text"
 			       label="COM_FABRIK_FIELD_GO_BACK_ICON_LABEL"
@@ -249,6 +270,12 @@
 			       translate_default="true"
 			       description="COM_FABRIK_FIELD_APPLY_BUTTON_LABEL_DESC"
 			       label="COM_FABRIK_FIELD_APPLY_BUTTON_LABEL_LABEL"/>
+
+			<field name="apply_button_class"
+			       type="text"
+			       description="COM_FABRIK_FIELD_APPLY_CLASS_DESC"
+			       label="COM_FABRIK_FIELD_APPLY_CLASS_LABEL">
+			</field>
 
 			<field name="apply_icon"
 			       type="text"
@@ -286,6 +313,13 @@
 			       description="COM_FABRIK_FIELD_DELETE_BUTTON_LABEL_DESC"
 			       label="COM_FABRIK_FIELD_DELETE_BUTTON_LABEL_LABEL"/>
 
+			<field name="delete_button_class"
+			       type="text"
+			       default="btn-danger"
+			       description="COM_FABRIK_FIELD_DELETE_CLASS_DESC"
+			       label="COM_FABRIK_FIELD_DELETE_CLASS_LABEL">
+			</field>
+
 			<field name="delete_icon"
 			       type="text"
 			       label="COM_FABRIK_FIELD_DELETE_ICON_LABEL"
@@ -321,6 +355,13 @@
 			       translate_default="true"
 			       description="COM_FABRIK_FIELD_SUBMIT_BUTTON_LABEL_DESC"
 			       label="COM_FABRIK_FIELD_SUBMIT_BUTTON_LABEL_LABEL"/>
+
+			<field name="save_button_class"
+			       type="text"
+			       default="btn-primary"
+			       description="COM_FABRIK_FIELD_SAVE_CLASS_DESC"
+			       label="COM_FABRIK_FIELD_SAVE_CLASS_LABEL">
+			</field>
 
 			<field name="save_icon"
 			       type="text"
@@ -416,6 +457,16 @@
 				<option value="tabloid">tabloid</option>
 				<option value="executive">executive</option>
 				<option value="folio">folio</option>
+			</field>
+
+			<field name="pdf_include_bootstrap"
+				   type="radio"
+				   class="btn-group"
+				   default="1"
+				   description="COM_FABRIK_FIELD_PDF_INCLUDE_BOOTSTRAP_DESC"
+				   label="COM_FABRIK_FIELD_PDF_INCLUDE_BOOTSTRAP_LABEL">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 
 
@@ -527,6 +578,7 @@
 				<option value="0">JNO</option>
 				<option value="1">COM_FABRIK_DETAILS_AND_FORM_VIEW</option>
 				<option value="2">COM_FABRIK_DETAILS_VIEW_ONLY</option>
+				<option value="3">COM_FABRIK_FORM_VIEW_ONLY</option>
 			</field>
 
 		</fieldset>

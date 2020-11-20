@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -39,6 +39,8 @@ class JFormFieldRL_FlexiContent extends \RegularLabs\Library\FieldGroup
 			->select('t.name as id, t.name')
 			->from('#__flexicontent_tags AS t')
 			->where('t.published = 1')
+			->where('t.name != ' . $this->db->quote(''))
+			->group('t.name')
 			->order('t.name');
 		$this->db->setQuery($query);
 		$list = $this->db->loadObjectList();

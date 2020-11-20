@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Sourcerer
- * @version         7.1.9
+ * @version         8.4.2
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -19,25 +19,27 @@ class Area
 {
 	static $prefix = 'SRC';
 
-	public static function tag($string, $area = '')
+	public static function tag(&$string, $area = '')
 	{
 		if (empty($string) || empty($area))
 		{
-			return $string;
+			return false;
 		}
 
 		$string = '<!-- START: ' . self::$prefix . '_' . strtoupper($area) . ' -->' . $string . '<!-- END: ' . self::$prefix . '_' . strtoupper($area) . ' -->';
 
 		if ($area != 'article_text')
 		{
-			return $string;
+			return true;
 		}
 
-		return RL_RegEx::replace(
+		$string = RL_RegEx::replace(
 			'#(<hr class="system-pagebreak".*?>)#si',
 			'<!-- END: ' . self::$prefix . '_' . strtoupper($area) . ' -->\1<!-- START: ' . self::$prefix . '_' . strtoupper($area) . ' -->',
 			$string
 		);
+
+		return true;
 	}
 
 	public static function get(&$string, $area = '')

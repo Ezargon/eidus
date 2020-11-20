@@ -193,6 +193,11 @@ div.popover {
 	cursor: move;
 }
 
+
+.slick-list.draggable {
+	cursor: auto;
+}
+
 .handle {
 	border-radius: 7px 7px 0px 0px;
 	-moz-border-radius: 7px 7px 0px 0px;
@@ -208,10 +213,6 @@ div.popover {
 	background-image: -ms-linear-gradient(top, #eee, #ccc);
 	padding: 4px 11px;
 	height: 15px;
-}
-
-.draggable {
-	cursor: move;
 }
 
 .expand {
@@ -520,6 +521,11 @@ table .fabrik___heading span.heading{
 	white-space: nowrap;
 }
 
+div.fabrik___heading{
+	white-space: nowrap;
+	font-weight: bold;
+}
+
 table.fabrikList td,
 table.fabrikList th{
 	padding: 5px;
@@ -704,4 +710,9 @@ form.fabrikForm label.radio {
 
 @media print {
 	a[href]:after { content: none !important; }
+	.fabrikPrintIcon { display: none !important; }
+	table {
+		page-break-inside: avoid;
+	}
+
 }

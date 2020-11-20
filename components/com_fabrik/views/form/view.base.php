@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -305,7 +305,10 @@ class FabrikViewFormBase extends FabrikView
 		$params = $model->getParams();
 		$view = $model->isEditable() === false ? 'details' : 'form';
 
-		if ($params->get('process-jplugins', 2) == 1 || ($params->get('process-jplugins', 2) == 2 && $model->isEditable() === false))
+		if ($params->get('process-jplugins', 2) == 1
+			|| ($params->get('process-jplugins', 2) == 2 && $model->isEditable() === false)
+			|| ($params->get('process-jplugins', 2) == 3 && $model->isEditable() === true)
+		)
 		{
 			$cloak = $view === 'details' && $this->app->input->get('format') !== 'pdf';
 			FabrikHelperHTML::runContentPlugins($text, $cloak);
@@ -376,6 +379,7 @@ class FabrikViewFormBase extends FabrikView
 				$menuParams = is_a($menu->params, 'Registry') || is_a($menu->params, 'JRegistry') ? $menu->params : new Registry($menu->params);
 				$params->set('page_heading', FText::_($menuParams->get('page_heading', '')));
 				$params->set('show_page_heading', $menuParams->get('show_page_heading', 0));
+				$params->set('pageclass_sfx', $menuParams->get('pageclass_sfx'));
 				$browserTitle = $model->getPageTitle(FText::_($menuParams->get('page_title')));
 				$this->doc->setTitle($w->parseMessageForPlaceHolder($browserTitle, $_REQUEST));
 			}
@@ -436,7 +440,7 @@ class FabrikViewFormBase extends FabrikView
 		if ($this->showPrint)
 		{
 			$text            = FabrikHelperHTML::image('print');
-			$this->printLink = '<a href="#" class="btn btn-default" class="printlink" onclick="window.print();return false;">' . $text . '</a>';
+			$this->printLink = '<a href="#" class="btn btn-default fabrikPrintIcon" onclick="window.print();return false;">' . $text . '</a>';
 		}
 
 		if ($input->get('tmpl') != 'component')
@@ -610,6 +614,7 @@ class FabrikViewFormBase extends FabrikView
 		if (!FabrikHelperHTML::inAjaxLoadedPage())
 		{
 			JText::script('COM_FABRIK_VALIDATING');
+            JText::script('COM_FABRIK_MUST_VALIDATE');
 			JText::script('COM_FABRIK_SUCCESS');
 			JText::script('COM_FABRIK_NO_REPEAT_GROUP_DATA');
 			JText::script('COM_FABRIK_VALIDATION_ERROR');
@@ -685,7 +690,21 @@ class FabrikViewFormBase extends FabrikView
 			$groupedJs->$groupId = $elementJs;
 		}
 
-		$script[] = json_encode($groupedJs);
+		$json = json_encode($groupedJs);
+
+		/*
+		 * Ran across an issue where encrypted fields that don't decrypt properly, for example if you do an
+		 * Akeeba clone with Kickstart that changes the secret, will cause a JSON_ERROR_UTF8 because the data
+		 * is binary blob.  Should really handle the error better, but for now just make sure there's an error message
+		 * so we (support staff) at least know what's going on.
+		 */
+		if ($json === false)
+		{
+			$this->app->enqueueMessage('JSON encode error! ' . json_last_error_msg());
+			return false;
+		}
+
+		$script[] = $json;
 		$script[] = "\t);";
 		$script[] = $actions;
 		$script[] = $vstr;
@@ -714,7 +733,16 @@ class FabrikViewFormBase extends FabrikView
 
 		// 3.1 call form js plugin code within main require method
 		$srcs = array_merge($srcs, $model->formPluginShim);
-		$str .= implode("\n", (array) $model->formPluginJS);
+		$str .= "\n$bKey.addPlugins({";
+		$plugins = array();
+
+		foreach ($model->formPluginJS as $pluginName => $pluginStr)
+		{
+			$plugins[] = "'$pluginName': $pluginStr";
+		}
+
+		$str .= implode(',', $plugins) . "});\n";
+
 		FabrikHelperHTML::script($srcs, $str);
 	}
 
@@ -799,6 +827,8 @@ class FabrikViewFormBase extends FabrikView
 		$minRepeat      = array();
 		$showMaxRepeats = array();
 		$minMaxErrMsg   = array();
+		$numRepeatEls   = array();
+		$noDataMsg      = array();
 
 		foreach ($this->groups as $g)
 		{
@@ -807,7 +837,8 @@ class FabrikViewFormBase extends FabrikView
 			$minRepeat[$g->id]      = $g->minRepeat;
 			$numRepeatEls[$g->id]   = FabrikString::safeColNameToArrayKey($g->numRepeatElement);
 			$showMaxRepeats[$g->id] = $g->showMaxRepeats;
-			$minMaxErrMsg[$g->id]   = $g->minMaxErrMsg;
+			$minMaxErrMsg[$g->id]   = JText::_($g->minMaxErrMsg);
+			$noDataMsg[$g->id]      = JText::_($g->noDataMsg);
 		}
 
 		$opts->hiddenGroup    = $hidden;
@@ -816,6 +847,7 @@ class FabrikViewFormBase extends FabrikView
 		$opts->showMaxRepeats = $showMaxRepeats;
 		$opts->minMaxErrMsg   = $minMaxErrMsg;
 		$opts->numRepeatEls   = $numRepeatEls;
+		$opts->noDataMsg      = $noDataMsg;
 
 		// $$$ hugh adding these so calc element can easily find joined and repeated join groups
 		// when it needs to add observe events ... don't ask ... LOL!
@@ -926,6 +958,15 @@ class FabrikViewFormBase extends FabrikView
 		$fields[]  = '<input type="hidden" name="package" value="' . $this->app->getUserState('com_fabrik.package', 'fabrik') . '" />';
 		$fields[]  = '<input type="hidden" name="packageId" value="' . $model->packageId . '" />';
 
+		if ($model->noData)
+		{
+			$fields[] = '<input type="hidden" name="nodata" value="1"" />';
+		}
+		else
+		{
+			$fields[] = '<input type="hidden" name="nodata" value="0" />';
+		}
+
 		/*
 		if ($input->get('fabrikdebug', '') === '2')
         {
@@ -994,7 +1035,7 @@ class FabrikViewFormBase extends FabrikView
 
 		$layoutData = (object) array(
 			'type' => 'reset',
-			'class' => 'btn-warning button clearSession',
+			'class' => $params->get('reset_button_class', 'btn-warning') . ' button clearSession',
 			'name' => 'Reset',
 			'label' => $resetLabel,
 			'formModel' => $model
@@ -1010,7 +1051,7 @@ class FabrikViewFormBase extends FabrikView
 
 		$layoutData       = (object) array(
 			'type' => 'submit',
-			'class' => 'button',
+			'class' => $params->get('copy_button_class', '') . ' button',
 			'name' => 'Copy',
 			'label' => $copyLabel,
 			'formModel' => $model
@@ -1027,7 +1068,7 @@ class FabrikViewFormBase extends FabrikView
 
 		$layoutData = (object) array(
 			'type' => $model->isAjax() ? 'button' : 'submit',
-			'class' => 'button',
+			'class' => $params->get('apply_button_class', '') . ' button',
 			'name' => 'apply',
 			'label' => $applyLabel,
 			'formModel' => $model
@@ -1045,7 +1086,7 @@ class FabrikViewFormBase extends FabrikView
 
 		$layoutData = (object) array(
 			'type' => 'submit',
-			'class' => 'btn-danger button',
+			'class' => $params->get('delete_button_class', 'btn-danger') . ' button',
 			'name' => 'delete',
 			'label' => $deleteLabel,
 			'formModel' => $model
@@ -1073,16 +1114,23 @@ class FabrikViewFormBase extends FabrikView
 		$multiPageSession = $model->sessionModel && $model->sessionModel->last_page > 0;
 		$form->clearMultipageSessionButton = $multiPageSession ? $btnLayout->render($layoutData) : '';
 
-		$layoutData = (object) array(
-			'type' => 'button',
-			'class' => 'button',
-			'name' => 'Goback',
-			'label' => $goBackLabel,
-			'attributes' => $model->isAjax() ? '' : FabrikWorker::goBackAction(),
-			'formModel' => $model
-		);
+		if (!$this->isMambot)
+		{
+			$layoutData = (object) array(
+				'type' => 'button',
+				'class' => $params->get('goback_button_class', '') . ' button',
+				'name' => 'Goback',
+				'label' => $goBackLabel,
+				'attributes' => $model->isAjax() ? '' : FabrikWorker::goBackAction(),
+				'formModel' => $model
+			);
 
-		$form->gobackButton = $params->get('goback_button', 0) ? $btnLayout->render($layoutData) : '';
+			$form->gobackButton = $params->get('goback_button', 0) ? $btnLayout->render($layoutData) : '';
+		}
+		else
+		{
+			$form->gobackButton = '';
+		}
 
 		if ($model->isEditable() && $params->get('submit_button', 1))
 		{
@@ -1099,7 +1147,7 @@ class FabrikViewFormBase extends FabrikView
 
 			$layoutData = (object) array(
 				'type' => $model->isAjax() ? 'button' : 'submit',
-				'class' => 'btn-primary button ' . $submitClass,
+				'class' => $params->get('save_button_class', 'btn-primary') . ' button ' . $submitClass,
 				'name' => 'Submit',
 				'label' => $submitLabel,
 				'id' => 'fabrikSubmit_' . $model->getId(),
@@ -1148,7 +1196,7 @@ class FabrikViewFormBase extends FabrikView
 			$form->prevButton = '';
 		}
 
-		// $$$ hugh - hide actions section is we're printing, or if not actions selected
+		// $$$ hugh - hide actions section if we're printing or format=PDF, or if not actions selected
 		$noButtons = (
 			empty($form->nextButton)
 			&& empty($form->prevButton)
@@ -1162,7 +1210,7 @@ class FabrikViewFormBase extends FabrikView
 			&& empty($form->customButtons)
 		);
 
-		$this->hasActions = ($input->get('print', '0') == '1' || $noButtons) ? false : true;
+		$this->hasActions = ($input->get('print', '0') == '1' || $input->get('format') === 'pdf' || $noButtons) ? false : true;
 
 		$format   = $model->isAjax() ? 'raw' : 'html';
 		$fields[] = '<input type="hidden" name="format" value="' . $format . '" />';
@@ -1204,6 +1252,12 @@ class FabrikViewFormBase extends FabrikView
 			// Used for validations
 			$fields[] = '<input type="hidden" name="fabrik_repeat_group[' . $group->id . ']" value="' . $c . '" id="fabrik_repeat_group_'
 				. $group->id . '_counter" />';
+
+			// Used for validations
+			$added = $input->get('fabrik_repeat_group_added', array(), 'array');
+			$added = ArrayHelper::getValue($added, $group->id, '0');
+			$fields[] = '<input type="hidden" name="fabrik_repeat_group_added[' . $group->id . ']" value="' . $added . '" id="fabrik_repeat_group_'
+				. $group->id . '_added" />';
 		}
 
 		// $$$ hugh - testing social_profile_hash stuff

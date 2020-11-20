@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -72,7 +72,7 @@ class HtmlTag
 			return '';
 		}
 
-		return $match['1'];
+		return $match[1];
 	}
 
 	/**
@@ -100,7 +100,7 @@ class HtmlTag
 
 		foreach ($matches as $match)
 		{
-			$attribs[$match['1']] = $match['2'];
+			$attribs[$match[1]] = $match[2];
 		}
 
 		return $attribs;
@@ -115,7 +115,7 @@ class HtmlTag
 	 *
 	 * @return string
 	 */
-	public static function combineAttributes($string1, $string2)
+	public static function combineAttributes($string1, $string2, $flatten = true)
 	{
 		$attribsutes1 = is_array($string1) ? $string1 : self::getAttributes($string1);
 		$attribsutes2 = is_array($string2) ? $string2 : self::getAttributes($string2);
@@ -146,11 +146,42 @@ class HtmlTag
 			$attributes[$key] = implode($glue, array_merge(explode($glue, $attribsutes1[$key]), explode($glue, $attribsutes2[$key])));
 		}
 
-		foreach ($attributes as $key => &$val)
+		return $flatten ? self::flattenAttributes($attributes) : $attributes;
+	}
+
+	/**
+	 * Convert array of attributes to a html style string
+	 *
+	 * @param array $attributes
+	 *
+	 * @return string
+	 */
+	public static function flattenAttributes($attributes, $prefix = '')
+	{
+		$output = [];
+
+		foreach ($attributes as $key => $val)
 		{
-			$val = $key . '="' . $val . '"';
+			if (is_null($val) || $val === '')
+			{
+				continue;
+			}
+
+			if ($val === false)
+			{
+				$val = 'false';
+			}
+
+			if ($val === true)
+			{
+				$val = 'true';
+			}
+
+			$val = str_replace('"', '&quot;', $val);
+
+			$output[] = $prefix . $key . '="' . $val . '"';
 		}
 
-		return implode(' ', $attributes);
+		return implode(' ', $output);
 	}
 }

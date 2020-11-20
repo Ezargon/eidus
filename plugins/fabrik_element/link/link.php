@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Plugin
  * @subpackage  Fabrik.element.link
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -345,10 +345,8 @@ class PlgFabrik_ElementLink extends PlgFabrik_Element
 		{
 			if ($params->get('use_bitly'))
 			{
-				require_once JPATH_SITE . '/components/com_fabrik/libs/bitly/bitly.php';
 				$login = $params->get('bitly_login');
-				$key = $params->get('bitly_apikey');
-				$bitly = new bitly($login, $key);
+				$apikey = $params->get('bitly_apikey');
 			}
 
 			foreach ($val as $key => &$v)
@@ -357,28 +355,15 @@ class PlgFabrik_ElementLink extends PlgFabrik_Element
 				{
 					if ($params->get('use_bitly'))
 					{
-						/* bitly will return an error if you try and shorten a shortened link,
-						 * and the class file we are using doesn't check for this
-						 */
-						if (!strstr($v['link'], 'bit.ly/') && $v['link'] !== '')
-						{
-							$v['link'] = (string) $bitly->shorten($v['link']);
-						}
+						$v['link'] = FabrikString::bitlify($v['link'], $login, $apikey, true);
 					}
 				}
 				else
 				{
-					if ($key == 'link')
-					{
-						$v = FabrikString::encodeurl($v);
-					}
 					// Not in repeat group
 					if ($key == 'link' && $params->get('use_bitly'))
 					{
-						if (!strstr($v, 'bit.ly/') && $v !== '')
-						{
-							$v = (string) $bitly->shorten($v);
-						}
+						$v = FabrikString::bitlify($v, $login, $apikey, true);
 					}
 				}
 			}

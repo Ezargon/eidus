@@ -1,15 +1,21 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\Registry\Registry;
+use RegularLabs\Library\RegEx as RL_RegEx;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -18,26 +24,30 @@ if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 
 require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
 
-use RegularLabs\Library\RegEx as RL_RegEx;
-
 class JFormFieldRL_Components extends \RegularLabs\Library\Field
 {
 	public $type = 'Components';
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
+		$size = (int) $this->get('size');
+
+		return $this->selectListSimpleAjax(
+			$this->type, $this->name, $this->value, $this->id,
+			compact('size')
+		);
+	}
+
+	function getAjaxRaw(Registry $attributes)
+	{
+		$name  = $attributes->get('name', $this->type);
+		$id    = $attributes->get('id', strtolower($name));
+		$value = $attributes->get('value', []);
+		$size  = $attributes->get('size');
 
 		$options = $this->getComponents();
 
-		if (empty($options))
-		{
-			return '';
-		}
-
-		$size = (int) $this->get('size');
-
-		return $this->selectListSimple($options, $this->name, $this->value, $this->id, $size, true);
+		return $this->selectListSimple($options, $name, $value, $id, $size, true);
 	}
 
 	function getComponents()
@@ -75,6 +85,11 @@ class JFormFieldRL_Components extends \RegularLabs\Library\Field
 			}
 
 			$component_folder = ($frontend ? JPATH_SITE : JPATH_ADMINISTRATOR) . '/components/' . $component->element;
+
+			if ( ! JFolder::exists($component_folder) && $admin)
+			{
+				$component_folder = JPATH_ADMINISTRATOR . '/components/' . $component->element;
+			}
 
 			// return if there is no main component folder
 			if ( ! JFolder::exists($component_folder))

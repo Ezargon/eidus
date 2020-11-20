@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,8 +13,8 @@ namespace RegularLabs\Library\Condition;
 
 defined('_JEXEC') or die;
 
-use GeoIp;
-use JLog;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Log\Log as JLog;
 
 /**
  * Class Geo
@@ -32,6 +32,27 @@ abstract class Geo
 			return $this->geo;
 		}
 
+
+		$geo = $this->getGeoObject($ip);
+
+		if (empty($geo))
+		{
+			return false;
+		}
+
+		$this->geo = $geo->get();
+
+		if (JFactory::getApplication()->get('debug'))
+		{
+			JLog::addLogger(['text_file' => 'regularlabs_geoip.log.php'], JLog::ALL, ['regularlabs_geoip']);
+			JLog::add(json_encode($this->geo), JLog::DEBUG, 'regularlabs_geoip');
+		}
+
+		return $this->geo;
+	}
+
+	private function getGeoObject($ip)
+	{
 		if ( ! file_exists(JPATH_LIBRARIES . '/geoip/geoip.php'))
 		{
 			return false;
@@ -39,16 +60,11 @@ abstract class Geo
 
 		require_once JPATH_LIBRARIES . '/geoip/geoip.php';
 
-		$geo = new GeoIp($ip);
-
-		$this->geo = $geo->get();
-
-		if (JDEBUG)
+		if ( ! class_exists('RegularLabs_GeoIp'))
 		{
-			JLog::addLogger(['text_file' => 'regularlabs_geoip.log.php'], JLog::ALL, ['regularlabs_geoip']);
-			JLog::add(json_encode($this->geo), JLog::DEBUG, 'regularlabs_geoip');
+			return new \GeoIp($ip);
 		}
 
-		return $this->geo;
+		return new \RegularLabs_GeoIp($ip);
 	}
 }

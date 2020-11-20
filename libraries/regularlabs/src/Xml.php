@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,10 +13,9 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-jimport('joomla.filesystem.file');
-
-use JFile;
 use SimpleXMLElement;
+
+jimport('joomla.filesystem.file');
 
 /**
  * Class File
@@ -34,14 +33,14 @@ class Xml
 	 */
 	public static function toObject($url, $root = '')
 	{
-		$hash = md5('xmlToObject_' . $url . '_' . $root);
+		$cache_id = 'xmlToObject_' . $url . '_' . $root;
 
-		if (Cache::has($hash))
+		if (Cache::has($cache_id))
 		{
-			return Cache::get($hash);
+			return Cache::get($cache_id);
 		}
 
-		if (JFile::exists($url))
+		if (file_exists($url))
 		{
 			$xml = @new SimpleXMLElement($url, LIBXML_NONET | LIBXML_NOCDATA, 1);
 		}
@@ -53,7 +52,7 @@ class Xml
 		if ( ! @count($xml))
 		{
 			return Cache::set(
-				$hash,
+				$cache_id,
 				(object) []
 			);
 		}
@@ -63,7 +62,7 @@ class Xml
 			if ( ! isset($xml->{$root}))
 			{
 				return Cache::set(
-					$hash,
+					$cache_id,
 					(object) []
 				);
 			}
@@ -84,7 +83,7 @@ class Xml
 		}
 
 		return Cache::set(
-			$hash,
+			$cache_id,
 			$xml
 		);
 	}

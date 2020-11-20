@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,8 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-use JText;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\Registry\Registry;
 
 class FieldGroup
 	extends Field
@@ -35,9 +36,9 @@ class FieldGroup
 		return $this->get('group', $this->default_group ?: $this->type);
 	}
 
-	public function getOptions()
+	public function getOptions($group = false)
 	{
-		$group = $this->getGroup();
+		$group = $group ?: $this->getGroup();
 		$id    = $this->type . '_' . $group;
 
 		if ( ! isset($data[$id]))
@@ -55,20 +56,37 @@ class FieldGroup
 			$this->value = explode(',', $this->value);
 		}
 
-		$size     = (int) $this->get('size');
-		$multiple = $this->get('multiple');
+		$size        = (int) $this->get('size');
+		$multiple    = $this->get('multiple');
+		$show_ignore = $this->get('show_ignore');
 
-		$group   = $group ?: $this->getGroup();
-		$options = $this->getOptions();
+		$group = $group ?: $this->getGroup();
 
-		switch ($group)
-		{
-			case 'categories':
-				return Form::selectList($options, $this->name, $this->value, $this->id, $size, $multiple);
+		$simple = $this->get('simple', ! in_array($group, ['categories']));
 
-			default:
-				return Form::selectListSimple($options, $this->name, $this->value, $this->id, $size, $multiple);
-		}
+		return $this->selectListAjax(
+			$this->type, $this->name, $this->value, $this->id,
+			compact('group', 'size', 'multiple', 'simple', 'show_ignore'),
+			$simple
+		);
+	}
+
+	function getAjaxRaw(Registry $attributes)
+	{
+		$this->params = $attributes;
+
+		$name     = $attributes->get('name', $this->type);
+		$id       = $attributes->get('id', strtolower($name));
+		$value    = $attributes->get('value', []);
+		$size     = $attributes->get('size');
+		$multiple = $attributes->get('multiple');
+		$simple   = $attributes->get('simple');
+
+		$options = $this->getOptions(
+			$attributes->get('group')
+		);
+
+		return $this->selectList($options, $name, $value, $id, $size, $multiple, $simple);
 	}
 
 	public function missingFilesOrTables($tables = ['categories', 'items'], $component = '', $table_prefix = '')

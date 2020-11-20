@@ -1,10 +1,3 @@
-.layout-edit {
-  @import "bootstrap-legacy/variables";
-  @import "bootstrap-legacy/mixins";
-  @import "bootstrap-legacy/forms.less";
-  @import "bootstrap-legacy/wells.less";
-  @import "bootstrap-legacy/accordion.less";
-}
 .layout-edit select.inputbox,
 .layout-edit select {
   width: 250px;
@@ -92,7 +85,8 @@ svg {
   font-size: 18px;
   margin-top: 0;
 }
-#mailto-window input[type="text"] {
+#mailto-window input[type="text"],
+#mailto-window input[type="email"] {
   height: auto !important;
 }
 .chzn-container.chzn-container-multi input[type="text"] {
@@ -125,4 +119,11 @@ svg {
   cursor: pointer;
   color: #333;
   border: 1px solid #bbb;
+}
+.edit.item-page .modal {
+  position: initial;
+}
+.edit.item-page .media-preview.add-on {
+  height: 34px;
+  line-height: 28px;
 }

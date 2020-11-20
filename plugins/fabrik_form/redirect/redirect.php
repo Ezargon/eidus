@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Plugin
  * @subpackage  Fabrik.form.redirect
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -57,7 +57,7 @@ class PlgFabrik_FormRedirect extends PlgFabrik_Form
 		$this->data['save_and_next'] = $params->get('save_and_next', '0');
 		$this->data['save_in_session'] = $params->get('save_insession');
 		$this->data['jump_page'] = $w->parseMessageForPlaceHolder($params->get('jump_page'), $this->data);
-		$this->data['thanks_message'] = $w->parseMessageForPlaceHolder(FText::_($params->get('thanks_message')), $this->data);
+		$this->data['thanks_message'] = FText::_($w->parseMessageForPlaceHolder($params->get('thanks_message'), $this->data));
 
 		if (!$this->shouldRedirect($params))
 		{
@@ -82,12 +82,12 @@ class PlgFabrik_FormRedirect extends PlgFabrik_Form
 		if ($this->data['save_and_next'] === '1')
 		{
 			$navIds = $this->getNavIds();
-			$next_rowid = $navIds->next == $navIds->last ? '' : '&rowid=' . $navIds->next;
+			$next_rowid = '&rowid=' . $navIds->next;
 			$itemId = FabrikWorker::itemId();
 
 			if ($this->app->isAdmin())
 			{
-				$url = 'index.php?option=com_' . $this->package . '&task=form.view&formid=' . $form->id . $keyIdentifier;
+				$url = 'index.php?option=com_' . $this->package . '&task=form.view&formid=' . $form->id;
 			}
 			else
 			{
@@ -115,8 +115,6 @@ class PlgFabrik_FormRedirect extends PlgFabrik_Form
 		}
 		else
 		{
-			$msg = $this->data['thanks_message'];
-
 			// Redirect not working in admin.
 			if (!$this->app->isAdmin())
 			{
@@ -133,6 +131,7 @@ class PlgFabrik_FormRedirect extends PlgFabrik_Form
 		}
 
 		$smsg[$this->renderOrder] = $this->data['thanks_message'];
+		$smsg[$this->renderOrder] = JText::sprintf($this->data['thanks_message']);
 
 		// Don't display system message if thanks is empty
 		if (FArrayHelper::getValue($this->data, 'thanks_message', '') !== '')
@@ -298,6 +297,12 @@ class PlgFabrik_FormRedirect extends PlgFabrik_Form
 		if ($isMabmot)
 		{
 			$queryvars['isMambot'] = 'isMambot=1';
+		}
+
+		if ($this->app->isAdmin() && substr($jumpPage, 0, 10) === 'index.php?')
+		{
+			$jumpPage = preg_replace('/&view=(\w+)/', '&task=$1.view', $jumpPage);
+			$jumpPage = preg_replace('/&Itemid=(\d*)/', '', $jumpPage);
 		}
 
 		if (empty($queryvars))
@@ -528,7 +533,7 @@ class PlgFabrik_FormRedirect extends PlgFabrik_Form
 		$o->first = $rows[0];
 		$o->lastKey = count($rows) - 1;
 		$o->last = $rows[$o->lastKey];
-		$o->next = $o->index + 1 > $o->lastKey ? $o->lastKey : $rows[$o->index + 1];
+		$o->next = $o->index + 1 > $o->lastKey ? '' : $rows[$o->index + 1];
 		$o->prev = $o->index - 1 < 0 ? 0 : $rows[$o->index - 1];
 		$this->navIds = $o;
 

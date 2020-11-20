@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.4" type="plugin" group="system" method="upgrade">
+<extension version="3.9" type="plugin" group="system" method="upgrade">
 	<name>plg_system_nnframework</name>
 	<description>PLG_SYSTEM_NNFRAMEWORK_DESC</description>
-	<version>16.6.1</version>
-	<creationDate>June 2016</creationDate>
+	<version>100.0.0PRO</version>
+	<creationDate>November 2018</creationDate>
 	<author>Regular Labs (Peter van Westen)</author>
 	<authorEmail>info@regularlabs.com</authorEmail>
 	<authorUrl>https://www.regularlabs.com</authorUrl>
-	<copyright>Copyright © 2017 Regular Labs - All Rights Reserved</copyright>
+	<copyright>Copyright © 2018 Regular Labs - All Rights Reserved</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 
 	<scriptfile>script.install.php</scriptfile>
@@ -18,10 +18,6 @@
 		<folder>helpers</folder>
 		<folder>language</folder>
 	</files>
-
-	<media folder="media" destination="nnframework">
-		<folder>js</folder>
-	</media>
 
 	<config>
 		<fields name="params" addfieldpath="/plugins/system/nnframework/fields">
@@ -35,7 +31,7 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="max_list_count" type="text" size="10" class="input-mini" default="2500"
+				<field name="max_list_count" type="number" size="10" class="input-mini" default="2500"
 					   label="NN_MAX_LIST_COUNT"
 					   description="NN_MAX_LIST_COUNT_DESC" />
 			</fieldset>

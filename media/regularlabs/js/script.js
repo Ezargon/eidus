@@ -1,361 +1,314 @@
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-var RegularLabsScripts = null;
+"use strict";
 
-(function($) {
-	"use strict";
+if (typeof window.RegularLabsScripts === 'undefined'
+	|| typeof RegularLabsScripts.version === 'undefined'
+	|| RegularLabsScripts.version < '20.9.11663') {
 
-	$(document).ready(function() {
-		// remove all empty control groups
-		$('div.control-group > div').each(function(i, el) {
-			if (
-				$(el).html().trim() == ''
-				&& (
-					$(el).attr('class') == 'control-label'
-					|| $(el).attr('class') == 'controls'
-				)
-			) {
-				$(el).remove();
-			}
-		});
-		$('div.control-group').each(function(i, el) {
-			if ($(el).html().trim() == '') {
-				$(el).remove();
-			}
-		});
-		$('div.control-group > div.hide').each(function(i, el) {
-			$(el).parent().css('margin', 0);
-		});
+	(function($) {
+		window.RegularLabsScripts = {
+			version: '20.9.11663',
 
-		$('.rl_resize_textarea').click(function() {
-			var $el    = $(this);
-			var $field = $('#' + $el.attr('data-id'));
+			ajax_list        : [],
+			started_ajax_list: false,
+			ajax_list_timer  : null,
 
-			if ($el.hasClass('rl_minimize')) {
-				$el.removeClass('rl_minimize').addClass('rl_maximize');
-				$field.css({'height': $el.attr('data-min')});
-				return;
-			}
-
-			$el.removeClass('rl_maximize').addClass('rl_minimize');
-			$field.css({'height': $el.attr('data-max')});
-		});
-	});
-
-	RegularLabsScripts = {
-		loadajax: function(url, succes, fail, query, timeout, dataType, cache) {
-			if (url.substr(0, 9) != 'index.php') {
-				url = url.replace('http://', '');
-				url = 'index.php?rl_qp=1&url=' + encodeURIComponent(url);
-				if (timeout) {
-					url += '&timeout=' + timeout;
-				}
-				if (cache) {
-					url += '&cache=' + cache;
-				}
-			}
-			var dt = dataType ? dataType : '';
-			$.ajax({
-				type    : 'post',
-				url     : url,
-				dataType: dt,
-				success : function(data) {
-					if (succes) {
-						eval(succes + ';');
+			loadajax: function(url, success, fail, query, timeout, dataType, cache) {
+				if (url.indexOf('index.php') !== 0 && url.indexOf('administrator/index.php') !== 0) {
+					url = url.replace('http://', '');
+					url = `index.php?rl_qp=1&url=${encodeURIComponent(url)}`;
+					if (timeout) {
+						url += `&timeout=${timeout}`;
 					}
-				},
-				error   : function(data) {
-					if (fail) {
-						eval(fail + ';');
+					if (cache) {
+						url += `&cache=${cache}`;
 					}
 				}
-			});
-		},
 
-		displayVersion: function(data, extension, version) {
-			if (!data) {
-				return;
-			}
+				let base = window.location.pathname;
 
-			var xml = RegularLabsScripts.getObjectFromXML(data);
+				base = base.substring(0, base.lastIndexOf('/'));
 
-			if (!xml) {
-				return;
-			}
-
-			if (typeof xml[extension] === 'undefined') {
-				return;
-			}
-
-			var dat = xml[extension];
-
-			if (!dat || typeof dat['version'] === 'undefined' || !dat['version']) {
-				return;
-			}
-
-			var new_version = dat['version'];
-			var compare     = RegularLabsScripts.compareVersions(version, new_version);
-
-			if (compare != '<') {
-				return;
-			}
-
-			var el = $('#nonumber_newversionnumber_' + extension);
-			if (el) {
-				el.text(new_version);
-			}
-
-			el = $('#nonumber_version_' + extension);
-			if (el) {
-				el.css('display', 'block');
-				el.parent().removeClass('hide');
-			}
-		},
-
-		toggleSelectListSelection: function(id) {
-			var el = document.getElement('#' + id);
-			if (el && el.options) {
-				for (var i = 0; i < el.options.length; i++) {
-					if (!el.options[i].disabled) {
-						el.options[i].selected = !el.options[i].selected;
-					}
+				if (
+					typeof Joomla !== 'undefined'
+					&& typeof Joomla.getOptions !== 'undefined'
+					&& Joomla.getOptions('system.paths')
+				) {
+					base = Joomla.getOptions('system.paths').base;
 				}
-			}
-		},
 
-		toggleSelectListSize: function(id) {
-			var link = document.getElement('#toggle_' + id);
-			var el   = document.getElement('#' + id);
-			if (link && el) {
-				if (!el.getAttribute('rel')) {
-					el.setAttribute('rel', el.getAttribute('size'));
-				}
-				if (el.getAttribute('size') == el.getAttribute('rel')) {
-					el.setAttribute('size', ( el.length > 100 ) ? 100 : el.length);
-					link.getElement('span.show').setStyle('display', 'none');
-					link.getElement('span.hide').setStyle('display', 'inline');
-					if (typeof RegularLabsToggler !== 'undefined') {
-						RegularLabsToggler.autoHeightDivs();
-					}
-				} else {
-					el.setAttribute('size', el.getAttribute('rel'));
-					link.getElement('span.hide').setStyle('display', 'none');
-					link.getElement('span.show').setStyle('display', 'inline');
-				}
-			}
-		},
+				// console.log(url);
+				// console.log(`${base}/${url}`);
 
-		prependTextarea: function(id, content, separator) {
-			var textarea     = jQuery('#' + id);
-			var orig_content = textarea.val().trim();
-
-			if (orig_content && separator) {
-				orig_content = "\n\n" + separator + "\n\n" + orig_content;
-			}
-
-			textarea.val(content + orig_content);
-		},
-
-		in_array: function(needle, haystack, casesensitive) {
-			if ({}.toString.call(needle).slice(8, -1) != 'Array') {
-				needle = [needle];
-			}
-			if ({}.toString.call(haystack).slice(8, -1) != 'Array') {
-				haystack = [haystack];
-			}
-
-			for (var h = 0; h < haystack.length; h++) {
-				for (var n = 0; n < needle.length; n++) {
-					if (casesensitive) {
-						if (haystack[h] == needle[n]) {
-							return true;
+				$.ajax({
+					type    : 'post',
+					url     : `${base}/${url}`,
+					dataType: dataType ? dataType : '',
+					success : function(data) {
+						if (success) {
+							success = `data = data ? data : ''; ${success};`.replace(/;\s*;/g, ';');
+							eval(success);
 						}
-					} else {
+					},
+					error   : function(data) {
+						if (fail) {
+							fail = `data = data ? data : ''; ${fail};`.replace(/;\s*;/g, ';');
+							eval(fail);
+						}
+					}
+				});
+			},
+
+			displayVersion: function(data, extension, version) {
+				if (!data) {
+					return;
+				}
+
+				const xml = this.getObjectFromXML(data);
+
+				if (!xml) {
+					return;
+				}
+
+				if (typeof xml[extension] === 'undefined') {
+					return;
+				}
+
+				const dat = xml[extension];
+
+				if (!dat || typeof dat.version === 'undefined' || !dat.version) {
+					return;
+				}
+
+				const new_version = dat.version;
+				const compare     = this.compareVersions(version, new_version);
+
+				if (compare != '<') {
+					return;
+				}
+
+				let el = $(`#regularlabs_newversionnumber_${extension}`);
+
+				if (el) {
+					el.text(new_version);
+				}
+
+				el = $(`#regularlabs_version_${extension}`);
+
+				if (el) {
+					el.css('display', 'block');
+					el.parent().removeClass('hide');
+				}
+			},
+
+			addToLoadAjaxList: function(url, success, error) {
+				// wrap inside the loadajax function (and escape string values)
+				url     = url.replace(/'/g, "\\'");
+				success = success.replace(/'/g, "\\'");
+				error   = error.replace(/'/g, "\\'");
+
+				const action = `RegularLabsScripts.loadajax(
+					'${url}',
+					'${success};RegularLabsScripts.ajaxRun();',
+					'${error};RegularLabsScripts.ajaxRun();'
+				)`;
+
+				this.addToAjaxList(action);
+			},
+
+			addToAjaxList: function(action) {
+				this.ajax_list.push(action);
+
+				if (!this.started_ajax_list) {
+					this.ajaxRun();
+				}
+			},
+
+			ajaxRun: function() {
+				if (typeof RegularLabsToggler !== 'undefined') {
+					RegularLabsToggler.initialize();
+				}
+
+				if (!this.ajax_list.length) {
+					return;
+				}
+
+				clearTimeout(this.ajax_list_timer);
+
+				this.started_ajax_list = true;
+
+				const action = this.ajax_list.shift();
+
+				eval(`${action};`);
+
+				if (!this.ajax_list.length) {
+					return;
+				}
+
+				// Re-trigger this ajaxRun function just in case it hangs somewhere
+				this.ajax_list_timer = setTimeout(
+					function() {
+						RegularLabsScripts.ajaxRun();
+					},
+					5000
+				);
+			},
+
+			in_array: function(needle, haystack, casesensitive) {
+				if ({}.toString.call(needle).slice(8, -1) !== 'Array') {
+					needle = [needle];
+				}
+				if ({}.toString.call(haystack).slice(8, -1) !== 'Array') {
+					haystack = [haystack];
+				}
+
+				for (let h = 0; h < haystack.length; h++) {
+					for (let n = 0; n < needle.length; n++) {
+						if (casesensitive) {
+							if (haystack[h] == needle[n]) {
+								return true;
+							}
+
+							continue;
+						}
+
 						if (haystack[h].toLowerCase() == needle[n].toLowerCase()) {
 							return true;
 						}
 					}
 				}
-			}
-			return false;
-		},
+				return false;
+			},
 
-		getObjectFromXML: function(xml) {
-			if (!xml) {
-				return;
-			}
+			getObjectFromXML: function(xml) {
+				if (!xml) {
+					return;
+				}
 
-			var obj = [];
-			$(xml).find('extension').each(function() {
-				var el = [];
-				$(this).children().each(function() {
-					el[this.nodeName.toLowerCase()] = String($(this).text()).trim();
+				const obj = [];
+				$(xml).find('extension').each(function() {
+					const el = [];
+					$(this).children().each(function() {
+						el[this.nodeName.toLowerCase()] = String($(this).text()).trim();
+					});
+					if (typeof el.alias !== 'undefined') {
+						obj[el.alias] = el;
+					}
+					if (typeof el.extname !== 'undefined' && el.extname != el.alias) {
+						obj[el.extname] = el;
+					}
 				});
-				if (typeof el.alias !== 'undefined') {
-					obj[el.alias] = el;
-				}
-				if (typeof el.extname !== 'undefined' && el.extname != el.alias) {
-					obj[el.extname] = el;
-				}
-			});
 
-			return obj;
-		},
+				return obj;
+			},
 
-		compareVersions: function(num1, num2) {
-			num1 = num1.split('.');
-			num2 = num2.split('.');
+			compareVersions: function(number1, neumber2) {
+				number1  = number1.split('.');
+				neumber2 = neumber2.split('.');
 
-			var let1 = '';
-			var let2 = '';
+				let letter1 = '';
+				let letter2 = '';
 
-			var max = Math.max(num1.length, num2.length);
-			for (var i = 0; i < max; i++) {
-				if (typeof num1[i] === 'undefined') {
-					num1[i] = '0';
-				}
-				if (typeof num2[i] === 'undefined') {
-					num2[i] = '0';
-				}
-
-				let1    = num1[i].replace(/^[0-9]*(.*)/, '$1');
-				num1[i] = parseInt(num1[i]);
-				let2    = num2[i].replace(/^[0-9]*(.*)/, '$1');
-				num2[i] = parseInt(num2[i]);
-
-				if (num1[i] < num2[i]) {
-					return '<';
-				} else if (num1[i] > num2[i]) {
-					return '>';
-				}
-			}
-
-			// numbers are same, so compare trailing letters
-			if (let2 && (!let1 || let1 > let2)) {
-				return '>';
-			} else if (let1 && (!let2 || let1 < let2 )) {
-				return '<';
-			} else {
-				return '=';
-			}
-		},
-
-		setRadio: function(id, value) {
-			value = value ? 1 : 0;
-			document.getElements('input#jform_' + id + value + ',input#jform_params_' + id + value + ',input#advancedparams_' + id + value).each(function(el) {
-				el.click();
-			});
-		},
-
-		setToggleTitleClass: function(input, value) {
-			var el = $(input);
-			el     = el.parent().parent().parent().parent();
-
-			el.removeClass('alert-success').removeClass('alert-error');
-			if (value === 2) {
-				el.addClass('alert-error');
-			} else if (value) {
-				el.addClass('alert-success');
-			}
-		},
-
-		initCheckAlls: function(id, classname) {
-			$('#' + id).attr('checked', RegularLabsScripts.allChecked(classname));
-			$('input.' + classname).click(function() {
-				$('#' + id).attr('checked', RegularLabsScripts.allChecked(classname));
-			});
-		},
-
-		allChecked: function(classname) {
-			return $('input.' + classname + ':checkbox:not(:checked)').length < 1;
-		},
-
-		checkAll: function(checkbox, classname) {
-			var allchecked = RegularLabsScripts.allChecked(classname);
-			$(checkbox).attr('checked', !allchecked);
-			$('input.' + classname).attr('checked', !allchecked);
-		},
-
-		getEditorSelection: function(editorname) {
-			var editor_textarea = document.getElementById(editorname);
-
-			if (!editor_textarea) {
-				return '';
-			}
-
-			var iframes = editor_textarea.parentNode.getElementsByTagName('iframe');
-
-			if (!iframes.length) {
-				return '';
-			}
-
-			var editor_frame  = iframes[0];
-			var contentWindow = editor_frame.contentWindow;
-
-			if (typeof contentWindow.getSelection !== 'undefined') {
-				var sel = contentWindow.getSelection();
-
-				if (sel.rangeCount) {
-					var container = contentWindow.document.createElement("div");
-					var len       = sel.rangeCount;
-					for (var i = 0; i < len; ++i) {
-						container.appendChild(sel.getRangeAt(i).cloneContents());
+				const max = Math.max(number1.length, neumber2.length);
+				for (let i = 0; i < max; i++) {
+					if (typeof number1[i] === 'undefined') {
+						number1[i] = '0';
+					}
+					if (typeof neumber2[i] === 'undefined') {
+						neumber2[i] = '0';
 					}
 
-					return container.innerHTML;
+					letter1     = number1[i].replace(/^[0-9]*(.*)/, '$1');
+					number1[i]  = parseInt(number1[i]);
+					letter2     = neumber2[i].replace(/^[0-9]*(.*)/, '$1');
+					neumber2[i] = parseInt(neumber2[i]);
+
+					if (number1[i] < neumber2[i]) {
+						return '<';
+					}
+
+					if (number1[i] > neumber2[i]) {
+						return '>';
+					}
 				}
 
-				return '';
-			}
+				// numbers are same, so compare trailing letters
+				if (letter2 && (!letter1 || letter1 > letter2)) {
+					return '>';
+				}
 
-			if (typeof contentWindow.document.selection !== 'undefined') {
-				if (contentWindow.document.selection.type == "Text") {
+				if (letter1 && (!letter2 || letter1 < letter2)) {
+					return '<';
+				}
+
+				return '=';
+			},
+
+			getEditorSelection: function(editorID) {
+				const editor_textarea = document.getElementById(editorID);
+
+				if (!editor_textarea) {
+					return '';
+				}
+
+				const editorIFrame = editor_textarea.parentNode.querySelector('iframe');
+
+				if (!editorIFrame) {
+					return '';
+				}
+
+				const contentWindow = editorIFrame.contentWindow;
+
+				if (typeof contentWindow.getSelection !== 'undefined') {
+					const sel = contentWindow.getSelection();
+
+					if (sel.rangeCount) {
+						const container = contentWindow.document.createElement('div');
+						const len       = sel.rangeCount;
+
+						for (let i = 0; i < len; ++i) {
+							container.appendChild(sel.getRangeAt(i).cloneContents());
+						}
+
+						return container.innerHTML;
+					}
+
+					return '';
+				}
+
+				if (typeof contentWindow.document.selection !== 'undefined'
+					&& contentWindow.document.selection.type === 'Text') {
 					return contentWindow.document.selection.createRange().htmlText;
 				}
 
 				return '';
-			}
+			},
 
-			return '';
-		}
-	};
-
-	$(document).ready().delay(1000, function() {
-		$('.btn-group.rl_btn-group label').click(function() {
-			var label = $(this);
-			var input = $('#' + label.attr('for'));
-
-			label.closest('.btn-group').find('label').removeClass('active btn-success btn-danger btn-primary');
-			if (input.val() == '' || input.val() == -2) {
-				label.addClass('active btn-primary');
-			} else if (input.val() == -1) {
-				label.addClass('active');
-			} else if (input.val() == 0) {
-				label.addClass('active btn-danger');
-			} else {
-				label.addClass('active btn-success');
+			/* 2018-11-01: These methods have moved to RegularLabsForm. Keeping them here for backwards compatibility. */
+			setRadio                 : function(id, value) {
+			},
+			initCheckAlls            : function(id, classname) {
+			},
+			allChecked               : function(classname) {
+				return false;
+			},
+			checkAll                 : function(checkbox, classname) {
+			},
+			toggleSelectListSelection: function(id) {
+			},
+			prependTextarea          : function(id, content, separator) {
+			},
+			setToggleTitleClass      : function(input, value) {
 			}
-			input.prop('checked', true);
-		});
-		$('.btn-group.rl_btn-group input[checked=checked]').each(function() {
-			$('label[for=' + $(this).attr('id') + ']').removeClass('active btn-success btn-danger btn-primary');
-			if ($(this).val() == '' || $(this).val() == -2) {
-				$('label[for=' + $(this).attr('id') + ']').addClass('active btn-primary');
-			} else if ($(this).val() == -1) {
-				$('label[for=' + $(this).attr('id') + ']').addClass('active');
-			} else if ($(this).val() == 0) {
-				$('label[for=' + $(this).attr('id') + ']').addClass('active btn-danger');
-			} else {
-				$('label[for=' + $(this).attr('id') + ']').addClass('active btn-success');
-			}
-		});
-	});
-})(jQuery);
+		};
+	})(jQuery);
+}

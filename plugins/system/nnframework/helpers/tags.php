@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -16,7 +16,7 @@ class NNTags
 	public static function getValuesFromString($string = '', $main_key = 'title', $known_boolean_keys = [])
 	{
 		// Only one value, so return simple key/value object
-		if (strpos($string, '="') == false && strpos($string, '|') == false)
+		if (strpos($string, '="') == false && strpos($string, '=\'') == false && strpos($string, '|') == false)
 		{
 			return (object) [$main_key => $string];
 		}
@@ -24,7 +24,7 @@ class NNTags
 		self::protectSpecialChars($string);
 
 		// No foo="bar" syntax found, so assume old syntax
-		if (strpos($string, '="') == false)
+		if (strpos($string, '="') == false && strpos($string, '=\'') == false)
 		{
 			self::unprotectSpecialChars($string);
 
@@ -42,9 +42,9 @@ class NNTags
 
 		$tag = (object) [];
 
-		foreach ($values['1'] as $i => $key)
+		foreach ($values[1] as $i => $key)
 		{
-			$value = $values['2'][$i];
+			$value = $values[2][$i];
 
 			self::unprotectSpecialChars($value);
 
@@ -81,7 +81,7 @@ class NNTags
 			return;
 		}
 
-		foreach ($tags['0'] as $tag)
+		foreach ($tags[0] as $tag)
 		{
 			// replace unescaped characters with special markup
 			$protected = str_replace(
@@ -127,8 +127,8 @@ class NNTags
 			foreach ($tags as $tag)
 			{
 				$string = str_replace(
-					$tag['0'],
-					$tag_start . base64_encode(str_replace([$temp_separator, $temp_equal], [$separator, $equal], $tag['0'])) . $tag_end,
+					$tag[0],
+					$tag_start . base64_encode(str_replace([$temp_separator, $temp_equal], [$separator, $equal], $tag[0])) . $tag_end,
 					$string
 				);
 			}
@@ -148,9 +148,9 @@ class NNTags
 		{
 			// spit part into key and val by equal sign
 			$keyval = explode($temp_equal, $keyval, 2);
-			if (isset($keyval['1']))
+			if (isset($keyval[1]))
 			{
-				$keyval['1'] = str_replace([$temp_separator, $temp_equal], [$separator, $equal], $keyval['1']);
+				$keyval[1] = str_replace([$temp_separator, $temp_equal], [$separator, $equal], $keyval[1]);
 			}
 
 			// unprotect tags in key and val
@@ -162,7 +162,7 @@ class NNTags
 				{
 					foreach ($tags as $tag)
 					{
-						$val = str_replace($tag['0'], base64_decode($tag['1']), $val);
+						$val = str_replace($tag[0], base64_decode($tag[1]), $val);
 					}
 
 					$keyval[trim($key)] = $val;
@@ -185,9 +185,9 @@ class NNTags
 			else
 			{
 				// else add as defined in the string
-				if (isset($keyval['1']))
+				if (isset($keyval[1]))
 				{
-					$tag_values->{$keyval['0']} = $keyval['1'];
+					$tag_values->{$keyval[0]} = $keyval[1];
 				}
 				else
 				{
@@ -279,7 +279,7 @@ class NNTags
 		require_once __DIR__ . '/text.php';
 
 		$tags = NNText::toArray($tags);
-		$tags = count($tags) > 1 ? '(?:' . implode('|', $tags) . ')' : $tags['0'];
+		$tags = count($tags) > 1 ? '(?:' . implode('|', $tags) . ')' : $tags[0];
 
 		$value      = '(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[a-z0-9-_]+))?';
 		$attributes = '(?:\s+[a-z0-9-_]+' . $value . ')+';
@@ -314,7 +314,7 @@ class NNTags
 		// Remove empty tags
 		while (preg_match('#<(' . implode('|', $elements) . ')(?: [^>]*)?>\s*(' . $breaks . ')<\/\1>\s*#s', $string, $match))
 		{
-			$string = str_replace($match['0'], $match['2'], $string);
+			$string = str_replace($match[0], $match[2], $string);
 		}
 
 		// Remove paragraphs around block elements
@@ -326,17 +326,17 @@ class NNTags
 		$block_elements = '(' . implode('|', $block_elements) . ')';
 		while (preg_match('#(<p(?: [^>]*)?>)(\s*' . $breaks . ')(<' . $block_elements . '(?: [^>]*)?>)#s', $string, $match))
 		{
-			if ($match['4'] == 'p')
+			if ($match[4] == 'p')
 			{
-				$match['3'] = $match['1'] . $match['3'];
-				NNText::combinePTags($match['3']);
+				$match[3] = $match[1] . $match[3];
+				NNText::combinePTags($match[3]);
 			}
 
-			$string = str_replace($match['0'], $match['2'] . $match['3'], $string);
+			$string = str_replace($match[0], $match[2] . $match[3], $string);
 		}
 		while (preg_match('#(</' . $block_elements . '>\s*' . $breaks . ')</p>#s', $string, $match))
 		{
-			$string = str_replace($match['0'], $match['1'], $string);
+			$string = str_replace($match[0], $match[1], $string);
 		}
 
 		$tags = explode(':|:', $string);

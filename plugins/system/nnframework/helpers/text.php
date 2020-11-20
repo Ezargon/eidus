@@ -1,15 +1,19 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\CMS\Uri\Uri as JUri;
 
 require_once __DIR__ . '/string.php';
 
@@ -45,7 +49,7 @@ class NNText
 		// If so, add :00 (seconds)
 		if (preg_match('#^([0-9]+-[0-9]+-[0-9]+)#', $date, $match))
 		{
-			$date = $match['1'] . ' 00:00:00';
+			$date = $match[1] . ' 00:00:00';
 
 			return;
 		}
@@ -360,7 +364,7 @@ class NNText
 
 		foreach ($tags as $tag)
 		{
-			$string = str_replace($tag['0'], $tag['2'] . NNText::combineTags($tag['1'], $tag['3']), $string);
+			$string = str_replace($tag[0], $tag[2] . NNText::combineTags($tag[1], $tag[3]), $string);
 		}
 	}
 
@@ -460,7 +464,7 @@ class NNText
 		// get attribute from string
 		if (preg_match('#' . preg_quote($attributes, '#') . '="([^"]*)"#si', $string, $match))
 		{
-			return $match['1'];
+			return $match[1];
 		}
 
 		return '';
@@ -487,7 +491,7 @@ class NNText
 
 		foreach ($matches as $match)
 		{
-			$attribs[$match['1']] = $match['2'];
+			$attribs[$match[1]] = $match[2];
 		}
 
 		return $attribs;
@@ -658,8 +662,8 @@ class NNText
 		}
 
 		$html_split = explode('<body', $html, 2);
-		$pre        = $html_split['0'];
-		$body       = '<body' . $html_split['1'];
+		$pre        = $html_split[0];
+		$body       = '<body' . $html_split[1];
 		$body_split = explode('</body>', $body);
 		$post       = array_pop($body_split);
 		$body       = implode('</body>', $body_split) . '</body>';
@@ -755,8 +759,8 @@ class NNText
 			return;
 		}
 
-		$pre    = substr($pre, 0, strlen($pre) - strlen($match['0']));
-		$string = $match['0'] . $string;
+		$pre    = substr($pre, 0, strlen($pre) - strlen($match[0]));
+		$string = $match[0] . $string;
 	}
 
 	protected static function fixBrokenTagsByPostString(&$post, &$string)
@@ -771,9 +775,9 @@ class NNText
 			return;
 		}
 
-		$post = substr($post, strlen($match['0']));
+		$post = substr($post, strlen($match[0]));
 
-		$string .= $match['0'];
+		$string .= $match[0];
 	}
 
 	static function createArray($string, $separator = ',')

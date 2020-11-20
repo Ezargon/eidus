@@ -105,6 +105,7 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
             var id = this.element.id + '-popupwin';
             this.windowopts = {
                 'id'             : id,
+                'data'           : this.form.getFormElementData(),
                 'title'          : Joomla.JText._('PLG_ELEMENT_DBJOIN_ADD'),
                 'contentType'    : 'xhr',
                 'loadMethod'     : 'xhr',
@@ -228,7 +229,7 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
          */
         _addOption: function (opt, l, v, rowOpt) {
             var sel = typeOf(this.options.value) === 'array' ?
-                    this.options.value : Array.from(this.options.value),
+                    this.options.value : Array.mfrom(this.options.value),
                 i = opt.getElement('input'),
                 subOpts = this.getSubOptions(),
                 subOptsRows = this.getSubOptsRow(),
@@ -383,9 +384,19 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
                     json.each(function (o) {
                         jsonValues.push(o.value);
                         if (!existingValues.contains(o.value) && o.value !== null) {
+                            if (o.selected) {
+                                self.options.value = o.value;
+                            }
                             sel = self.options.value === o.value;
                             self.addOption(o.value, o.text, sel);
                             changed = true;
+                        }
+                        else {
+                            if (o.selected) {
+                                if (self.options.value !== o.value) {
+                                    self.update(o.value);
+                                }
+                            }
                         }
                     });
 
@@ -400,6 +411,24 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
                     if (changed) {
                         self.element.fireEvent('change', new Event.Mock(self.element, 'change'));
                         self.element.fireEvent('blur', new Event.Mock(self.element, 'blur'));
+                    }
+
+                    if (self.options.showDesc)
+                    {
+                        var c = self.getContainer().getElement('.dbjoin-description');
+                        jQuery(c).empty();
+                        var descDiv = jQuery(Fabrik.jLayouts['fabrik-element-' + self.getPlugin() + '-form-description-div'])[0];
+                        var i = 0;
+                        json.each(function (o) {
+                            var $desc = jQuery(descDiv).clone();
+                            $desc.removeClass('description-0');
+                            $desc.addClass('description-' + i++);
+                            if (self.options.value === o.value) {
+                                $desc.css('display','');
+                            }
+                            $desc.html(o.description);
+                            jQuery(c).append($desc);
+                        });
                     }
 
                     self.activePopUp = false;
@@ -956,7 +985,7 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
                         // rob previously we we doing appendInfo() but that didnt get the concat
                         // labels for the database join
                         if (this.options.displayType === 'auto-complete') {
-                            if (this.activePopup) {
+                            if (this.activePopUp) {
                                 // Need to get v if auto-complete and updating from posted popup form
                                 // as we only want to get ONE
                                 // option back inside update();
@@ -1031,13 +1060,15 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
                             (typeOf(js) === 'function') ? js.delay(700, this, this) : eval(js);
                         }.bind(this));
                     }
-                    if (this.element) {
-                        this.element.addEvent(action, function (e) {
-                            if (e) {
-                                e.stop();
-                            }
-                            (typeOf(js) === 'function') ? js.delay(0, this, this) : eval(js);
-                        }.bind(this));
+                    else {
+                        if (this.element) {
+                            this.element.addEvent(action, function (e) {
+                                if (e) {
+                                    e.stop();
+                                }
+                                (typeOf(js) === 'function') ? js.delay(0, this, this) : eval(js);
+                            }.bind(this));
+                        }
                     }
                     break;
             }
@@ -1062,7 +1093,30 @@ define(['jquery', 'fab/element', 'fab/encoder', 'fab/fabrik', 'fab/autocomplete-
          */
         updateUsingRaw: function () {
             return true;
-        }
+        },
+
+        /**
+         * Called from FbFormSubmit
+         *
+         * @params   function  cb  Callback function to run when the element is in an acceptable state for the form processing to continue
+         *
+         * @return  void
+         */
+        onsubmit: function (cb) {
+            /**
+             * if the selected option in a dropdown is disabled, unset the disabled property,
+             * otherwise the value won't get submitted with the form.
+             */
+            if (this.options.editable) {
+                switch (this.options.displayType) {
+                    case 'dropdown':
+                    case 'multilist':
+                        jQuery('#' + this.element.id + ' option:selected:disabled').prop('disabled',false);
+                }
+            }
+            this.parent(cb);
+        },
+
     });
 
     return window.FbDatabasejoin;

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -14,7 +14,7 @@ namespace RegularLabs\Library;
 defined('_JEXEC') or die;
 
 use DateTimeZone;
-use JFactory;
+use Joomla\CMS\Factory as JFactory;
 
 /**
  * Class Condition
@@ -23,15 +23,19 @@ use JFactory;
 abstract class Condition
 	implements \RegularLabs\Library\Api\ConditionInterface
 {
-	public $request      = null;
-	public $date         = null;
-	public $db           = null;
-	public $selection    = null;
-	public $params       = null;
-	public $include_type = null;
-	public $article      = null;
+	static  $_request     = null;
+	public  $request      = null;
+	public  $date         = null;
+	public  $db           = null;
+	public  $selection    = null;
+	public  $params       = null;
+	public  $include_type = null;
+	public  $article      = null;
+	public  $module       = null;
+	private $timezone     = null;
+	private $dates        = [];
 
-	public function __construct($condition = [], $article = null)
+	public function __construct($condition = [], $article = null, $module = null)
 	{
 		$tz         = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
 		$this->date = JFactory::getDate()->setTimeZone($tz);
@@ -45,6 +49,7 @@ abstract class Condition
 		$this->include_type = isset($condition->include_type) ? $condition->include_type : 'none';
 
 		$this->article = $article;
+		$this->module  = $module;
 	}
 
 	public function init()
@@ -55,76 +60,91 @@ abstract class Condition
 	{
 	}
 
+	public function beforePass()
+	{
+	}
+
 	private function getRequest()
 	{
+		$return_early = ! is_null(self::$_request);
+
 		$app   = JFactory::getApplication();
 		$input = $app->input;
 
-		$id = $input->get('id', [0], 'array');
+		$attributes = $input->getArray();
 
-		$request = (object) [
+		$id = isset($attributes['a_id'])
+			? $input->get('a_id', [0], 'array')
+			: $input->get('id', [0], 'array');
+
+		self::$_request = (object) [
 			'idname' => 'id',
 			'option' => $input->get('option'),
 			'view'   => $input->get('view'),
 			'task'   => $input->get('task'),
 			'layout' => $input->getString('layout'),
 			'Itemid' => $this->getItemId(),
-			'id'     => (int) $id['0'],
+			'id'     => (int) $id[0],
 		];
 
-		switch ($request->option)
+		switch (self::$_request->option)
 		{
 			case 'com_categories':
-				$extension       = $input->getCmd('extension');
-				$request->option = $extension ? $extension : 'com_content';
-				$request->view   = 'category';
+				$extension              = $input->getCmd('extension');
+				self::$_request->option = $extension ? $extension : 'com_content';
+				self::$_request->view   = 'category';
 				break;
 
 			case 'com_breezingforms':
-				if ($request->view == 'article')
+				if (self::$_request->view == 'article')
 				{
-					$request->option = 'com_content';
+					self::$_request->option = 'com_content';
 				}
 				break;
 		}
 
-		$this->initRequest($request);
+		$this->initRequest(self::$_request);
 
-		if ( ! $request->id)
+		if ( ! self::$_request->id)
 		{
-			$cid         = $input->get('cid', [0], 'array');
-			$request->id = (int) $cid['0'];
+			$cid                = $input->get('cid', [0], 'array');
+			self::$_request->id = (int) $cid[0];
+		}
+
+		if ($return_early)
+		{
+			return self::$_request;
 		}
 
 		// if no id is found, check if menuitem exists to get view and id
 		if (Document::isClient('site')
-			&& ( ! $request->option || ! $request->id)
+			&& ( ! self::$_request->option || ! self::$_request->id)
 		)
 		{
-			$menuItem = empty($request->Itemid)
+			$menuItem = empty(self::$_request->Itemid)
 				? $app->getMenu('site')->getActive()
-				: $app->getMenu('site')->getItem($request->Itemid);
+				: $app->getMenu('site')->getItem(self::$_request->Itemid);
 
 			if ($menuItem)
 			{
-				if ( ! $request->option)
+				if ( ! self::$_request->option)
 				{
-					$request->option = (empty($menuItem->query['option'])) ? null : $menuItem->query['option'];
+					self::$_request->option = (empty($menuItem->query['option'])) ? null : $menuItem->query['option'];
 				}
 
-				$request->view = (empty($menuItem->query['view'])) ? null : $menuItem->query['view'];
-				$request->task = (empty($menuItem->query['task'])) ? null : $menuItem->query['task'];
+				self::$_request->view = (empty($menuItem->query['view'])) ? null : $menuItem->query['view'];
+				self::$_request->task = (empty($menuItem->query['task'])) ? null : $menuItem->query['task'];
 
-				if ( ! $request->id)
+				if ( ! self::$_request->id)
 				{
-					$request->id = (empty($menuItem->query[$request->idname])) ? $menuItem->params->get($request->idname) : $menuItem->query[$request->idname];
+					self::$_request->id = (empty($menuItem->query[self::$_request->idname])) ? $menuItem->params->get(self::$_request->idname) : $menuItem->query[self::$_request->idname];
 				}
 			}
 
 			unset($menuItem);
 		}
 
-		return $request;
+		return self::$_request;
 	}
 
 	public function _($pass = true, $include_type = null)
@@ -210,7 +230,7 @@ abstract class Condition
 	{
 		$pass_type = ! empty($data) ? $this->{'pass' . $type}($data) : $this->{'pass' . $type}();
 
-		if ($pass_type == null)
+		if ($pass_type === null)
 		{
 			return true;
 		}
@@ -246,11 +266,11 @@ abstract class Condition
 
 	public function getMenuItemParams($id = 0)
 	{
-		$hash = md5('getMenuItemParams_' . $id);
+		$cache_id = 'getMenuItemParams_' . $id;
 
-		if (Cache::has($hash))
+		if (Cache::has($cache_id))
 		{
-			return Cache::get($hash);
+			return Cache::get($cache_id);
 		}
 
 		$query = $this->db->getQuery(true)
@@ -263,7 +283,7 @@ abstract class Condition
 		$parameters = Parameters::getInstance();
 
 		return Cache::set(
-			$hash,
+			$cache_id,
 			$parameters->getParams($params)
 		);
 	}
@@ -275,11 +295,11 @@ abstract class Condition
 			return [];
 		}
 
-		$hash = md5('getParentIds_' . $id . '_' . $table . '_' . $parent . '_' . $child);
+		$cache_id = 'getParentIds_' . $id . '_' . $table . '_' . $parent . '_' . $child;
 
-		if (Cache::has($hash))
+		if (Cache::has($cache_id))
 		{
-			return Cache::get($hash);
+			return Cache::get($cache_id);
 		}
 
 		$parent_ids = [];
@@ -303,7 +323,7 @@ abstract class Condition
 		}
 
 		return Cache::set(
-			$hash,
+			$cache_id,
 			$parent_ids
 		);
 	}
@@ -315,11 +335,11 @@ abstract class Condition
 			return [];
 		}
 
-		$hash = md5('makeArray_' . json_encode($array) . '_' . $delimiter . '_' . $trim);
+		$cache_id = 'makeArray_' . json_encode($array) . '_' . $delimiter . '_' . $trim;
 
-		if (Cache::has($hash))
+		if (Cache::has($cache_id))
 		{
-			return Cache::get($hash);
+			return Cache::get($cache_id);
 		}
 
 		$array = $this->mixedDataToArray($array, $delimiter);
@@ -345,7 +365,7 @@ abstract class Condition
 		}
 
 		return Cache::set(
-			$hash,
+			$cache_id,
 			$array
 		);
 	}
@@ -364,14 +384,14 @@ abstract class Condition
 			return $array;
 		}
 
-		if (isset($array['0']) && is_array($array['0']))
+		if (isset($array[0]) && is_array($array[0]))
 		{
-			return $array['0'];
+			return $array[0];
 		}
 
-		if (count($array) === 1 && strpos($array['0'], ',') !== false)
+		if (count($array) === 1 && strpos($array[0], ',') !== false)
 		{
-			return explode(',', $array['0']);
+			return explode(',', $array[0]);
 		}
 
 		return $array;
@@ -420,5 +440,51 @@ abstract class Condition
 		}
 
 		return $menu;
+	}
+
+	public function getNow()
+	{
+		return strtotime($this->date->format('Y-m-d H:i:s', true));
+	}
+
+	public function getDate($date = '')
+	{
+		$date = Date::fix($date);
+
+		$id = 'date_' . $date;
+
+		if (isset($this->dates[$id]))
+		{
+			return $this->dates[$id];
+		}
+
+		$this->dates[$id] = JFactory::getDate($date);
+
+		if (empty($this->params->ignore_time_zone))
+		{
+			$this->dates[$id]->setTimeZone($this->getTimeZone());
+		}
+
+		return $this->dates[$id];
+	}
+
+	public function getDateString($date = '')
+	{
+		$date = $this->getDate($date);
+		$date = strtotime($date->format('Y-m-d H:i:s', true));
+
+		return $date;
+	}
+
+	private function getTimeZone()
+	{
+		if ( ! is_null($this->timezone))
+		{
+			return $this->timezone;
+		}
+
+		$this->timezone = new DateTimeZone(JFactory::getApplication()->getCfg('offset'));
+
+		return $this->timezone;
 	}
 }

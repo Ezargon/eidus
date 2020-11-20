@@ -1,15 +1,20 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Date\Date as JDate;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Language\Text as JText;
+use RegularLabs\Library\StringHelper as RL_String;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -18,42 +23,33 @@ if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 
 require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
 
-use RegularLabs\Library\Document as RL_Document;
-use RegularLabs\Library\StringHelper as RL_String;
-
 class JFormFieldRL_TextAreaPlus extends \RegularLabs\Library\Field
 {
 	public $type = 'TextAreaPlus';
 
 	protected function getLabel()
 	{
-		$this->params = $this->element->attributes();
-
 		$resize                = $this->get('resize', 0);
 		$show_insert_date_name = $this->get('show_insert_date_name', 0);
+		$add_separator         = $this->get('add_separator', 1);
 
 		$label = RL_String::html_entity_decoder(JText::_($this->get('label')));
 
-		$html = '<label id="' . $this->id . '-lbl" for="' . $this->id . '"';
+		$attribs = 'id="' . $this->id . '-lbl" for="' . $this->id . '"';
+
 		if ($this->description)
 		{
-			$html .= ' class="hasTooltip" title="<strong>' . $label . '</strong><br>' . JText::_($this->description) . '">';
-		}
-		else
-		{
-			$html .= '>';
+			$attribs .= ' class="hasPopover" title="' . $label . '"'
+				. ' data-content="' . JText::_($this->description) . '"';
 		}
 
-		$html .= $label;
+		$html = '<label ' . $attribs . '>' . $label;
 
 		if ($show_insert_date_name)
 		{
-			JHtml::_('jquery.framework');
-
-			RL_Document::script('regularlabs/script.min.js');
-
-			$date_name = JDate::getInstance()->format('[Y-m-d]') . '[' . JFactory::getUser()->username . '] : ';
-			$onclick   = "RegularLabsScripts.prependTextarea('" . $this->id . "', '" . addslashes($date_name) . "', '---');";
+			$date_name = JDate::getInstance()->format('[Y-m-d]') . ' ' . JFactory::getUser()->name . ' : ';
+			$separator = $add_separator ? '---' : 'none';
+			$onclick   = "RegularLabsForm.prependTextarea('" . $this->id . "', '" . addslashes($date_name) . "', '" . $separator . "');";
 
 			$html .= '<br><span role="button" class="btn btn-mini rl_insert_date" onclick="' . $onclick . '">'
 				. JText::_('RL_INSERT_DATE_NAME')
@@ -62,11 +58,6 @@ class JFormFieldRL_TextAreaPlus extends \RegularLabs\Library\Field
 
 		if ($resize)
 		{
-			JHtml::_('jquery.framework');
-
-			RL_Document::script('regularlabs/script.min.js');
-			RL_Document::stylesheet('regularlabs/style.min.css');
-
 			$html .= '<br><span role="button" class="rl_resize_textarea rl_maximize"'
 				. ' data-id="' . $this->id . '"  data-min="' . $this->get('height', 80) . '" data-max="' . $resize . '">'
 				. '<span class="rl_resize_textarea_maximize">'
@@ -85,8 +76,6 @@ class JFormFieldRL_TextAreaPlus extends \RegularLabs\Library\Field
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
-
 		$width  = $this->get('width', 600);
 		$height = $this->get('height', 80);
 		$class  = ' class="' . trim('rl_textarea ' . $this->get('class')) . '"';

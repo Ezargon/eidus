@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,11 +13,10 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-jimport('joomla.filesystem.file');
+use Joomla\CMS\Access\Access as JAccess;
+use Joomla\CMS\Factory as JFactory;
 
-use JAccess;
-use JFactory;
-use JFile;
+jimport('joomla.filesystem.file');
 
 /**
  * Class Protect
@@ -62,11 +61,11 @@ class Protect
 	 */
 	public static function isRestrictedPage($hastags = false, $restricted_formats = [])
 	{
-		$hash = md5('isRestrictedPage_' . $hastags . '_' . json_encode($restricted_formats));
+		$cache_id = 'isRestrictedPage_' . $hastags . '_' . json_encode($restricted_formats);
 
-		if (Cache::has($hash))
+		if (Cache::has($cache_id))
 		{
-			return Cache::get($hash);
+			return Cache::get($cache_id);
 		}
 
 		$input = JFactory::getApplication()->input;
@@ -78,22 +77,16 @@ class Protect
 		// return if current page is a JoomFish or Josetta page
 		$is_restricted = (
 			in_array($input->get('format'), $restricted_formats)
-			|| in_array($input->get('view'), ['image', 'img'])
+//			|| in_array($input->get('view'), ['image', 'img'])
 			|| in_array($input->get('type'), ['image', 'img'])
 			|| in_array($input->get('task'), ['install.install', 'install.ajax_upload'])
-			|| ($hastags
-				&& (
-					$input->getInt('rl_qp', 0)
-					|| in_array($input->get('option'), ['com_joomfishplus', 'com_josetta'])
-				)
-			)
-			|| (Document::isClient('administrator')
-				&& in_array($input->get('option'), ['com_jdownloads'])
-			)
+			|| ($hastags && $input->getInt('rl_qp', 0))
+			|| ($hastags && in_array($input->get('option'), ['com_joomfishplus', 'com_josetta']))
+			|| (Document::isClient('administrator') && in_array($input->get('option'), ['com_jdownloads']))
 		);
 
 		return Cache::set(
-			$hash,
+			$cache_id,
 			$is_restricted
 		);
 	}
@@ -126,18 +119,16 @@ class Protect
 			return false;
 		}
 
-		$restricted_components =
-			is_array($restricted_components)
-				? $restricted_components
-				: explode(',', str_replace('|', ',', $restricted_components));
+		$restricted_components = ArrayHelper::toArray(str_replace('|', ',', $restricted_components));
 
-		if (in_array(JFactory::getApplication()->input->get('option'), $restricted_components))
+		if ( ! empty($restricted_components) && in_array(JFactory::getApplication()->input->get('option'), $restricted_components))
 		{
 			return true;
 		}
 
 		if (JFactory::getApplication()->input->get('option') == 'com_acymailing'
-			&& JFactory::getApplication()->input->get('ctrl') != 'user'
+			&& ! in_array(JFactory::getApplication()->input->get('ctrl'), ['user', 'archive'])
+			&& ! in_array(JFactory::getApplication()->input->get('view'), ['user', 'archive'])
 		)
 		{
 			return true;
@@ -155,7 +146,7 @@ class Protect
 	 */
 	public static function isComponentInstalled($extension_alias)
 	{
-		return JFile::exists(JPATH_ADMINISTRATOR . '/components/com_' . $extension_alias . '/' . $extension_alias . '.php');
+		return file_exists(JPATH_ADMINISTRATOR . '/components/com_' . $extension_alias . '/' . $extension_alias . '.php');
 	}
 
 	/**
@@ -167,22 +158,25 @@ class Protect
 	 */
 	public static function isSystemPluginInstalled($extension_alias)
 	{
-		return JFile::exists(JPATH_PLUGINS . '/system/' . $extension_alias . '/' . $extension_alias . '.php');
+		return file_exists(JPATH_PLUGINS . '/system/' . $extension_alias . '/' . $extension_alias . '.php');
 	}
 
 	/**
 	 * Return the Regular Expressions string to match:
 	 * The edit form
 	 *
-	 * @param int $regex_format
+	 * @param array $form_classes
 	 *
 	 * @return string
 	 */
-	public static function getFormRegex()
+	public static function getFormRegex($form_classes = [])
 	{
+		$form_classes = ArrayHelper::toArray($form_classes);
+
 		return '(<form\s[^>]*('
 			. '(id|name)="(adminForm|postform|submissionForm|default_action_user|seblod_form|spEntryForm)"'
 			. '|action="[^"]*option=com_myjspace&(amp;)?view=see"'
+			. (! empty($form_classes) ? '|class="([^"]* )?(' . implode('|', $form_classes) . ')( [^"]*)?"' : '')
 			. '))';
 	}
 
@@ -346,9 +340,21 @@ class Protect
 	public static function protectHtmlTags(&$string)
 	{
 		// protect comment tags
-		self::protectByRegex($string, '<!--\s[^>].*?(?:\s-->|$)');
+		self::protectHtmlCommentTags($string);
+
 		// protect html tags
 		self::protectByRegex($string, '<[a-z][^>]*(?:="[^"]*"|=\'[^\']*\')+[^>]*>');
+	}
+
+	/**
+	 * Protect all html comment tags
+	 *
+	 * @param string $string
+	 */
+	public static function protectHtmlCommentTags(&$string)
+	{
+		// protect comment tags
+		self::protectByRegex($string, '<\!--.*?-->');
 	}
 
 	/**
@@ -366,7 +372,7 @@ class Protect
 			return;
 		}
 
-		$matches      = array_unique($matches['0']);
+		$matches      = array_unique($matches[0]);
 		$replacements = [];
 
 		foreach ($matches as $match)
@@ -485,7 +491,7 @@ class Protect
 			return;
 		}
 
-		$matches = array_unique($matches['0']);
+		$matches = array_unique($matches[0]);
 
 		foreach ($matches as $match)
 		{
@@ -500,7 +506,7 @@ class Protect
 	 * @param array  $tags
 	 * @param bool   $include_closing_tags
 	 */
-	public static function protectForm(&$string, $tags = [], $include_closing_tags = true)
+	public static function protectForm(&$string, $tags = [], $include_closing_tags = true, $form_classes = [])
 	{
 		if ( ! Document::isEditPage())
 		{
@@ -509,7 +515,7 @@ class Protect
 
 		list($tags, $protected_tags) = self::prepareTags($tags, $include_closing_tags);
 
-		$string = RegEx::replace(self::getFormRegex(), '<!-- TMP_START_EDITOR -->\1', $string);
+		$string = RegEx::replace(self::getFormRegex($form_classes), '<!-- TMP_START_EDITOR -->\1', $string);
 		$string = explode('<!-- TMP_START_EDITOR -->', $string);
 
 		foreach ($string as $i => &$string_part)
@@ -542,9 +548,9 @@ class Protect
 		// Protect entire form
 		if (empty($tags))
 		{
-			$form_parts      = explode('</form>', $string, 2);
-			$form_parts['0'] = self::protectString($form_parts['0'] . '</form>');
-			$string          = implode('', $form_parts);
+			$form_parts    = explode('</form>', $string, 2);
+			$form_parts[0] = self::protectString($form_parts[0] . '</form>');
+			$string        = implode('', $form_parts);
 
 			return;
 		}
@@ -560,7 +566,7 @@ class Protect
 		// protect tags only inside form fields
 		RegEx::matchAll(
 			'(?:<textarea[^>]*>.*?<\/textarea>|<input[^>]*>)',
-			$form_parts['0'],
+			$form_parts[0],
 			$matches,
 			null,
 			PREG_PATTERN_ORDER
@@ -571,12 +577,12 @@ class Protect
 			return;
 		}
 
-		$matches = array_unique($matches['0']);
+		$matches = array_unique($matches[0]);
 
 		foreach ($matches as $match)
 		{
-			$field           = str_replace($tags, $protected_tags, $match);
-			$form_parts['0'] = str_replace($match, $field, $form_parts['0']);
+			$field         = str_replace($tags, $protected_tags, $match);
+			$form_parts[0] = str_replace($match, $field, $form_parts[0]);
 		}
 
 		$string = implode('</form>', $form_parts);
@@ -585,10 +591,20 @@ class Protect
 	/**
 	 * Replace any protected text to original
 	 *
-	 * @param string $string
+	 * @param string|array $string
 	 */
 	public static function unprotect(&$string)
 	{
+		if (is_array($string))
+		{
+			foreach ($string as &$part)
+			{
+				self::unprotect($part);
+			}
+
+			return;
+		}
+
 		self::unprotectByDelimiters(
 			$string,
 			[self::$protect_tags_start, self::$protect_tags_end]
@@ -698,16 +714,16 @@ class Protect
 			$tags = [$tags];
 		}
 
-		$hash = md5('prepareTags_' . json_encode($tags) . '_' . $include_closing_tags);
+		$cache_id = 'prepareTags_' . json_encode($tags) . '_' . $include_closing_tags;
 
-		if (Cache::has($hash))
+		if (Cache::has($cache_id))
 		{
-			return Cache::get($hash);
+			return Cache::get($cache_id);
 		}
 
 		foreach ($tags as $i => $tag)
 		{
-			if (StringHelper::is_alphanumeric($tag['0']))
+			if (StringHelper::is_alphanumeric($tag[0]))
 			{
 				$tag = '{' . $tag;
 			}
@@ -721,7 +737,7 @@ class Protect
 		}
 
 		return Cache::set(
-			$hash,
+			$cache_id,
 			[$tags, self::protectArray($tags, 1)]
 		);
 	}
@@ -1053,12 +1069,12 @@ class Protect
 
 			if (count($tag) < 2)
 			{
-				$tag = [$tag['0'], $tag['0']];
+				$tag = [$tag[0], $tag[0]];
 			}
 
-			$regex = $character_start . RegEx::quote($tag['0']) . '(?:\s.*?)?' . $character_end
+			$regex = $character_start . RegEx::quote($tag[0]) . '(?:\s.*?)?' . $character_end
 				. '(.*?)'
-				. $character_start . '/' . RegEx::quote($tag['1']) . $character_end;
+				. $character_start . '/' . RegEx::quote($tag[1]) . $character_end;
 
 			$replace = $keep_content ? '\1' : '';
 
@@ -1092,12 +1108,12 @@ class Protect
 
 		foreach ($matches as $match)
 		{
-			$content = $match['3'];
+			$content = $match[3];
 			foreach ($tags as $tag)
 			{
 				$content = RegEx::replace(RegEx::quote($tag) . '.*?\}', '', $content);
 			}
-			$string = str_replace($match['0'], $match['1'] . $content . $match['4'], $string);
+			$string = str_replace($match[0], $match[1] . $content . $match[4], $string);
 		}
 	}
 
@@ -1131,12 +1147,12 @@ class Protect
 			PREG_PATTERN_ORDER
 		);
 
-		if (empty($matches) || empty($matches['0']))
+		if (empty($matches) || empty($matches[0]))
 		{
 			return;
 		}
 
-		$matches = array_unique($matches['0']);
+		$matches = array_unique($matches[0]);
 
 		// preg_quote all tags
 		$tags_regex = RegEx::quote($tags) . '.*?\}';

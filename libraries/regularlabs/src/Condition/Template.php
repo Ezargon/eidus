@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ namespace RegularLabs\Library\Condition;
 
 defined('_JEXEC') or die;
 
-use JFactory;
+use Joomla\CMS\Factory as JFactory;
 
 /**
  * Class Template
@@ -47,7 +47,7 @@ class Template
 		// Find template style id based on params, as the template style id is not always stored in the getTemplate
 		$query = $this->db->getQuery(true)
 			->select('id')
-			->from('#__template_styles as s')
+			->from('#__template_styles AS s')
 			->where('s.client_id = 0')
 			->where('s.template = ' . $this->db->quote($template->template))
 			->where('s.params = ' . $this->db->quote($params));

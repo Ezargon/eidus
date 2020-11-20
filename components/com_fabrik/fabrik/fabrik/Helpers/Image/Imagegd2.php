@@ -2,7 +2,7 @@
 /**
  * @package     Joomla
  * @subpackage  Fabrik.image
- * @copyright   Copyright (C) 2005-2015 fabrikar.com - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -20,7 +20,7 @@ use \Fabrik\Helpers\StringHelper;
  *
  * @package     Joomla
  * @subpackage  Fabrik.helpers
- * @copyright   Copyright (C) 2005-2015 fabrikar.com - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  * @since       1.0
  */
@@ -47,9 +47,11 @@ class Imagegd2 extends Imagegd
 			throw new RuntimeException("no file found for $origFile");
 		}
 
+		$fromFile = $this->storage->preRenderPath($origFile);
+
 		// Load image
 		$img = null;
-		$ext = $this->getImgType($origFile);
+		$ext = $this->getImgType($fromFile);
 
 		if (!$ext)
 		{
@@ -57,22 +59,22 @@ class Imagegd2 extends Imagegd
 		}
 
 		ini_set('display_errors', true);
-		$memory    = ini_get('memory_limit');
-		$intMemory = StringHelper::rtrimword($memory, 'M');
+		$memory    = \FabrikWorker::getMemoryLimit(true);
+		$intMemory = \FabrikWorker::getMemoryLimit();
 
-		if ($intMemory < 50)
+		if ($intMemory < (64 * 1024 * 1024))
 		{
 			ini_set('memory_limit', '50M');
 		}
 
 		if ($ext == 'jpg' || $ext == 'jpeg')
 		{
-			$img    = @imagecreatefromjpeg($origFile);
+			$img    = @imagecreatefromjpeg($fromFile);
 			$header = "image/jpeg";
 		}
 		elseif ($ext == 'png')
 		{
-			$img    = @imagecreatefrompng($origFile);
+			$img    = @imagecreatefrompng($fromFile);
 			$header = "image/png";
 
 			// Only if your version of GD includes GIF support
@@ -81,7 +83,7 @@ class Imagegd2 extends Imagegd
 		{
 			if (function_exists('imagecreatefromgif'))
 			{
-				$img    = @imagecreatefromgif($origFile);
+				$img    = @imagecreatefromgif($fromFile);
 				$header = "image/gif";
 			}
 			else
@@ -112,6 +114,13 @@ class Imagegd2 extends Imagegd
 
 				// Create a new temporary image
 				$tmp_img = imagecreatetruecolor($new_width, $new_height);
+				
+				// Handle image transparency for resized image
+				if (function_exists('imagealphablending'))
+				{
+					imagealphablending($tmp_img, false);
+					imagesavealpha($tmp_img, true);
+				}
 
 				// Copy and resize old image into new image
 				imagecopyresampled($tmp_img, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
@@ -165,7 +174,11 @@ class Imagegd2 extends Imagegd
 		}
 
 		$this->thumbPath = $destFile;
-		ini_set('memory_limit', $memory);
+
+		if ($intMemory < (64 * 1024 * 1024))
+		{
+			ini_set('memory_limit', $memory);
+		}
 	}
 }
 

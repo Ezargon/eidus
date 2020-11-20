@@ -38,11 +38,13 @@ define(['jquery', 'fab/element'], function (jQuery, FbElement) {
                 this.refreshEditor();
             }.bind(this));
 
+            /*
             Fabrik.addEvent('fabrik.form.elements.added', function (form) {
                 if (form.isMultiPage()) {
                     this.refreshEditor();
                 }
             }.bind(this));
+            */
 
             Fabrik.addEvent('fabrik.form.submit.start', function (form) {
                 if (this.options.wysiwyg && form.options.ajax) {
@@ -221,6 +223,7 @@ define(['jquery', 'fab/element'], function (jQuery, FbElement) {
                 tinyMCE.execCommand('mceFocus', false, id);
                 this._removeTinyEditor(id);
             }
+            this.parent(groupid);
         },
 
         getTextContainer: function () {

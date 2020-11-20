@@ -1,15 +1,21 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Application\ApplicationHelper as JApplicationHelper;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Http\HttpFactory as JHttpFactory;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\CMS\Uri\Uri as JUri;
 
 require_once __DIR__ . '/cache.php';
 
@@ -179,7 +185,7 @@ class NNFrameworkFunctions
 			$url = str_replace('.min.', '.', $url);
 		}
 
-		if ( ! JFile::exists(JPATH_SITE . $url))
+		if ( ! file_exists(JPATH_SITE . $url))
 		{
 			return JFactory::getDocument()->addScriptVersion($url);
 		}
@@ -200,7 +206,7 @@ class NNFrameworkFunctions
 			$url = str_replace('.min.', '.', $url);
 		}
 
-		if ( ! JFile::exists(JPATH_SITE . $url))
+		if ( ! file_exists(JPATH_SITE . $url))
 		{
 			return JFactory::getDocument()->addStyleSheetVersion($url);
 		}
@@ -218,7 +224,7 @@ class NNFrameworkFunctions
 		}
 
 		// only allow url calls from administrator
-		if ( ! JFactory::getApplication()->isAdmin())
+		if ( ! JFactory::getApplication()->isClient('administrator'))
 		{
 			die;
 		}
@@ -457,7 +463,7 @@ class NNFrameworkFunctions
 
 		foreach ($files as $file)
 		{
-			if ( ! JFile::exists($file))
+			if ( ! file_exists($file))
 			{
 				continue;
 			}
@@ -476,9 +482,9 @@ class NNFrameworkFunctions
 		switch ($type)
 		{
 			case 'component':
-				if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_' . $extension . '/' . $extension . '.php')
-					|| JFile::exists(JPATH_ADMINISTRATOR . '/components/com_' . $extension . '/admin.' . $extension . '.php')
-					|| JFile::exists(JPATH_SITE . '/components/com_' . $extension . '/' . $extension . '.php')
+				if (file_exists(JPATH_ADMINISTRATOR . '/components/com_' . $extension . '/' . $extension . '.php')
+					|| file_exists(JPATH_ADMINISTRATOR . '/components/com_' . $extension . '/admin.' . $extension . '.php')
+					|| file_exists(JPATH_SITE . '/components/com_' . $extension . '/' . $extension . '.php')
 				)
 				{
 					if ($extension == 'cookieconfirm')
@@ -498,13 +504,13 @@ class NNFrameworkFunctions
 				break;
 
 			case 'plugin':
-				return JFile::exists(JPATH_PLUGINS . '/' . $folder . '/' . $extension . '/' . $extension . '.php');
+				return file_exists(JPATH_PLUGINS . '/' . $folder . '/' . $extension . '/' . $extension . '.php');
 
 			case 'module':
-				return (JFile::exists(JPATH_ADMINISTRATOR . '/modules/mod_' . $extension . '/' . $extension . '.php')
-					|| JFile::exists(JPATH_ADMINISTRATOR . '/modules/mod_' . $extension . '/mod_' . $extension . '.php')
-					|| JFile::exists(JPATH_SITE . '/modules/mod_' . $extension . '/' . $extension . '.php')
-					|| JFile::exists(JPATH_SITE . '/modules/mod_' . $extension . '/mod_' . $extension . '.php')
+				return (file_exists(JPATH_ADMINISTRATOR . '/modules/mod_' . $extension . '/' . $extension . '.php')
+					|| file_exists(JPATH_ADMINISTRATOR . '/modules/mod_' . $extension . '/mod_' . $extension . '.php')
+					|| file_exists(JPATH_SITE . '/modules/mod_' . $extension . '/' . $extension . '.php')
+					|| file_exists(JPATH_SITE . '/modules/mod_' . $extension . '/mod_' . $extension . '.php')
 				);
 
 			case 'library':
@@ -583,7 +589,7 @@ class NNFrameworkFunctions
 			return NNCache::get($hash);
 		}
 
-		if (JFile::exists($url))
+		if (file_exists($url))
 		{
 			$xml = @new SimpleXMLElement($url, LIBXML_NONET | LIBXML_NOCDATA, 1);
 		}

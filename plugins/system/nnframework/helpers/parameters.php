@@ -1,15 +1,18 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Component\ComponentHelper as JComponentHelper;
+use Joomla\CMS\Plugin\PluginHelper as JPluginHelper;
 
 require_once __DIR__ . '/cache.php';
 
@@ -182,8 +185,8 @@ class NNFrameworkParameters
 
 		jimport('joomla.filesystem.file');
 		if ( ! $path
-			|| ! JFile::exists($path)
-			|| ! $file = JFile::read($path)
+			|| ! file_exists($path)
+			|| ! $file = file_get_contents($path)
 		)
 		{
 			return NNCache::set(
@@ -206,7 +209,7 @@ class NNFrameworkParameters
 				|| ( ! isset($field['attributes']['DEFAULT']) && ! isset($field['attributes'][$default]))
 				|| ! isset($field['attributes']['NAME'])
 				|| $field['attributes']['NAME'] == ''
-				|| $field['attributes']['NAME']['0'] == '@'
+				|| $field['attributes']['NAME'][0] == '@'
 				|| ! isset($field['attributes']['TYPE'])
 				|| $field['attributes']['TYPE'] == 'spacer'
 			)

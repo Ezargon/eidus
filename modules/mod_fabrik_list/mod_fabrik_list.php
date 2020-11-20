@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -134,6 +134,13 @@ $orderDir = (array) $ordering['order_dir'];
 
 if (!empty($orderBy))
 {
+	// added setting ordering in the session so PDF rendering will pick it up
+	foreach ($orderBy as $k => $v)
+	{
+		$context = 'com_fabrik.list' . $model->getRenderContext() . '.order.' . $v;
+		JFactory::getSession()->set($context, $orderDir[$k]);
+	}
+
 	$model->getTable()->order_by = json_encode($orderBy);
 	$model->getTable()->order_dir = json_encode($orderDir);
 }

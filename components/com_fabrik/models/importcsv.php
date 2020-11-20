@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -175,8 +175,10 @@ class FabrikFEModelImportcsv extends JModelForm
 		/* Track errors message- so if from frontend menu redirect 
 		    to current url rather than throwing exception
 		 */
-		$errmsg = ''; 
-		
+		$errmsg = '';
+		$app      = JFactory::getApplication();
+		$input    = $app->input;
+
 		if (!(bool) ini_get('file_uploads'))
 		{
             $errmsg = FText::_('COM_FABRIK_ERR_UPLOADS_DISABLED');
@@ -184,10 +186,9 @@ class FabrikFEModelImportcsv extends JModelForm
 		}
 		else
 		{
-		    $app      = JFactory::getApplication();
-		    $input    = $app->input;
+
 		    $userFile = $input->files->get('jform');
-		}    
+		}
 
 		if (!$userFile)
 		{
@@ -309,6 +310,11 @@ class FabrikFEModelImportcsv extends JModelForm
 			throw new UnexpectedValueException('Csv file : ' . $baseDir . '/' . $file . ' not found');
 		}
 
+		$origLineEnding = ini_get("auto_detect_line_endings");
+		ini_set("auto_detect_line_endings", true);
+		$origMaxExecution = ini_get("max_execution_time");
+		ini_set("max_execution_time", 300);
+
 		$csv              = new Csv_Bv($baseDir . '/' . $file, $field_delimiter, $text_delimiter, '\\');
 		$csv->inPutFormat = FArrayHelper::getValue($data, 'inPutFormat', 'csv');
 
@@ -377,6 +383,9 @@ class FabrikFEModelImportcsv extends JModelForm
 		}
 
 		fclose($csv->mHandle);
+
+		ini_set("auto_detect_line_endings", $origLineEnding);
+		ini_set("max_execution_time", $origMaxExecution);
 	}
 
 	/**
@@ -735,23 +744,18 @@ class FabrikFEModelImportcsv extends JModelForm
 	 */
 	public function insertData()
 	{
+		$origMaxExecution = ini_get("max_execution_time");
+		ini_set("max_execution_time", 300);
+
 		$app                 = JFactory::getApplication();
 		$jForm               = $app->input->get('jform', array(), 'array');
 		
-		// $$ Phil - If from menu, get dropData and overwrite from menu option 
-        $dropData = FabrikWorker::getMenuOrRequestVar('csv_import_dropdata', '', false, 'menu');
+		// Default to menu / request, allow override by UI (jform) options
+        $dropData = FabrikWorker::getMenuOrRequestVar('csv_import_dropdata', '0', false, 'menu');
+        $dropData = (int) FArrayHelper::getValue($jForm, 'drop_data', $dropData);
 
-		if ($dropData == '')
-		{
-			$dropData = (int) FArrayHelper::getValue($jForm, 'drop_data', 0);
-		}
-
-        $overWrite = FabrikWorker::getMenuOrRequestVar('csv_import_overwrite', '', false, 'menu');
-
-		if($overWrite == '')
-		{
-			$overWrite = (int) FArrayHelper::getValue($jForm, 'overwrite', 0);
-		}
+        $overWrite = FabrikWorker::getMenuOrRequestVar('csv_import_overwrite', '0', false, 'menu');
+        $overWrite = (int) FArrayHelper::getValue($jForm, 'overwrite', $overWrite);
 		
 		$model               = $this->getlistModel();
 		$model->importingCSV = true;
@@ -896,7 +900,9 @@ class FabrikFEModelImportcsv extends JModelForm
 				if (!in_array(false, FabrikWorker::getPluginManager()->runPlugins('onImportCSVRow', $model, 'list')))
 				{
 					$rowid = $formModel->processToDB();
-					FabrikWorker::getPluginManager()->runPlugins('onAfterImportCSVRow', $model, 'list');
+					$args = new \stdClass();
+					$args->rowid = $rowid;
+					FabrikWorker::getPluginManager()->runPlugins('onAfterImportCSVRow', $model, 'list', $args);
 				}
 			}
 			else
@@ -915,6 +921,8 @@ class FabrikFEModelImportcsv extends JModelForm
 		$this->updatedCount = $updatedCount;
 
 		FabrikWorker::getPluginManager()->runPlugins('onCompleteImportCSV', $model, 'list');
+
+		ini_set('max_execution_time', $origMaxExecution);
 	}
 
 	/**

@@ -1,15 +1,17 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory as JFactory;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -17,8 +19,6 @@ if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 }
 
 require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
-
-use RegularLabs\Library\Document as RL_Document;
 
 class JFormFieldRL_Block extends \RegularLabs\Library\Field
 {
@@ -31,14 +31,11 @@ class JFormFieldRL_Block extends \RegularLabs\Library\Field
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
-
-		RL_Document::stylesheet('regularlabs/style.min.css');
-
 		$title       = $this->get('label');
 		$description = $this->get('description');
 		$class       = $this->get('class');
 		$showclose   = $this->get('showclose', 0);
+		$nowell      = $this->get('nowell', 0);
 
 		$start = $this->get('start', 0);
 		$end   = $this->get('end', 0);
@@ -48,26 +45,33 @@ class JFormFieldRL_Block extends \RegularLabs\Library\Field
 		if ($start || ! $end)
 		{
 			$html[] = '</div>';
+
 			if (strpos($class, 'alert') !== false)
 			{
-				$html[] = '<div class="alert ' . $class . '">';
+				$class = 'alert ' . $class;
 			}
-			else
+			else if ( ! $nowell)
 			{
-				$html[] = '<div class="well well-small ' . $class . '">';
+				$class = 'well well-small ' . $class;
 			}
+
+			$html[] = '<div class="' . $class . '">';
+
 			if ($showclose && JFactory::getUser()->authorise('core.admin'))
 			{
-				$html[] = '<button type="button" class="close rl_remove_assignment">&times;</button>';
+				$html[] = '<button type="button" class="close rl_remove_assignment" aria-label="Close">&times;</button>';
 			}
+
 			if ($title)
 			{
 				$html[] = '<h4>' . $this->prepareText($title) . '</h4>';
 			}
+
 			if ($description)
 			{
 				$html[] = '<div>' . $this->prepareText($description) . '</div>';
 			}
+
 			$html[] = '<div><div>';
 		}
 

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -14,8 +14,8 @@ namespace RegularLabs\Library\Condition;
 defined('_JEXEC') or die;
 
 use ContentsubmitModelArticle;
-use JFactory;
-use JTable;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Table\Table as JTable;
 
 /**
  * Class ContentCategory
@@ -28,6 +28,7 @@ class ContentCategory
 	{
 		// components that use the com_content secs/cats
 		$components = ['com_content', 'com_flexicontent', 'com_contentsubmit'];
+
 		if ( ! in_array($this->request->option, $components))
 		{
 			return $this->_(false);
@@ -38,6 +39,8 @@ class ContentCategory
 			return $this->_(false);
 		}
 
+		$app = JFactory::getApplication();
+
 		$is_content  = in_array($this->request->option, ['com_content', 'com_flexicontent']);
 		$is_category = in_array($this->request->view, ['category']);
 		$is_item     = in_array($this->request->view, ['', 'article', 'item', 'form']);
@@ -47,6 +50,7 @@ class ContentCategory
 			&& ! ($this->params->inc_categories && $is_content && $is_category)
 			&& ! ($this->params->inc_articles && $is_content && $is_item)
 			&& ! ($this->params->inc_others && ! ($is_content && ($is_category || $is_item)))
+			&& ! ($app->input->get('rl_qp') && ! empty($this->getCategoryIds()))
 		)
 		{
 			return $this->_(false);
@@ -105,7 +109,7 @@ class ContentCategory
 			if ( ! $pass && $this->params->inc_children)
 			{
 				$parent_ids = $this->getCatParentIds($catid);
-				$parent_ids = array_diff($parent_ids, ['1']);
+				$parent_ids = array_diff($parent_ids, [1]);
 				foreach ($parent_ids as $id)
 				{
 					if (in_array($id, $this->selection))
@@ -129,18 +133,34 @@ class ContentCategory
 			return (array) $this->request->id;
 		}
 
-		if ( ! $this->article && $this->request->id)
+		$app = JFactory::getApplication();
+
+		$catid = $app->getUserState('com_content.edit.article.data.catid');
+
+		if ( ! $catid)
 		{
-			$this->article = JTable::getInstance('content');
-			$this->article->load($this->request->id);
+			if ( ! $this->article && $this->request->id)
+			{
+				$this->article = JTable::getInstance('content');
+				$this->article->load($this->request->id);
+			}
+
+			if ($this->article && isset($this->article->catid))
+			{
+				return (array) $this->article->catid;
+			}
 		}
 
-		if ($this->article && $this->article->catid)
+		if ( ! $catid)
 		{
-			return (array) $this->article->catid;
+			$catid = $app->getUserState('com_content.articles.filter.category_id');
 		}
 
-		$catid      = JFactory::getApplication()->input->getInt('catid', JFactory::getApplication()->getUserState('com_content.articles.filter.category_id'));
+		if ( ! $catid)
+		{
+			$catid = JFactory::getApplication()->input->getInt('catid');
+		}
+
 		$menuparams = $this->getMenuItemParams($this->request->Itemid);
 
 		if ($this->request->view == 'featured')

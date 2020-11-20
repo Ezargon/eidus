@@ -2,11 +2,12 @@
 <extension type="package" version="2.5" method="upgrade">
 	<name>JEV_PACKAGE_TITLE</name>
 	<packagename>jevents</packagename>
-	<version>3.4.43</version>
+	<version>3.6.6</version>
 	<url>http://www.jevents.net</url>
-	<creationDate>August 2017</creationDate>
+	<creationDate>September 2020</creationDate>
 	<author>GWE Systems Ltd</author>
-	<copyright>(C) 2012-2017 GWE Systems Ltd</copyright>
+	<copyright>(C) 2012-2020 GWE Systems Ltd</copyright>
+	<copyrightYear>2020</copyrightYear>
 	<authorEmail></authorEmail>
 	<authorUrl>www.gwesystems.com</authorUrl>
 	<packager>GWE Systems Ltd</packager>
@@ -18,7 +19,7 @@
 		<language tag="en-GB">en-GB/en-GB.pkg_jevents.sys.ini</language>
 	</languages>
 	<files>
-		<file type="component" id="com_jevents" >com_jevents.zip</file>
+		<file type="component" id="com_jevents">com_jevents.zip</file>
 		<file type="module" id="mod_jevents_cal" client="site">mod_jevents_cal.zip</file>
 		<file type="module" id="mod_jevents_legend" client="site">mod_jevents_legend.zip</file>
 		<file type="module" id="mod_jevents_latest" client="site">mod_jevents_latest.zip</file>
@@ -29,12 +30,13 @@
 		<file type="plugin" id="eventsearch" group="search">search.zip</file>
 		<file type="plugin" id="jeventsinstaller" group="content">installer.zip</file>
 		<file type="plugin" id="jevents" group="content">jevents.zip</file>
+		<file type="plugin" id="jevents" group="actionlog">actionlog_jevents.zip</file>
+		<file type="plugin" id="gwejson" group="system">gwejson.zip</file>
 		<file type="library" id="googl">googl.zip</file>
 		<file type="library" id="jevmodal">jevmodal.zip</file>
-		<file type="library" id="gwejson">gwejson.zip</file>
 		<file type="library" id="jevtypeahead">jevtypeahead.zip</file>
 	</files>
 	<updateservers>
-		<server type="extension" name="JEvents Updates">https://www.jevents.net/updates/-/pkg_jevents-update-3.4.43.xml</server>
+		<server type="extension" name="JEvents Updates">https://www.jevents.net/newupdates/package_jevents.xml</server>
 	</updateservers>
 </extension>

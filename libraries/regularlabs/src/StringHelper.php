@@ -1,19 +1,20 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 namespace RegularLabs\Library;
 
-use Joomla\String\Normalise;
-
 defined('_JEXEC') or die;
+
+use Joomla\String\Normalise;
+use Normalizer;
 
 /**
  * Class StringHelper
@@ -121,6 +122,18 @@ class StringHelper
 	}
 
 	/**
+	 * Check if string is a valid key / alias (alphanumeric with optional _ or - chars)
+	 *
+	 * @param string $string
+	 *
+	 * @return bool
+	 */
+	public static function is_key($string)
+	{
+		return RegEx::match('^[a-z][a-z0-9-_]*$', trim($string));
+	}
+
+	/**
 	 * Split a long string into parts (array)
 	 *
 	 * @param string $string
@@ -213,7 +226,7 @@ class StringHelper
 	 *
 	 * @return string
 	 */
-	public static function convertToUtf8(&$string = '')
+	public static function convertToUtf8($string = '')
 	{
 		if (self::detectUTF8($string))
 		{
@@ -249,6 +262,42 @@ class StringHelper
 	public static function camelToUnderscore($string = '', $tolowercase = true)
 	{
 		$string = Normalise::toUnderscoreSeparated(Normalise::fromCamelCase($string));
+
+		if ( ! $tolowercase)
+		{
+			return $string;
+		}
+
+		return strtolower($string);
+	}
+
+	/**
+	 * Removes html tags from string
+	 *
+	 * @param string $string
+	 * @param bool   $remove_comments
+	 *
+	 * @return string
+	 */
+	public static function removeHtml($string, $remove_comments = false)
+	{
+		return Html::removeHtmlTags($string, $remove_comments);
+	}
+
+	/**
+	 * Normalizes the input provided and returns the normalized string
+	 *
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public static function normalize($string, $tolowercase = false)
+	{
+		// Normalizer-class missing!
+		if (class_exists('Normalizer', $autoload = false))
+		{
+			$string = Normalizer::normalize($string);
+		}
 
 		if ( ! $tolowercase)
 		{

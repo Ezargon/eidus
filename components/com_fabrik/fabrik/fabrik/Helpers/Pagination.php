@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -171,7 +171,7 @@ class Pagination extends \JPagination
 	 *
 	 * @return   string  HTML link
 	 */
-	protected function _item_active(JPaginationObject $item)
+	protected function _item_active(\Joomla\CMS\Pagination\PaginationObject $item)
 	{
 		$displayData       = new stdClass;
 		$displayData->item = $item;
@@ -189,7 +189,7 @@ class Pagination extends \JPagination
 	 *
 	 * @since   1.5
 	 */
-	protected function _item_inactive(JPaginationObject $item)
+	protected function _item_inactive(\Joomla\CMS\Pagination\PaginationObject $item)
 	{
 		$displayData       = new stdClass;
 		$displayData->item = $item;

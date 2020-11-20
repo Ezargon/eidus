@@ -1,10 +1,11 @@
 <?php
 /**
- * @package     Joomla.Platform
- * @subpackage  Document
+ * Partial Document class
  *
- * @copyright   Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE
+ * @package     Joomla
+ * @subpackage  Fabrik.Documents
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
+ * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
 defined('JPATH_PLATFORM') or die;
@@ -402,7 +403,7 @@ class JDocumentRendererHead extends JDocumentRendererHtmlHead
 		$app = JFactory::getApplication();
 		$uri = parse_url($app->input->server->get('HTTP_REFERER', '', 'string'));
 		$key = $uri['path'];
-		$qs = FArrayHelper::getValue($uri, 'query', '');
+		$qs = ArrayHelper::getValue($uri, 'query', '');
 
 		if (!empty($qs))
 		{

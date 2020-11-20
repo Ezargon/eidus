@@ -1,15 +1,17 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use RegularLabs\Library\DB as RL_DB;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -17,8 +19,6 @@ if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 }
 
 require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
-
-use RegularLabs\Library\Database as RL_Database;
 
 class JFormFieldRL_RedShop extends \RegularLabs\Library\FieldGroup
 {
@@ -81,7 +81,7 @@ class JFormFieldRL_RedShop extends \RegularLabs\Library\FieldGroup
 			->from('#__redshop_category AS c')
 			->where('c.published > -1');
 
-		if (RL_Database::tableExists('redshop_category_xref'))
+		if (RL_DB::tableExists('redshop_category_xref'))
 		{
 			$query->clear('select')
 				->select('c.category_id as id, x.category_parent_id AS parent_id, c.category_name AS title, c.published')
@@ -109,7 +109,7 @@ class JFormFieldRL_RedShop extends \RegularLabs\Library\FieldGroup
 			->group('p.product_id')
 			->order('p.product_name, p.product_number');
 
-		if (RL_Database::tableExists('redshop_category_xref'))
+		if (RL_DB::tableExists('redshop_category_xref'))
 		{
 			$query->clear('select')
 				->select('p.product_id as id, p.product_name AS name, p.product_number as number, c.category_name AS cat, p.published')

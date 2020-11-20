@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,9 +13,10 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-use JFactory;
-use JHtml;
-use JText;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Form\Form as JForm;
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Language\Text as JText;
 
 /**
  * Class Field
@@ -46,11 +47,23 @@ class Field
 	 */
 	public function __construct($form = null)
 	{
+		parent::__construct($form);
+
 		$this->db = JFactory::getDbo();
 
 		$params = Parameters::getInstance()->getPluginParams('regularlabs');
 
 		$this->max_list_count = $params->max_list_count;
+
+		Document::loadFormDependencies();
+		Document::stylesheet('regularlabs/style.min.css');
+	}
+
+	public function setup(\SimpleXMLElement $element, $value, $group = null)
+	{
+		$this->params = $element->attributes();
+
+		return parent::setup($element, $value, $group);
 	}
 
 	/**
@@ -92,14 +105,24 @@ class Field
 		];
 	}
 
-	public static function selectList(&$options, $name, $value, $id, $size = 0, $multiple = false)
+	public static function selectList(&$options, $name, $value, $id, $size = 0, $multiple = false, $simple = false)
 	{
-		return Form::selectlist($options, $name, $value, $id, $size, $multiple);
+		return Form::selectlist($options, $name, $value, $id, $size, $multiple, $simple);
 	}
 
 	public static function selectListSimple(&$options, $name, $value, $id, $size = 0, $multiple = false)
 	{
-		return Form::selectListSimple($options, $name, $value, $id, $size, $multiple, true);
+		return Form::selectListSimple($options, $name, $value, $id, $size, $multiple);
+	}
+
+	public static function selectListAjax($field, $name, $value, $id, $attributes = [], $simple = false)
+	{
+		return Form::selectListAjax($field, $name, $value, $id, $attributes, $simple);
+	}
+
+	public static function selectListSimpleAjax($field, $name, $value, $id, $attributes = [])
+	{
+		return Form::selectListSimpleAjax($field, $name, $value, $id, $attributes);
 	}
 
 	/**
@@ -144,9 +167,9 @@ class Field
 	function getOptionsByList($list, $extras = [], $levelOffset = 0)
 	{
 		$options = [];
-		foreach ($list as $item)
+		foreach ($list as $id => $item)
 		{
-			$options[] = $this->getOptionByListItem($item, $extras, $levelOffset);
+			$options[$id] = $this->getOptionByListItem($item, $extras, $levelOffset);
 		}
 
 		return $options;
@@ -240,7 +263,7 @@ class Field
 
 		foreach ($list as $item)
 		{
-			$item->treename = Form::prepareSelectItem($item->treename, $item->published, '', 1);
+			$item->treename = Form::prepareSelectItem($item->treename, isset($item->published) ? $item->published : 1, '', 1);
 
 			$options[] = JHtml::_('select.option', $item->id, $item->treename, 'value', 'text', 0);
 		}
@@ -271,11 +294,6 @@ class Field
 				$string = $this->sprintf_old($string);
 				break;
 
-			// sprintf format (comma separated)
-			case (strpos($string, ',') !== false):
-				$string = $this->sprintf($string);
-				break;
-
 			// Normal language string
 			default:
 				$string = JText::_($string);
@@ -293,6 +311,7 @@ class Field
 	 */
 	private function fixLanguageStringSyntax($string = '')
 	{
+		$string = str_replace('[:COMMA:]', ',', $string);
 		$string = trim(StringHelper::html_entity_decoder($string));
 		$string = str_replace('&quot;', '"', $string);
 		$string = str_replace('span style="font-family:monospace;"', 'span class="rl_code"', $string);
@@ -319,12 +338,12 @@ class Field
 		$string_parts = explode(',', $string);
 		$first_part   = array_shift($string_parts);
 
-		if ($first_part !== strtoupper($first_part))
+		if ($first_part === strtoupper($first_part))
 		{
-			return $string;
+			$first_part = JText::_($first_part);
 		}
 
-		$first_part = RegEx::replace('\[\[%([0-9]+):[^\]]*\]\]', '%\1$s', JText::_($first_part));
+		$first_part = RegEx::replace('\[\[%([0-9]+):[^\]]*\]\]', '%\1$s', $first_part);
 
 		array_walk($string_parts, '\RegularLabs\Library\Field::jText');
 

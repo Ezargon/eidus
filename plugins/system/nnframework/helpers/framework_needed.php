@@ -1,15 +1,17 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Installer\Installer as JInstaller;
 
 class NNFrameworkNeeded
 {
@@ -57,12 +59,12 @@ class NNFrameworkNeeded
 				continue;
 			}
 
-			$version = $data['0'];
+			$version = $data[0];
 
 			if ( ! $version || $current_version < $version)
 			{
 				// An extension (version) is installed that still needs the NoNumber framework
-				$still_installed[] = $data['1'];
+				$still_installed[] = $data[1];
 			}
 		}
 
@@ -100,7 +102,7 @@ class NNFrameworkNeeded
 
 		foreach ($paths as $path)
 		{
-			if ( ! JFile::exists($path))
+			if ( ! file_exists($path))
 			{
 				continue;
 			}

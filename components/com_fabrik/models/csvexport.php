@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Utilities\ArrayHelper;
+use Fabrik\Helpers\Html;
 
 jimport('joomla.application.component.model');
 
@@ -344,16 +345,12 @@ class FabrikFEModelCSVExport extends FabModel
 	private function getFileName()
 	{
 		$this->model->setId($this->app->input->getInt('listid'));
-		$table    = $this->model->getTable();
-		$filename = $this->model->getParams()->get('csv_filename');
-		if ($filename == '')
-		{
-			$filename = $table->db_table_name . '-export.csv';
-		}
-		else
-		{
-			$filename = sprintf($filename, date('Y-m-d'));
-		}
+
+		$filename = Html::getLayout('fabrik-csv-filename')
+			->render((object) array(
+				'model' => $this->model,
+				'filename' => $this->model->getParams()->get('csv_filename')
+			));
 		return $filename;
 	}
 

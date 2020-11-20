@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ namespace RegularLabs\Plugin\System\RegularLabs;
 
 defined('_JEXEC') or die;
 
-use JFactory;
+use Joomla\CMS\Factory as JFactory;
 use RegularLabs\Library\RegEx as RL_RegEx;
 
 class AdminMenu
@@ -35,7 +35,8 @@ class AdminMenu
 		}
 
 		if (strpos($html, '<ul id="menu"') === false
-			|| strpos($html, '">Regular Labs ') === false
+			|| (strpos($html, '">Regular Labs ') === false
+				&& strpos($html, '" >Regular Labs ') === false)
 		)
 		{
 			return;
@@ -53,7 +54,7 @@ class AdminMenu
 			return;
 		}
 
-		$menu_items = $matches['0'];
+		$menu_items = $matches[0];
 
 		if (count($menu_items) < 2)
 		{
@@ -66,7 +67,7 @@ class AdminMenu
 		{
 			RL_RegEx::match('class="(?:no-dropdown )?menu-(.*?)"', $menu_item, $icon);
 
-			$icon = str_replace('icon-icon-', 'icon-', 'icon-' . $icon['1']);
+			$icon = str_replace('icon-icon-', 'icon-', 'icon-' . $icon[1]);
 
 			$menu_item = str_replace(
 				['>Regular Labs - ', '>Regular Labs '],
@@ -99,10 +100,10 @@ class AdminMenu
 			. "\n" . '</ul>'
 			. '</li>';
 
-		$first = array_shift($matches['0']);
+		$first = array_shift($matches[0]);
 
 		$html = str_replace($first, $new_menu_item, $html);
-		$html = str_replace($matches['0'], '', $html);
+		$html = str_replace($matches[0], '', $html);
 
 		JFactory::getApplication()->setBody($html);
 	}

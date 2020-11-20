@@ -1,17 +1,24 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 /* @DEPRECATED */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory as JFactory;
+
+if (is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+{
+	require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
+}
 
 require_once dirname(__DIR__) . '/assignment.php';
 
@@ -143,7 +150,7 @@ class RLAssignmentsZoo extends RLAssignment
 					$cats[] = $menuparams->category;
 				}
 
-				if (empty($cats['0']))
+				if (empty($cats[0]))
 				{
 					return [];
 				}
@@ -151,7 +158,7 @@ class RLAssignmentsZoo extends RLAssignment
 				$query = $this->db->getQuery(true)
 					->select('c.application_id')
 					->from('#__zoo_category AS c')
-					->where('c.id = ' . (int) $cats['0']);
+					->where('c.id = ' . (int) $cats[0]);
 				$this->db->setQuery($query);
 				$cats[] = 'app' . $this->db->loadResult();
 

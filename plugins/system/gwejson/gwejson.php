@@ -4,7 +4,7 @@
  * @package     GWE Systems
  * @subpackage  System.Gwejson
  *
- * @copyright   Copyright (C)  2015 GWE Systems Ltd. All rights reserved.
+ * @copyright   Copyright (C)  2015 - 2020 GWE Systems Ltd. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 defined('JPATH_BASE') or die;
@@ -150,7 +150,7 @@ class PlgSystemGwejson extends JPlugin
 			}
 			catch (Exception $e) {
 				//PlgSystemGwejson::throwerror("There was an exception ".$e->getMessage()." ".var_export($e->getTrace()));
-				PlgSystemGwejson::throwerror("There was an exception " . $e->getMessage());
+				PlgSystemGwejson::throwerror("There was an exception " . addslashes($e->getMessage()));
 			}
 		}
 
@@ -188,7 +188,7 @@ class PlgSystemGwejson extends JPlugin
 					//file_put_contents(dirname(__FILE__) . "/cache/error.txt", var_export($requestData, true));
 					PlgSystemGwejson::throwerror("There was an error - no request object ");
 				}
-				else if ($requestObject->error)
+				else if (isset($requestObject->error) && $requestObject->error)
 				{
 					PlgSystemGwejson::throwerror("There was an error - Request object error " . $requestObject->error);
 				}

@@ -1,17 +1,19 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 namespace RegularLabs\Library\Condition;
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory as JFactory;
 
 /**
  * Class Hikashop
@@ -20,4 +22,14 @@ defined('_JEXEC') or die;
 abstract class Hikashop
 	extends \RegularLabs\Library\Condition
 {
+	public function beforePass()
+	{
+		$input = JFactory::getApplication()->input;
+
+		// Reset $this->request because HikaShop messes with the view after stuff is loaded!
+		$this->request->option = $input->get('option', $this->request->option);
+		$this->request->view   = $input->get('view', $input->get('ctrl', $this->request->view));
+		$this->request->id     = $input->getInt('id', $this->request->id);
+		$this->request->Itemid = $input->getInt('Itemid', $this->request->Itemid);
+	}
 }

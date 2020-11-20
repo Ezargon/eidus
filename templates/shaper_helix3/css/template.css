@@ -2008,6 +2008,9 @@ textarea.uneditable-input {
   font-weight: 700;
   color: #000;
 }
+.backface-visible {
+  backface-visibility: hidden;
+}
 #sp-top-bar {
   padding: 8px 0;
 }
@@ -2414,12 +2417,20 @@ article.item {
 .entry-quote {
   margin-bottom: 50px;
 }
+.pull-right.entry-image {
+  margin: 0 0 18px 20px;
+}
+.entry-status,
+.entry-quote {
+  margin-bottom: 50px;
+}
 .entry-header {
   position: relative;
   margin-bottom: 30px;
 }
 .entry-header.has-post-format {
   margin-left: 68px;
+  display: inline-block;
 }
 .entry-header h2 {
   margin: 8px 0 0;

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,9 +13,9 @@ namespace RegularLabs\Plugin\System\RegularLabs;
 
 defined('_JEXEC') or die;
 
-use JFactory;
-use JHtml;
-use JUri;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Uri\Uri as JUri;
 use RegularLabs\Library\Document as RL_Document;
 use RegularLabs\Library\RegEx as RL_RegEx;
 
@@ -94,8 +94,12 @@ class QuickPage
 
 		header('Content-Type: ' . $format . '; charset=utf-8');
 		JHtml::_('bootstrap.framework');
-		JFactory::getDocument()->addScript(JUri::root(true) . '/administrator/templates/isis/js/template.js');
-		JFactory::getDocument()->addStylesheet(JUri::root(true) . '/administrator/templates/isis/css/template.css');
+		JFactory::getDocument()->addScript(
+			JUri::root(true) . '/administrator/templates/isis/js/template.js'
+		);
+		JFactory::getDocument()->addStylesheet(
+			JUri::root(true) . '/administrator/templates/isis/css/template' . (JFactory::getDocument()->direction === 'rtl' ? '-rtl' : '') . '.css'
+		);
 
 		RL_Document::style('regularlabs/popup.min.css');
 
@@ -120,6 +124,9 @@ class QuickPage
 		$html = RL_RegEx::replace('\s*<link [^>]*href="[^"]*templates/system/[^"]*\.css[^"]*"[^>]*( /)?>', '', $html);
 		$html = RL_RegEx::replace('(<body [^>]*class=")', '\1reglab-popup ', $html);
 		$html = str_replace('<body>', '<body class="reglab-popup"', $html);
+
+		// Move the template css down to last
+		$html = RL_RegEx::replace('(<link [^>]*href="[^"]*templates/isis/[^"]*\.css[^"]*"[^>]*(?: /)?>\s*)(.*?)(<script)', '\2\1\3', $html);
 
 		echo $html;
 

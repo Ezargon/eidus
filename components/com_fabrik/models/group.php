@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -543,7 +543,8 @@ class FabrikFEModelGroup extends FabModel
 		$element->column .= '" ';
 		$spans           = $this->columnSpans();
 		$spanKey         = $rowIx % $colCount;
-		$element->span   = $element->hidden ? '' : FArrayHelper::getValue($spans, $spanKey, FabrikHelperHTML::getGridSpan(floor(12 / $colCount)));
+		$default = floor(12 / $colCount);
+		$element->span   = $element->hidden ? '' : FArrayHelper::getValue($spans, $spanKey, FabrikHelperHTML::getGridSpan((int)floor(12 / $colCount)));
 
 		if (!$element->hidden)
 		{
@@ -597,7 +598,7 @@ class FabrikFEModelGroup extends FabModel
 				if (strstr($w, '%'))
 				{
 					$w = (int) str_replace('%', '', $w);
-					$w = floor(($w / 100) * 12);
+					$w = (int) floor(($w / 100) * 12);
 				}
 
 				$w = ' ' . FabrikHelperHTML::getGridSpan($w);
@@ -975,6 +976,7 @@ class FabrikFEModelGroup extends FabModel
 			$group->maxRepeat        = (int) $params->get('repeat_max');
 			$group->minRepeat        = $params->get('repeat_min', '') === '' ? 1 : (int) $params->get('repeat_min', '');
 			$group->numRepeatElement = $params->get('repeat_num_element', '');
+			$group->noDataMsg        = $params->get('repeat_no_data_message', '');
 			$group->showMaxRepeats   = $params->get('show_repeat_max', '0') == '1';
 			$group->minMaxErrMsg     = $params->get('repeat_error_message', '');
 			$group->minMaxErrMsg     = FText::_($group->minMaxErrMsg);
@@ -989,7 +991,8 @@ class FabrikFEModelGroup extends FabModel
 			$group->showLegend       = $this->showLegend($group);
 			$group->labels           = $params->get('labels_above', -1);
 			$group->dlabels          = $params->get('labels_above_details', -1);
-			$group->class            = array();
+			$group->classArray       = array();
+			$group->class            = '';
 
 			if ($this->canRepeat())
 			{
@@ -1563,7 +1566,7 @@ class FabrikFEModelGroup extends FabModel
 		$groupId          = $this->getId();
 		$formModel        = $this->getFormModel();
 		$origGroupRowsIds = FArrayHelper::getValue($formModel->formData, 'fabrik_group_rowids', array());
-		$origGroupRowsIds = FArrayHelper::getValue($origGroupRowsIds, $groupId, array());
+		$origGroupRowsIds = FArrayHelper::getValue($origGroupRowsIds, $groupId, '[]');
 		$origGroupRowsIds = json_decode($origGroupRowsIds);
 
 		return $origGroupRowsIds;
@@ -1624,7 +1627,7 @@ class FabrikFEModelGroup extends FabModel
 				$d = ArrayHelper::fromObject($d);
 			}
 
-			$repeatGroup = count($d);
+			$repeatGroup = is_scalar($d) ? 1 : count($d);
 		}
 		else
 		{

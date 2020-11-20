@@ -4,7 +4,7 @@
  *
  * @package     Joomla.Plugin
  * @subpackage  Fabrik.form.sms
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -12,6 +12,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Fabrik\Helpers\ArrayHelper;
+use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
 /**
  * Twilio SMS gateway class
@@ -34,31 +36,30 @@ class Twilio extends JObject
 
 	public function process($message = '', $opts)
 	{
-		jimport('vendor.twilio.sdk.Services.Twilio');
-		$username = ArrayHelper::getValue($opts, 'sms-username');
+		$sid = ArrayHelper::getValue($opts, 'sms-username');
 		$token = ArrayHelper::getValue($opts, 'sms-password');
 		$smsto = ArrayHelper::getValue($opts, 'sms-to');
 
 		// From a valid Twilio number
 		$smsfrom = ArrayHelper::getValue($opts, 'sms-from');
-		$smstos = explode(",", $smsto);
+		$smstos = empty($smsto) ? array() : explode(",", $smsto);
 
-		$client = new Services_Twilio($username, $token);
+		$client = new Twilio\Rest\Client($sid, $token);
 
 		foreach ($smstos as $smsto)
 		{
 			try {
-				$call = $client->account->messages->create(
+				$client->messages->create(
+					trim($smsto),
 					array(
-						'From' => $smsfrom,
-						'To' => $smsto,
-						'Body' => $message
+						'from' => $smsfrom,
+						'body' => $message
 					)
 				);
 			}
-			catch (Services_Twilio_RestException $e)
+			catch (TwilioException $e)
 			{
-				//echo $e->getMessage();
+				JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 
 				return false;
 			}

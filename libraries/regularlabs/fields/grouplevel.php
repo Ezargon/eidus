@@ -1,15 +1,18 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text as JText;
+use Joomla\Registry\Registry;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -24,13 +27,35 @@ class JFormFieldRL_GroupLevel extends \RegularLabs\Library\Field
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
-
 		$size      = (int) $this->get('size');
 		$multiple  = $this->get('multiple');
 		$show_all  = $this->get('show_all');
 		$use_names = $this->get('use_names');
 
+		return $this->selectListAjax(
+			$this->type, $this->name, $this->value, $this->id,
+			compact('size', 'multiple', 'show_all', 'use_names')
+		);
+	}
+
+	function getAjaxRaw(Registry $attributes)
+	{
+		$name     = $attributes->get('name', $this->type);
+		$id       = $attributes->get('id', strtolower($name));
+		$value    = $attributes->get('value', []);
+		$size     = $attributes->get('size');
+		$multiple = $attributes->get('multiple');
+
+		$options = $this->getOptions(
+			(bool) $attributes->get('show_all'),
+			(bool) $attributes->get('use_names')
+		);
+
+		return $this->selectList($options, $name, $value, $id, $size, $multiple);
+	}
+
+	protected function getOptions($show_all = false, $use_names = false)
+	{
 		$options = $this->getUserGroups($use_names);
 
 		if ($show_all)
@@ -42,7 +67,7 @@ class JFormFieldRL_GroupLevel extends \RegularLabs\Library\Field
 			array_unshift($options, $option);
 		}
 
-		return $this->selectList($options, $this->name, $this->value, $this->id, $size, $multiple);
+		return $options;
 	}
 
 	protected function getUserGroups($use_names = false)

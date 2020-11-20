@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -27,11 +27,26 @@ class GeoRegion
 			return $this->_(false);
 		}
 
+		$country = $this->geo->countryCode;
 		$regions = $this->geo->regionCodes;
-		array_walk($regions, function (&$value) {
-			$value = $this->geo->countryCode . '-' . $value;
-		});
+
+		array_walk($regions, function (&$region, $key, $country) {
+
+			$region = $this->getCountryRegionCode($region, $country);
+		}, $country);
 
 		return $this->passSimple($regions);
+	}
+
+	private function getCountryRegionCode(&$region, $country)
+	{
+		switch ($country . '-' . $region)
+		{
+			case 'MX-CMX':
+				return 'MX-DIF';
+
+			default:
+				return $country . '-' . $region;
+		}
 	}
 }

@@ -1,15 +1,17 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text as JText;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -43,21 +45,44 @@ class JFormFieldRL_Note extends \RegularLabs\Library\Field
 		$title       = $this->element['label'] ? (string) $this->element['label'] : ($this->element['title'] ? (string) $this->element['title'] : '');
 		$heading     = $this->element['heading'] ? (string) $this->element['heading'] : 'h4';
 		$description = (string) $this->element['description'];
-		$class       = ! empty($this->class) ? ' class="' . $this->class . '"' : '';
+		$class       = ! empty($this->class) ? $this->class : '';
 		$close       = (string) $this->element['close'];
+		$controls    = (int) $this->element['controls'];
 
-		$html = [];
+		$class = ! empty($class) ? ' class="' . $class . '"' : '';
+
+		$button      = '';
+		$title       = ! empty($title) ? JText::_($title) : '';
+		$description = ! empty($description) ? JText::_($description) : '';
 
 		if ($close)
 		{
 			$close  = $close == 'true' ? 'alert' : $close;
-			$html[] = '<button type="button" class="close" data-dismiss="' . $close . '">&times;</button>';
+			$button = '<button type="button" class="close" data-dismiss="' . $close . '" aria-label="Close">&times;</button>';
 		}
 
-		$html[] = ! empty($title) ? '<' . $heading . '>' . JText::_($title) . '</' . $heading . '>' : '';
-		$html[] = ! empty($description) ? JText::_($description) : '';
+		if ($heading && $title)
+		{
+			$title = '<' . $heading . '>'
+				. $title
+				. '</' . $heading . '>';
+		}
 
-		return '</div><div ' . $class . '>' . implode('', $html);
+		if ($controls)
+		{
+			$title = '<div class="control-label"><label>'
+				. $title
+				. '</label></div>';
+
+			$description = '<div class="controls">'
+				. $description
+				. '</div>';
+		}
+
+		return '</div><div ' . $class . '>'
+			. $button
+			. $title
+			. $description;
 	}
 
 	protected function getInput()

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Sourcerer
- * @version         7.1.9
+ * @version         8.4.2
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -14,10 +14,13 @@ namespace RegularLabs\Plugin\System\Sourcerer;
 defined('_JEXEC') or die;
 
 use JFile;
-use JText;
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\CMS\Uri\Uri as JUri;
 use RegularLabs\Library\ArrayHelper as RL_Array;
 use RegularLabs\Library\Document as RL_Document;
 use RegularLabs\Library\Html as RL_Html;
+use RegularLabs\Library\ObjectHelper as RL_Object;
 use RegularLabs\Library\PluginTag as RL_PluginTag;
 use RegularLabs\Library\Protect as RL_Protect;
 use RegularLabs\Library\RegEx as RL_RegEx;
@@ -97,8 +100,8 @@ class Replace
 		$components = Area::get($string, 'component');
 		foreach ($components as $component)
 		{
-			self::replace($component['1'], 'components', '');
-			$string = str_replace($component['0'], $component['1'], $string);
+			self::replace($component[1], 'components', '');
+			$string = str_replace($component[0], $component[1], $string);
 		}
 
 		// EVERYWHERE
@@ -116,10 +119,20 @@ class Replace
 
 		$params = Params::get();
 
-		$data    = RL_PluginTag::getAttributesFromStringOld(trim($match['data']), []);
+		$data        = trim($match['data']);
+		$remove_html = ! isset($data[0]) || $data[0] !== '0';
+
+		$data = trim($match['data'], '0 ');
+		// Remove spaces inside list values
+		$data = RL_RegEx::replace('(="[^"]*,) ', '\1', $data);
+		// Convert new syntax to old
+		$data = str_replace(['"', ' '], ['', '|'], $data);
+		// Get attributes from old syntax (we still need this to handle the unquoted stuff)
+		$data = RL_PluginTag::getAttributesFromStringOld($data, []);
+
 		$content = trim($match['content']);
 
-		$remove_html = ! in_array('0', $data->params);
+		$remove_html = (isset($data->raw) && $data->raw) ? false : $remove_html;
 
 		// Remove html tags if code is placed via the WYSIWYG editor
 		if ($remove_html)
@@ -129,12 +142,6 @@ class Replace
 
 		self::replacePhpShortCodes($content);
 
-		// Add the include file if file=... or include=... is used in the {source} tag
-		$file = ! empty($data->file) ? $data->file : (! empty($data->include) ? $data->include : '');
-		if ( ! empty($file) && JFile::exists(JPATH_SITE . $params->include_path . $file))
-		{
-			$content = '<?php include JPATH_SITE . \'' . $params->include_path . $file . '\'; ?>' . $content;
-		}
 
 		self::replaceTags($content, $area, $article);
 
@@ -172,6 +179,7 @@ class Replace
 		return $content;
 	}
 
+
 	private static function replacePhpShortCodes(&$string)
 	{
 		// Replace <? with <?php
@@ -187,10 +195,8 @@ class Replace
 			return;
 		}
 
-		$params = Params::get();
-
 		// allow in component?
-		if (RL_Protect::isRestrictedComponent(isset($params->components) ? $params->components : [], $area))
+		if (RL_Protect::isRestrictedComponent(Params::get('components', []), $area))
 		{
 			Protect::protectTags($string);
 
@@ -297,13 +303,13 @@ class Replace
 		{
 			foreach ($matches as $match)
 			{
-				if ( ! in_array($match['1'], $forbidden_tags_array))
+				if ( ! in_array($match[1], $forbidden_tags_array))
 				{
 					continue;
 				}
 
-				$tag    = Protect::getMessageCommentTag(JText::sprintf('SRC_TAG_REMOVED_FORBIDDEN', $match['1']));
-				$string = str_replace($match['0'], $tag, $string);
+				$tag    = Protect::getMessageCommentTag(JText::sprintf('SRC_TAG_REMOVED_FORBIDDEN', $match[1]));
+				$string = str_replace($match[0], $tag, $string);
 			}
 		}
 
@@ -315,13 +321,13 @@ class Replace
 		{
 			foreach ($matches as $match)
 			{
-				if ( ! in_array($match['1'], $forbidden_tags_array))
+				if ( ! in_array($match[1], $forbidden_tags_array))
 				{
 					continue;
 				}
 
-				$tag    = Protect::getMessageCommentTag(JText::sprintf('SRC_TAG_REMOVED_FORBIDDEN', $match['1']));
-				$string = str_replace($match['0'], $tag, $string);
+				$tag    = Protect::getMessageCommentTag(JText::sprintf('SRC_TAG_REMOVED_FORBIDDEN', $match[1]));
+				$string = str_replace($match[0], $tag, $string);
 			}
 		}
 	}
@@ -358,8 +364,8 @@ class Replace
 		if ( ! $enabled)
 		{
 			// replace source block content with HTML comment
-			$string_array      = [];
-			$string_array['0'] = Protect::getMessageCommentTag(JText::sprintf('SRC_CODE_REMOVED_NOT_ALLOWED', JText::_('SRC_PHP'), JText::_('SRC_PHP')));
+			$string_array    = [];
+			$string_array[0] = Protect::getMessageCommentTag(JText::sprintf('SRC_CODE_REMOVED_NOT_ALLOWED', JText::_('SRC_PHP'), JText::_('SRC_PHP')));
 
 			$string = implode('', $string_array);
 
@@ -368,8 +374,8 @@ class Replace
 		if ( ! $security_pass)
 		{
 			// replace source block content with HTML comment
-			$string_array      = [];
-			$string_array['0'] = Protect::getMessageCommentTag(JText::sprintf('SRC_CODE_REMOVED_SECURITY', JText::_('SRC_PHP')));
+			$string_array    = [];
+			$string_array[0] = Protect::getMessageCommentTag(JText::sprintf('SRC_CODE_REMOVED_SECURITY', JText::_('SRC_PHP')));
 
 			$string = implode('', $string_array);
 
@@ -383,18 +389,18 @@ class Replace
 			{
 				if (fmod($i, 2) == 0)
 				{
-					$string_array['1'] .= "<!-- SRC_SEMICOLON --> ?>" . $string_array[$i] . "<?php ";
+					$string_array[1] .= "<!-- SRC_SEMICOLON --> ?>" . $string_array[$i] . "<?php ";
 					unset($string_array[$i]);
 					continue;
 				}
 
-				$string_array['1'] .= $string_array[$i];
+				$string_array[1] .= $string_array[$i];
 				unset($string_array[$i]);
 			}
 		}
 
 		$semicolon = '<!-- SRC_SEMICOLON -->';
-		$script    = trim($string_array['1']) . $semicolon;
+		$script    = trim($string_array[1]) . $semicolon;
 		$script    = RL_RegEx::replace('(;\s*)?' . RL_RegEx::quote($semicolon), ';', $script);
 
 		$area = Params::getArea('default');
@@ -411,14 +417,14 @@ class Replace
 			$functionsArray = [];
 			foreach ($functions as $function)
 			{
-				$functionsArray[] = $function['1'] . ')';
+				$functionsArray[] = $function[1] . ')';
 			}
 
 			$comment = JText::_('SRC_PHP_CODE_REMOVED_FORBIDDEN') . ': ( ' . implode(', ', $functionsArray) . ' )';
 
-			$string_array['1'] = RL_Document::isHtml()
+			$string_array[1] = RL_Document::isHtml()
 				? Protect::getMessageCommentTag($comment)
-				: $string_array['1'] = '';
+				: $string_array[1] = '';
 
 			$string = implode('', $string_array);
 
@@ -429,9 +435,9 @@ class Replace
 
 		$src_variables['article'] = $article;
 
-		$output = Code::run($script, $src_variables);
+		$output = Code::run($script, $src_variables, Params::get('tmp_path'));
 
-		$string_array['1'] = $output;
+		$string_array[1] = $output;
 
 		$string = implode('', $string_array);
 	}

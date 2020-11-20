@@ -1,15 +1,18 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Language\Text as JText;
 
 class NNHtml
 {
@@ -66,7 +69,7 @@ class NNHtml
 
 		if ( ! $multiple)
 		{
-			$first_level = isset($options['0']->level) ? $options['0']->level : 0;
+			$first_level = isset($options[0]->level) ? $options[0]->level : 0;
 			foreach ($options as &$option)
 			{
 				if ( ! isset($option->level))

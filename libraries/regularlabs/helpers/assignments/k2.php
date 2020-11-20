@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,10 +13,17 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory as JFactory;
+
+if (is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+{
+	require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
+}
+
 require_once dirname(__DIR__) . '/assignment.php';
 
 // If controller.php exists, assume this is K2 v3
-defined('RL_K2_VERSION') or define('RL_K2_VERSION', JFile::exists(JPATH_ADMINISTRATOR . '/components/com_k2/controller.php') ? 3 : 2);
+defined('RL_K2_VERSION') or define('RL_K2_VERSION', file_exists(JPATH_ADMINISTRATOR . '/components/com_k2/controller.php') ? 3 : 2);
 
 class RLAssignmentsK2 extends RLAssignment
 {

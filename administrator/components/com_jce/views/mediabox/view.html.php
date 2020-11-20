@@ -1,90 +1,64 @@
 <?php
 
 /**
- * @package   	JCE
- * @copyright 	Copyright (c) 2009-2017 Ryan Demmer. All rights reserved.
- * @license   	GNU/GPL 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * @copyright 	Copyright (c) 2009-2020 Ryan Demmer. All rights reserved
+ * @license   	GNU/GPL 2 or later - https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * JCE is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * other free or open source software licenses
  */
-defined('_JEXEC') or die('RESTRICTED');
+defined('JPATH_PLATFORM') or die;
 
-wfimport('admin.classes.view');
+class JceViewMediabox extends JViewLegacy
+{
+    public $form;
+    public $data;
 
-class WFViewMediabox extends WFView {
+    public function display($tpl = null)
+    {
+        $document = JFactory::getDocument();
 
-    function getParams($data) {
+        $form = $this->get('Form');
+        $data = $this->get('Data');
 
-        jimport('joomla.form.form');
-
-        $xml = JPATH_PLUGINS . '/system/jcemediabox/jcemediabox.xml';
-
-        if (class_exists('JForm')) {
-            $control = 'config:fields:fieldset';
-        } else {
-            $control = 'params';
-             $xml = JPATH_PLUGINS . '/system/jcemediabox.xml';
+        // Bind the form to the data.
+        if ($form && $data) {
+            $form->bind($data);
         }
 
-        $params = new WFParameter($data, $xml, '', array('control' => $control));
-        $params->addElementPath(JPATH_PLUGINS . '/system/jcemediabox/elements');
+        $this->form = $form;
+        $this->data = $data;
 
-        $groups = array();
-        $array  = array();
+        $this->name = JText::_('WF_MEDIABOX');
+        $this->fieldsname = "";
+        $this->formclass = 'form-horizontal options-grid-form options-grid-form-full';
 
-        foreach ($params->getGroups() as $group) {
-            $groups[] = $params->getParams('params', $group);
-        }
-
-        foreach ($groups as $group) {
-            $array = array_merge($array, $group);
-        }
-
-        return $array;
-    }
-
-    function display($tpl = null) {
-        $db = JFactory::getDBO();
-
-        $lang = JFactory::getLanguage();
-        $lang->load('plg_system_jcemediabox');
-
-        $client = JRequest::getWord('client', 'site');
-        $model = $this->getModel();
-
-        $plugin = JPluginHelper::getPlugin('system', 'jcemediabox');
-
-        $params = $this->getParams($plugin->params);
-
-        $this->assign('params', $params);
-        $this->assign('client', $client);
-
-        wfimport('admin.models.editor');
-
-        $options = array(
-            'stylesheets' => (array) WFModelEditor::getStyleSheets(),
-            'labels' => array(
-                'picker' => WFText::_('WF_COLORPICKER_PICKER'),
-                'palette' => WFText::_('WF_COLORPICKER_PALETTE'),
-                'named' => WFText::_('WF_COLORPICKER_NAMED'),
-                'template' => WFText::_('WF_COLORPICKER_TEMPLATE'),
-                'color' => WFText::_('WF_COLORPICKER_COLOR'),
-                'apply' => WFText::_('WF_COLORPICKER_APPLY'),
-                'name' => WFText::_('WF_COLORPICKER_NAME')
-            ),
-            'parent' => '.ui-jce'
-        );
-
-        $this->addScriptDeclaration('jQuery(document).ready(function($){$("input.color").colorpicker(' . json_encode($options) . ');});');
-
-        WFToolbarHelper::apply();
-        WFToolbarHelper::save();
-        WFToolbarHelper::cancel();
-        WFToolbarHelper::help('mediabox.config');
-
+        $this->addToolbar();
         parent::display($tpl);
     }
 
+    /**
+     * Add the page title and toolbar.
+     *
+     * @since   3.0
+     */
+    protected function addToolbar()
+    {
+        JFactory::getApplication()->input->set('hidemainmenu', true);
+
+        $user = JFactory::getUser();
+        JToolbarHelper::title(JText::_('WF_MEDIABOX'), 'pictures');
+
+        // If not checked out, can save the item.
+        if ($user->authorise('jce.config', 'com_jce')) {
+            JToolbarHelper::apply('mediabox.apply');
+            JToolbarHelper::save('mediabox.save');
+        }
+
+        JToolbarHelper::cancel('mediabox.cancel', 'JTOOLBAR_CLOSE');
+
+        JToolbarHelper::divider();
+        JToolbarHelper::help('WF_MEDIABOX_EDIT');
+    }
 }

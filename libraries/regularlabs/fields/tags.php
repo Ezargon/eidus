@@ -1,15 +1,19 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\Registry\Registry;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -24,26 +28,53 @@ class JFormFieldRL_Tags extends \RegularLabs\Library\Field
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
+		$size        = (int) $this->get('size');
+		$simple      = (int) $this->get('simple');
+		$show_ignore = $this->get('show_ignore');
+		$use_names   = $this->get('use_names');
 
-		$size      = (int) $this->get('size');
-		$use_names = $this->get('use_names');
+		if ($show_ignore && in_array('-1', $this->value))
+		{
+			$this->value = ['-1'];
+		}
 
+		return $this->selectListAjax(
+			$this->type, $this->name, $this->value, $this->id,
+			compact('size', 'simple', 'show_ignore', 'use_names'),
+			$simple
+		);
+	}
+
+	function getAjaxRaw(Registry $attributes)
+	{
+		$name   = $attributes->get('name', $this->type);
+		$id     = $attributes->get('id', strtolower($name));
+		$value  = $attributes->get('value', []);
+		$size   = $attributes->get('size');
+		$simple = $attributes->get('simple');
+
+		$options = $this->getOptions(
+			(bool) $attributes->get('show_all'),
+			(bool) $attributes->get('use_names')
+		);
+
+		return $this->selectList($options, $name, $value, $id, $size, true, $simple);
+	}
+
+	protected function getOptions($show_ignore = false, $use_names = false, $value = [])
+	{
 		// assemble items to the array
 		$options = [];
-		if ($this->get('show_ignore'))
+
+		if ($show_ignore)
 		{
-			if (in_array('-1', $this->value))
-			{
-				$this->value = ['-1'];
-			}
 			$options[] = JHtml::_('select.option', '-1', '- ' . JText::_('RL_IGNORE') . ' -');
 			$options[] = JHtml::_('select.option', '-', '&nbsp;', 'value', 'text', true);
 		}
 
 		$options = array_merge($options, $this->getTags($use_names));
 
-		return $this->selectList($options, $this->name, $this->value, $this->id, $size, true);
+		return $options;
 	}
 
 	protected function getTags($use_names)

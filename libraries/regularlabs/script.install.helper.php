@@ -1,29 +1,36 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory as JFactory;
+use Joomla\CMS\Filesystem\File as JFile;
+use Joomla\CMS\Filesystem\Folder as JFolder;
+use Joomla\CMS\Installer\Installer as JInstaller;
+use Joomla\CMS\Language\Text as JText;
+
 class RegularLabsInstallerScriptHelper
 {
-	public $name            = '';
-	public $alias           = '';
-	public $extname         = '';
-	public $extension_type  = '';
-	public $plugin_folder   = 'system';
-	public $module_position = 'status';
-	public $client_id       = 1;
-	public $install_type    = 'install';
-	public $show_message    = true;
-	public $db              = null;
-	public $softbreak       = null;
+	public $name              = '';
+	public $alias             = '';
+	public $extname           = '';
+	public $extension_type    = '';
+	public $plugin_folder     = 'system';
+	public $module_position   = 'status';
+	public $client_id         = 1;
+	public $install_type      = 'install';
+	public $show_message      = true;
+	public $db                = null;
+	public $softbreak         = null;
+	public $installed_version = '';
 
 	public function __construct(&$params)
 	{
@@ -31,14 +38,16 @@ class RegularLabsInstallerScriptHelper
 		$this->db      = JFactory::getDbo();
 	}
 
-	public function preflight($route, JAdapterInstance $adapter)
+	public function preflight($route, $adapter)
 	{
 		if ( ! in_array($route, ['install', 'update']))
 		{
-			return;
+			return true;
 		}
 
 		JFactory::getLanguage()->load('plg_system_regularlabsinstaller', JPATH_PLUGINS . '/system/regularlabsinstaller');
+
+		$this->installed_version = $this->getVersion($this->getInstalledXMLFile());
 
 		if ($this->show_message && $this->isInstalled())
 		{
@@ -49,9 +58,11 @@ class RegularLabsInstallerScriptHelper
 		{
 			return false;
 		}
+
+		return true;
 	}
 
-	public function postflight($route, JAdapterInstance $adapter)
+	public function postflight($route, $adapter)
 	{
 		$this->removeGlobalLanguageFiles();
 		$this->removeUnusedLanguageFiles();
@@ -157,7 +168,7 @@ class RegularLabsInstallerScriptHelper
 
 		switch ($type)
 		{
-			case 'plugin';
+			case 'plugin':
 				$folders[] = JPATH_PLUGINS . '/' . $folder . '/' . $extname;
 				break;
 
@@ -195,6 +206,7 @@ class RegularLabsInstallerScriptHelper
 		{
 			foreach ($folders as $folder)
 			{
+				JFactory::getApplication()->enqueueMessage('2. Deleting: ' . $folder, 'notice');
 				JFolder::delete($folder);
 			}
 
@@ -232,7 +244,7 @@ class RegularLabsInstallerScriptHelper
 				JText::sprintf(
 					'COM_INSTALLER_UNINSTALL_SUCCESS',
 					JText::_('COM_INSTALLER_TYPE_TYPE_' . strtoupper($type))
-				)
+				), 'success'
 			);
 		}
 	}
@@ -352,11 +364,11 @@ class RegularLabsInstallerScriptHelper
 	{
 		JFactory::getApplication()->enqueueMessage(
 			JText::sprintf(
-				JText::_($this->install_type == 'update' ? 'RLI_THE_EXTENSION_HAS_BEEN_UPDATED_SUCCESSFULLY' : 'RLI_THE_EXTENSION_HAS_BEEN_INSTALLED_SUCCESSFULLY'),
+				$this->install_type == 'update' ? 'RLI_THE_EXTENSION_HAS_BEEN_UPDATED_SUCCESSFULLY' : 'RLI_THE_EXTENSION_HAS_BEEN_INSTALLED_SUCCESSFULLY',
 				'<strong>' . JText::_($this->name) . '</strong>',
 				'<strong>' . $this->getVersion() . '</strong>',
 				$this->getFullType()
-			)
+			), 'success'
 		);
 	}
 
@@ -364,7 +376,7 @@ class RegularLabsInstallerScriptHelper
 	{
 		switch ($this->extension_type)
 		{
-			case 'plugin';
+			case 'plugin':
 				return JText::_('plg_' . strtolower($this->plugin_folder));
 
 			case 'component':
@@ -414,7 +426,7 @@ class RegularLabsInstallerScriptHelper
 			return '';
 		}
 
-		$xml = JApplicationHelper::parseXMLInstallFile($file);
+		$xml = JInstaller::parseXMLInstallFile($file);
 
 		if ( ! $xml || ! isset($xml['version']))
 		{
@@ -426,26 +438,26 @@ class RegularLabsInstallerScriptHelper
 
 	public function isNewer()
 	{
-		if ( ! $installed_version = $this->getVersion($this->getInstalledXMLFile()))
+		if ( ! $this->installed_version)
 		{
 			return true;
 		}
 
 		$package_version = $this->getVersion();
 
-		return version_compare($installed_version, $package_version, '<=');
+		return version_compare($this->installed_version, $package_version, '<=');
 	}
 
 	public function canInstall()
 	{
 		// The extension is not installed yet
-		if ( ! $installed_version = $this->getVersion($this->getInstalledXMLFile()))
+		if ( ! $this->installed_version)
 		{
 			return true;
 		}
 
 		// The free version is installed. So any version is ok to install
-		if (strpos($installed_version, 'PRO') === false)
+		if (strpos($this->installed_version, 'PRO') === false)
 		{
 			return true;
 		}
@@ -527,6 +539,7 @@ class RegularLabsInstallerScriptHelper
 
 	public function onAfterInstall($route)
 	{
+		return true;
 	}
 
 	public function delete($files = [])
@@ -545,14 +558,38 @@ class RegularLabsInstallerScriptHelper
 		}
 	}
 
-	public function fixAssetsRules($rules = '{"core.admin":[],"core.manage":[]}')
+	public function fixAssetsRules()
 	{
-		// replace default rules value {} with the correct initial value
+		$query = $this->db->getQuery(true)
+			->select($this->db->quoteName('rules'))
+			->from('#__assets')
+			->where($this->db->quoteName('title') . ' = ' . $this->db->quote('com_' . $this->extname));
+		$this->db->setQuery($query, 0, 1);
+		$rules = $this->db->loadResult();
+
+		$rules = json_decode($rules);
+
+		if (empty($rules))
+		{
+			return;
+		}
+
+		foreach ($rules as $key => $value)
+		{
+			if ( ! empty($value))
+			{
+				continue;
+			}
+
+			unset($rules->$key);
+		}
+
+		$rules = json_encode($rules);
+
 		$query = $this->db->getQuery(true)
 			->update($this->db->quoteName('#__assets'))
 			->set($this->db->quoteName('rules') . ' = ' . $this->db->quote($rules))
-			->where($this->db->quoteName('title') . ' = ' . $this->db->quote('com_' . $this->extname))
-			->where($this->db->quoteName('rules') . ' = ' . $this->db->quote('{}'));
+			->where($this->db->quoteName('title') . ' = ' . $this->db->quote('com_' . $this->extname));
 		$this->db->setQuery($query);
 		$this->db->execute();
 	}
@@ -822,13 +859,18 @@ class RegularLabsInstallerScriptHelper
 			return;
 		}
 
+		if ( ! is_file(__DIR__ . '/language'))
+		{
+			return;
+		}
+
 		$installed_languages = array_merge(
-			JFolder::folders(JPATH_SITE . '/language'),
-			JFolder::folders(JPATH_ADMINISTRATOR . '/language')
+			is_file(JPATH_SITE . '/language') ? JFolder::folders(JPATH_SITE . '/language') : [],
+			is_file(JPATH_ADMINISTRATOR . '/language') ? JFolder::folders(JPATH_ADMINISTRATOR . '/language') : []
 		);
 
 		$languages = array_diff(
-			JFolder::folders(__DIR__ . '/language'),
+			JFolder::folders(__DIR__ . '/language') ?: [],
 			$installed_languages
 		);
 

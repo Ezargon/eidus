@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-use JFactory;
+use Joomla\CMS\Factory as JFactory;
 
 /**
  * Class Cache
@@ -25,14 +25,16 @@ class Cache
 	static $cache = [];
 
 	// Is the cached object in the cache memory?
-	public static function has($hash)
+	public static function has($id)
 	{
-		return isset(self::$cache[$hash]);
+		return isset(self::$cache[md5($id)]);
 	}
 
 	// Get the cached object from the cache memory
-	public static function get($hash)
+	public static function get($id)
 	{
+		$hash = md5($id);
+
 		if ( ! isset(self::$cache[$hash]))
 		{
 			return false;
@@ -42,16 +44,23 @@ class Cache
 	}
 
 	// Save the cached object to the cache memory
-	public static function set($hash, $data)
+	public static function set($id, $data)
 	{
-		self::$cache[$hash] = $data;
+		self::$cache[md5($id)] = $data;
 
 		return $data;
 	}
 
 	// Get the cached object from the Joomla cache
-	public static function read($hash)
+	public static function read($id)
 	{
+		if (JFactory::getApplication()->get('debug'))
+		{
+			return false;
+		}
+
+		$hash = md5($id);
+
 		if (isset(self::$cache[$hash]))
 		{
 			return self::$cache[$hash];
@@ -63,8 +72,15 @@ class Cache
 	}
 
 	// Save the cached object to the Joomla cache
-	public static function write($hash, $data, $time_to_life_in_minutes = 0, $force_caching = true)
+	public static function write($id, $data, $time_to_life_in_minutes = 0, $force_caching = true)
 	{
+		if (JFactory::getApplication()->get('debug'))
+		{
+			return $data;
+		}
+
+		$hash = md5($id);
+
 		self::$cache[$hash] = $data;
 
 		$cache = JFactory::getCache(self::$group, 'output');

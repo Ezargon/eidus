@@ -21,7 +21,8 @@ define(['jquery'], function (jQuery) {
 	        editable   : false,
 	        isJoin     : false,
 	        joinId     : 0,
-	        changeEvent: 'change'
+	        changeEvent: 'change',
+            hasAjaxValidation: false
         },
 
         /**
@@ -136,12 +137,12 @@ define(['jquery'], function (jQuery) {
         fireEvents: function (evnts) {
             if (this.hasSubElements()) {
                 this._getSubElements().each(function (el) {
-                    Array.from(evnts).each(function (e) {
+                    Array.mfrom(evnts).each(function (e) {
                         el.fireEvent(e);
                     }.bind(this));
                 }.bind(this));
             } else {
-                Array.from(evnts).each(function (e) {
+                Array.mfrom(evnts).each(function (e) {
                     if (this.element) {
                         this.element.fireEvent(e);
                     }
@@ -274,6 +275,42 @@ define(['jquery'], function (jQuery) {
         validate: function () {
         },
 
+        /**
+         * Add AJAX validation trigger, called from form model setup or when cloned
+         */
+        addAjaxValidationAux: function () {
+            var self = this;
+            // the hasAjaxValidation flag is only set during setup
+            if (this.element && this.options.hasAjaxValidation) {
+                var $el = jQuery(this.element);
+                if ($el.hasClass('fabrikSubElementContainer')) {
+                    // check for things like radio buttons & checkboxes
+                    $el.find('.fabrikinput').on(this.getChangeEvent(), function (e) {
+                        self.form.doElementValidation(e, true);
+                    });
+                    return;
+                }
+                $el.on(this.getChangeEvent(), function (e) {
+                    self.form.doElementValidation(e, false);
+                });
+            }
+        },
+
+        /**
+         * Add AJAX validation trigger, called from form model
+         */
+        addAjaxValidation: function () {
+            var self = this;
+            if (!this.element) {
+                this.element = document.id(this.strElement);
+            }
+            if (this.element) {
+                // set our hasAjaxValidation flag and do the actual event add
+                this.options.hasAjaxValidation = true;
+                this.addAjaxValidationAux();
+            }
+        },
+
         //store new options created by user in hidden field
         addNewOption: function (val, label) {
             var a;
@@ -351,10 +388,10 @@ define(['jquery'], function (jQuery) {
         },
 
         reset: function () {
-            this.resetEvents();
             if (this.options.editable === true) {
                 this.update(this.options.defaultVal);
             }
+            this.resetEvents();
         },
 
         resetEvents: function () {
@@ -392,18 +429,28 @@ define(['jquery'], function (jQuery) {
         },
 
         /**
+         * Called before an AJAX validation is triggered, in case an element wants to abort it,
+         * for example date element with time picker
+         */
+        shouldAjaxValidate: function () {
+            return true;
+        },
+
+        /**
          * Run when the element is cloned in a repeat group
          */
         cloned: function (c) {
             this.renewEvents();
             this.resetEvents();
+            this.addAjaxValidationAux();
+            var changeEvent = this.getChangeEvent();
             if (this.element.hasClass('chzn-done')) {
                 this.element.removeClass('chzn-done');
                 this.element.addClass('chzn-select');
                 this.element.getParent().getElement('.chzn-container').destroy();
                 jQuery('#' + this.element.id).chosen();
                 jQuery(this.element).addClass('chzn-done');
-                var changeEvent = this.getChangeEvent();
+
                 jQuery('#' + this.options.element).on('change', {changeEvent: changeEvent}, function (event) {
                     document.id(this.id).fireEvent(event.data.changeEvent, new Event.Mock(event.data.changeEvent,
                         document.id(this.id)));
@@ -415,6 +462,7 @@ define(['jquery'], function (jQuery) {
          * Run when the element is de-cloned from the form as part of a deleted repeat group
          */
         decloned: function (groupid) {
+            this.form.removeMustValidate(this);
         },
 
         /**
@@ -577,23 +625,26 @@ define(['jquery'], function (jQuery) {
          * @param {number} left
          */
         moveTip: function (top, left) {
-            var t = this.tips(), tip, origPos;
+            var t = this.tips(), tip, origPos, popover;
             if (t.length > 0) {
                 t = jQuery(t[0]);
-                tip = t.data('popover').$tip;
-                if (tip) {
-                    origPos = tip.data('origPos');
-                    if (origPos === undefined) {
-                        origPos = {
-                            'top' : parseInt(t.data('popover').$tip.css('top'), 10) + top,
-                            'left': parseInt(t.data('popover').$tip.css('left'), 10) + left
-                        };
-                        tip.data('origPos', origPos);
+                popover = t.data('popover');
+                if (popover) {
+                    tip = popover.$tip;
+                    if (tip) {
+                        origPos = tip.data('origPos');
+                        if (origPos === undefined) {
+                            origPos = {
+                                'top': parseInt(t.data('popover').$tip.css('top'), 10) + top,
+                                'left': parseInt(t.data('popover').$tip.css('left'), 10) + left
+                            };
+                            tip.data('origPos', origPos);
+                        }
+                        tip.css({
+                            'top': origPos.top - top,
+                            'left': origPos.left - left
+                        });
                     }
-                    tip.css({
-                        'top': origPos.top - top,
-                        'left': origPos.left - left
-                    });
                 }
             }
         },
@@ -767,7 +818,7 @@ define(['jquery'], function (jQuery) {
                     suffixFound = true;
                 }
             }
-            var bits = Array.from(n.split('_'));
+            var bits = Array.mfrom(n.split('_'));
             var i = bits.getLast();
             if (typeOf(i.toInt()) === 'null') {
                 return bits.join('_');
@@ -853,6 +904,8 @@ define(['jquery'], function (jQuery) {
             var c = this.getContainer();
             if (c) {
                 jQuery(c).hide();
+                jQuery(c).addClass('fabrikHide');
+
             }
         },
 
@@ -860,6 +913,7 @@ define(['jquery'], function (jQuery) {
             var c = this.getContainer();
             if (c) {
                 jQuery(c).show();
+                jQuery(c).removeClass('fabrikHide');
             }
         },
 

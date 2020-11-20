@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -18,18 +18,12 @@ if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 
 require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
 
-use RegularLabs\Library\Document as RL_Document;
-
 class JFormFieldRL_PlainText extends \RegularLabs\Library\Field
 {
 	public $type = 'PlainText';
 
 	protected function getLabel()
 	{
-		RL_Document::stylesheet('regularlabs/style.min.css');
-
-		$this->params = $this->element->attributes();
-
 		$label   = $this->prepareText($this->get('label'));
 		$tooltip = $this->prepareText($this->get('description'));
 
@@ -48,14 +42,12 @@ class JFormFieldRL_PlainText extends \RegularLabs\Library\Field
 			return '<div>' . $label . '</div>';
 		}
 
-		return '<label class="hasTooltip" title="<strong>' . $label . '</strong><br>' . htmlentities($tooltip) . '">'
+		return '<label class="hasPopover" title="' . $label . '" data-content="' . htmlentities($tooltip) . '">'
 			. $label . '</label>';
 	}
 
 	protected function getInput()
 	{
-		$this->params = $this->element->attributes();
-
 		$text = $this->prepareText($this->value);
 
 		if ( ! $text)

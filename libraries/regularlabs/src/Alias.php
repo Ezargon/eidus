@@ -1,17 +1,20 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Application\ApplicationHelper as JApplicationHelper;
+use Joomla\CMS\Factory as JFactory;
 
 /**
  * Class Alias
@@ -21,13 +24,43 @@ class Alias
 {
 	/**
 	 * Creates an alias from a string
+	 *
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public static function get($string = '', $unicode = false)
+	{
+		if (empty($string))
+		{
+			return '';
+		}
+
+		$string = StringHelper::removeHtml($string);
+
+		if ($unicode || JFactory::getConfig()->get('unicodeslugs') == 1)
+		{
+			return self::stringURLUnicodeSlug($string);
+		}
+
+		// Remove < > html entities
+		$string = str_replace(['&lt;', '&gt;'], '', $string);
+
+		// Convert html entities
+		$string = StringHelper::html_entity_decoder($string);
+
+		return JApplicationHelper::stringURLSafe($string);
+	}
+
+	/**
+	 * Creates a unicode alias from a string
 	 * Based on stringURLUnicodeSlug method from the unicode slug plugin by infograf768
 	 *
 	 * @param string $string
 	 *
 	 * @return string
 	 */
-	public static function get($string = '')
+	private static function stringURLUnicodeSlug($string = '')
 	{
 		if (empty($string))
 		{

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-use JText;
+use Joomla\CMS\Language\Text as JText;
 
 /**
  * Class Language
@@ -44,13 +44,15 @@ class License
 			return '';
 		}
 
+		Document::loadMainDependencies();
+
 		return
-			'<div class="alert alert-default rl_licence">'
+			'<div class="alert alert-default rl_license">'
 			. JText::sprintf('RL_IS_FREE_VERSION', $name)
 			. '<br>'
 			. JText::_('RL_FOR_MORE_GO_PRO')
 			. '<br>'
-			. '<a href="https://www.regularlabs.com/purchase?ext=' . $alias . '" target="_blank" class="btn btn-small btn-primary">'
+			. '<a href="https://www.regularlabs.com/purchase/cart/add/' . $alias . '" target="_blank" class="btn btn-small btn-primary">'
 			. ' <span class="icon-basket"></span>'
 			. StringHelper::html_entity_decoder(JText::_('RL_GO_PRO'))
 			. '</a>'

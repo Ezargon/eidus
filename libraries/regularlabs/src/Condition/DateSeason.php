@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -47,22 +47,22 @@ class DateSeason
 					|| $date >= strtotime($date_year . '-12-21')
 				)
 				{
-					return $season_names['2']; // Must be in Summer
+					return $season_names[2]; // Must be in Summer
 				}
 
 				if ($date >= strtotime($date_year . '-09-23'))
 				{
-					return $season_names['1']; // Must be in Spring
+					return $season_names[1]; // Must be in Spring
 				}
 
 				if ($date >= strtotime($date_year . '-06-21'))
 				{
-					return $season_names['0']; // Must be in Winter
+					return $season_names[0]; // Must be in Winter
 				}
 
 				if ($date >= strtotime($date_year . '-03-21'))
 				{
-					return $season_names['3']; // Must be in Fall
+					return $season_names[3]; // Must be in Fall
 				}
 				break;
 			case 'australia':
@@ -71,22 +71,22 @@ class DateSeason
 					|| $date >= strtotime($date_year . '-12-01')
 				)
 				{
-					return $season_names['2']; // Must be in Summer
+					return $season_names[2]; // Must be in Summer
 				}
 
 				if ($date >= strtotime($date_year . '-09-01'))
 				{
-					return $season_names['1']; // Must be in Spring
+					return $season_names[1]; // Must be in Spring
 				}
 
 				if ($date >= strtotime($date_year . '-06-01'))
 				{
-					return $season_names['0']; // Must be in Winter
+					return $season_names[0]; // Must be in Winter
 				}
 
 				if ($date >= strtotime($date_year . '-03-01'))
 				{
-					return $season_names['3']; // Must be in Fall
+					return $season_names[3]; // Must be in Fall
 				}
 				break;
 			default: // northern
@@ -95,22 +95,22 @@ class DateSeason
 					|| $date >= strtotime($date_year . '-12-21')
 				)
 				{
-					return $season_names['0']; // Must be in Winter
+					return $season_names[0]; // Must be in Winter
 				}
 
 				if ($date >= strtotime($date_year . '-09-23'))
 				{
-					return $season_names['3']; // Must be in Fall
+					return $season_names[3]; // Must be in Fall
 				}
 
 				if ($date >= strtotime($date_year . '-06-21'))
 				{
-					return $season_names['2']; // Must be in Summer
+					return $season_names[2]; // Must be in Summer
 				}
 
 				if ($date >= strtotime($date_year . '-03-21'))
 				{
-					return $season_names['1']; // Must be in Spring
+					return $season_names[1]; // Must be in Spring
 				}
 				break;
 		}

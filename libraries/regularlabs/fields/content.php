@@ -1,15 +1,19 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Language\Text as JText;
+use RegularLabs\Library\ArrayHelper as RL_ArrayHelper;
 
 if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
@@ -37,6 +41,8 @@ class JFormFieldRL_Content extends \RegularLabs\Library\FieldGroup
 		{
 			return -1;
 		}
+
+		$this->value = RL_ArrayHelper::toArray($this->value);
 
 		// assemble items to the array
 		$options = [];
@@ -77,7 +83,7 @@ class JFormFieldRL_Content extends \RegularLabs\Library\FieldGroup
 		}
 
 		$query->clear('select')
-			->select('i.id, i.title as name, i.language, c.title as cat, i.access as published')
+			->select('i.id, i.title as name, i.language, c.title as cat, i.state as published')
 			->join('LEFT', '#__categories AS c ON c.id = i.catid')
 			->order('i.title, i.ordering, i.id');
 		$this->db->setQuery($query);

@@ -10,6 +10,7 @@
 		       class="readonly"
 		       default="0"
 		       label="COM_FABRIK_ID_LABEL"
+		       description="COM_FABRIK_FIELD_VIZUALIZATION_ID_DESC"
 		       readonly="true"
 		       size="10"/>
 
@@ -31,6 +32,7 @@
 		       hide="readmore,pagebreak"
 		       description="COM_FABRIK_FIELD_INTRODUCTION_DESC"
 		       label="COM_FABRIK_FIELD_INTRODUCTION_LABEL"
+			   filter="FabrikAdminHelper::filterText"
 		       rows="3"/>
 
 		<field name="plugin"
@@ -79,6 +81,10 @@
 		       class="input-medium"
 		       label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
 		       description="JGLOBAL_FIELD_PUBLISH_UP_DESC"
+			   translateformat="true"
+			   showtime="true"
+			   size="22"
+			   filter="user_utc"
 		/>
 
 		<field name="publish_down"
@@ -86,6 +92,10 @@
 		       class="input-medium"
 		       label="JGLOBAL_FIELD_PUBLISH_DOWN_LABEL"
 		       description="JGLOBAL_FIELD_PUBLISH_DOWN_DESC"
+			   translateformat="true"
+			   showtime="true"
+			   size="22"
+			   filter="user_utc"
 		/>
 
 	</fieldset>

@@ -1,13 +1,16 @@
 <?php 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
+
 $cfg	 = JEVConfig::getInstance();
 
 if ($cfg->get("tooltiptype",'joomla')=='overlib'){
 	JEVHelper::loadOverlib();
 }
 
-$view =  $this->getViewName();
+$view = $this->getViewName();
 echo $this->loadTemplate('cell' );
 $eventCellClass = "EventCalendarCell_".$view;
 
@@ -40,16 +43,16 @@ $precedingMonth = $this->datamodel->getPrecedingMonth($this->data);
     <?php
     $datacount = count($this->data["dates"]);
     $dn=0;
-    for ($w=0;$w<6 && $dn<$datacount;$w++){
+    foreach ($this->data['weeks'] AS $wkn => $week) {
     ?>           
 	<tr valign="top" style="height:80px;">				
         <?php
         echo "<td width='2%' class='cal_td_weeklink'>";
-        list($week,$link) = each($this->data['weeks']);
-        echo "<a href='".$link."'>$week</a></td>\n";
+		echo "<a href='".$week."'>$wkn</a></td>\n";
 
-        for ($d=0;$d<7 && $dn<$datacount;$d++){
-        	$currentDay = $this->data["dates"][$dn];
+		for ($d=0;$d<7 && $dn<$datacount;$d++){
+
+	    $currentDay = $this->data["dates"][$dn];
         	switch ($currentDay["monthType"]){
         		case "prior":
         		case "following":
@@ -65,7 +68,7 @@ $precedingMonth = $this->datamodel->getPrecedingMonth($this->data);
 				?>
             <td <?php echo $cellclass;?> width="14%" valign="top" style="height:80px;">
                 <?php   $this->_datecellAddEvent($this->year, $this->month, $currentDay["d"]);?>
-            	<a class="cal_daylink" href="<?php echo $currentDay["link"]; ?>" title="<?php echo JText::_('JEV_CLICK_TOSWITCH_DAY'); ?>"><?php echo $currentDay['d']; ?></a>
+            	<a class="cal_daylink" href="<?php echo $currentDay["link"]; ?>" title="<?php echo Text::_('JEV_CLICK_TOSWITCH_DAY'); ?>"><?php echo $currentDay['d']; ?></a>
                 <?php
                 
                 if (count($currentDay["events"])>0){

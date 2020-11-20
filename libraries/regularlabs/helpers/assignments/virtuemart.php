@@ -1,17 +1,24 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 /* @DEPRECATED */
 
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory as JFactory;
+
+if (is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
+{
+	require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
+}
 
 require_once dirname(__DIR__) . '/assignment.php';
 
@@ -22,8 +29,8 @@ class RLAssignmentsVirtueMart extends RLAssignment
 		$virtuemart_product_id  = JFactory::getApplication()->input->get('virtuemart_product_id', [], 'array');
 		$virtuemart_category_id = JFactory::getApplication()->input->get('virtuemart_category_id', [], 'array');
 
-		$this->request->item_id     = isset($virtuemart_product_id['0']) ? $virtuemart_product_id['0'] : null;
-		$this->request->category_id = isset($virtuemart_category_id['0']) ? $virtuemart_category_id['0'] : null;
+		$this->request->item_id     = isset($virtuemart_product_id[0]) ? $virtuemart_product_id[0] : null;
+		$this->request->category_id = isset($virtuemart_category_id[0]) ? $virtuemart_category_id[0] : null;
 		$this->request->id          = ($this->request->item_id) ? $this->request->item_id : $this->request->category_id;
 	}
 
@@ -79,7 +86,7 @@ class RLAssignmentsVirtueMart extends RLAssignment
 				$lang   = substr($lang, 0, strpos($lang, '|'));
 				if (preg_match('#"([^"]*_[^"]*)"#', $lang, $lang))
 				{
-					$lang = $lang['1'];
+					$lang = $lang[1];
 				}
 				else
 				{

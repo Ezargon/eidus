@@ -5,7 +5,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -29,7 +29,7 @@ define("COM_FABRIK_LIVESITE_ROOT", JURI::getInstance()->toString(array('scheme',
 define("FABRIKFILTER_TEXT", 0);
 define("FABRIKFILTER_EVAL", 1);
 define("FABRIKFILTER_QUERY", 2);
-define("FABRKFILTER_NOQUOTES", 3);
+define("FABRIKFILTER_NOQUOTES", 3);
 
 /** @var delimiter used to define separator in csv export */
 define("COM_FABRIK_CSV_DELIMITER", ",");
@@ -77,7 +77,7 @@ require_once COM_FABRIK_FRONTEND . '/models/plugin.php';
 require_once COM_FABRIK_FRONTEND . '/models/element.php';
 require_once COM_FABRIK_FRONTEND . '/models/plugin-form.php';
 require_once COM_FABRIK_FRONTEND . '/models/elementlist.php';
-require_once COM_FABRIK_FRONTEND . '/views/FabrikView.php';
+//require_once COM_FABRIK_FRONTEND . '/views/FabrikView.php';
 
 if ($app->isAdmin())
 {

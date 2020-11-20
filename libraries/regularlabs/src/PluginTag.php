@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -60,7 +60,10 @@ class PluginTag
 		}
 
 		// Replace html entity quotes to normal quotes
-		$string = str_replace('&quot;', '"', $string);
+		if (strpos($string, '"') === false)
+		{
+			$string = str_replace('&quot;', '"', $string);
+		}
 
 		self::protectSpecialChars($string);
 
@@ -71,7 +74,7 @@ class PluginTag
 		$string = RegEx::replace('((?:^|")\s*)&nbsp;(\s*(?:[a-z]|$))', '\1 \2', $string);
 
 		// Only one value, so return simple key/value object
-		if (strpos($string, '|') == false && ! RegEx::match('=\s*"', $string))
+		if (strpos($string, '|') == false && ! RegEx::match('=\s*["\']', $string))
 		{
 			self::unprotectSpecialChars($string, $keep_escaped_chars);
 
@@ -79,7 +82,7 @@ class PluginTag
 		}
 
 		// No foo="bar" syntax found, so assume old syntax
-		if ( ! RegEx::match('=\s*"', $string))
+		if ( ! RegEx::match('=\s*["\']', $string))
 		{
 			self::unprotectSpecialChars($string, $keep_escaped_chars);
 
@@ -90,7 +93,7 @@ class PluginTag
 		}
 
 		// Cannot find right syntax, so return simple key/value object
-		if ( ! RegEx::matchAll('(?:^|\s)(?<key>[a-z0-9-_]+)\s*(?<not>\!?)=\s*"(?<value>.*?)"', $string, $matches))
+		if ( ! RegEx::matchAll('(?:^|\s)(?<key>[a-z0-9-_\:]+)\s*(?<not>\!?)=\s*(["\'])(?<value>.*?)\3', $string, $matches))
 		{
 			self::unprotectSpecialChars($string, $keep_escaped_chars);
 
@@ -139,20 +142,17 @@ class PluginTag
 		}
 
 		// Convert boolean values to actual booleans
-		switch ($value)
+		if ($value === 'true' || $value === true)
 		{
-			case 'true':
-				return $match['not'] ? false : true;
-				break;
-
-			case 'false':
-				return $match['not'] ? true : false;
-				break;
-
-			default:
-				return $match['not'] ? '!NOT!' . $value : $value;
-				break;
+			return $match['not'] ? false : true;
 		}
+
+		if ($value === 'false' || $value === false)
+		{
+			return $match['not'] ? true : false;
+		}
+
+		return $match['not'] ? '!NOT!' . $value : $value;
 	}
 
 	/**
@@ -186,7 +186,7 @@ class PluginTag
 			return;
 		}
 
-		foreach ($tags['0'] as $tag)
+		foreach ($tags[0] as $tag)
 		{
 			// replace unescaped characters with special markup
 			$protected = str_replace(
@@ -259,8 +259,8 @@ class PluginTag
 			foreach ($tags as $tag)
 			{
 				$string = str_replace(
-					$tag['0'],
-					$tag_start . base64_encode(str_replace([$temp_separator, $temp_equal], [$separator, $equal], $tag['0'])) . $tag_end,
+					$tag[0],
+					$tag_start . base64_encode(str_replace([$temp_separator, $temp_equal], [$separator, $equal], $tag[0])) . $tag_end,
 					$string
 				);
 			}
@@ -280,25 +280,27 @@ class PluginTag
 		{
 			// spit part into key and val by equal sign
 			$keyval = explode($temp_equal, $keyval, 2);
-			if (isset($keyval['1']))
+			if (isset($keyval[1]))
 			{
-				$keyval['1'] = str_replace([$temp_separator, $temp_equal], [$separator, $equal], $keyval['1']);
+				$keyval[1] = str_replace([$temp_separator, $temp_equal], [$separator, $equal], $keyval[1]);
 			}
 
 			// unprotect tags in key and val
-			foreach ($keyval as $key => $val)
+			foreach ($keyval as $key => $value)
 			{
-				RegEx::matchAll(RegEx::quote($tag_start) . '(.*?)' . RegEx::quote($tag_end), $val, $tags);
+				RegEx::matchAll(RegEx::quote($tag_start) . '(.*?)' . RegEx::quote($tag_end), $value, $tags);
 
-				if ( ! empty($tags))
+				if (empty($tags))
 				{
-					foreach ($tags as $tag)
-					{
-						$val = str_replace($tag['0'], base64_decode($tag['1']), $val);
-					}
-
-					$keyval[trim($key)] = $val;
+					continue;
 				}
+
+				foreach ($tags as $tag)
+				{
+					$value = str_replace($tag[0], base64_decode($tag[1]), $value);
+				}
+
+				$keyval[trim($key)] = $value;
 			}
 
 			if (isset($keys[$i]))
@@ -306,21 +308,37 @@ class PluginTag
 				$key = trim($keys[$i]);
 				// if value is in the keys array add as defined in keys array
 				// ignore equal sign
-				$val = implode($equal, $keyval);
-				if (substr($val, 0, strlen($key) + 1) == $key . '=')
+				$value = implode($equal, $keyval);
+
+				if (substr($value, 0, strlen($key) + 1) == $key . '=')
 				{
-					$val = substr($val, strlen($key) + 1);
+					$value = substr($value, strlen($key) + 1);
 				}
-				$attributes->{$key} = $val;
+
+				$attributes->{$key} = $value;
 				unset($keys[$i]);
 
 				continue;
 			}
 
 			// else add as defined in the string
-			if (isset($keyval['1']))
+			if (isset($keyval[1]))
 			{
-				$attributes->{$keyval['0']} = $keyval['1'];
+				$value = $keyval[1];
+
+				$value = trim($value, '"');
+
+				if ($value === 'true' || $value === true)
+				{
+					$value = true;
+				}
+
+				if ($value === 'false' || $value === false)
+				{
+					$value = false;
+				}
+
+				$attributes->{$keyval[0]} = $value;
 				continue;
 			}
 
@@ -461,9 +479,12 @@ class PluginTag
 	 *
 	 * @return string
 	 */
-	public static function getRegexInsideTag()
+	public static function getRegexInsideTag($start_character = '{', $end_character = '}')
 	{
-		return '(?:[^\{\}]*\{[^\}]*\})*.*?';
+		$s = RegEx::quote($start_character);
+		$e = RegEx::quote($end_character);
+
+		return '(?:[^' . $s . $e . ']*' . $s . '[^' . $e . ']*' . $e . ')*.*?';
 	}
 
 	/**
@@ -476,8 +497,14 @@ class PluginTag
 	 */
 	public static function getRegexLeadingHtml($group_id = '')
 	{
-		$group          = 'leading_block_element_' . $group_id;
-		$html_tag_group = 'html_tag_' . $group_id;
+		$group          = 'leading_block_element';
+		$html_tag_group = 'html_tag';
+
+		if ($group_id)
+		{
+			$group          .= '_' . $group_id;
+			$html_tag_group .= '_' . $group_id;
+		}
 
 		$block_elements = Html::getBlockElements(['div']);
 		$block_element  = '(?<' . $group . '>' . implode('|', $block_elements) . ')';
@@ -501,7 +528,12 @@ class PluginTag
 	 */
 	public static function getRegexTrailingHtml($group_id = '')
 	{
-		$group = 'leading_block_element_' . $group_id;
+		$group = 'leading_block_element';
+
+		if ($group_id)
+		{
+			$group .= '_' . $group_id;
+		}
 
 		// If the grouped name is found, then grab all content till ending html tag is found. Otherwise grab nothing.
 		return '(?(<' . $group . '>)'
@@ -523,8 +555,14 @@ class PluginTag
 	{
 		$block_elements = ! empty($block_elements) ? $block_elements : Html::getBlockElements($excluded_block_elements);
 
-		return '(?:<(?:' . implode('|', $block_elements) . ')(?: [^>]*)?>\s*(?:<br ?/?>\s*)*)?'
-			. '(?:<(?:' . implode('|', $inline_elements) . ')(?: [^>]*)?>\s*(?:<br ?/?>\s*)*){0,3}';
+		$regex = '(?:<(?:' . implode('|', $block_elements) . ')(?: [^>]*)?>\s*(?:<br ?/?>\s*)*)?';
+
+		if ( ! empty($inline_elements))
+		{
+			$regex .= '(?:<(?:' . implode('|', $inline_elements) . ')(?: [^>]*)?>\s*(?:<br ?/?>\s*)*){0,3}';
+		}
+
+		return $regex;
 	}
 
 	/**
@@ -541,8 +579,16 @@ class PluginTag
 	{
 		$block_elements = ! empty($block_elements) ? $block_elements : Html::getBlockElements($excluded_block_elements);
 
-		return '(?:(?:\s*<br ?/?>)*\s*<\/(?:' . implode('|', $inline_elements) . ')>){0,3}'
-			. '(?:(?:\s*<br ?/?>)*\s*<\/(?:' . implode('|', $block_elements) . ')>)?';
+		$regex = '';
+
+		if ( ! empty($inline_elements))
+		{
+			$regex .= '(?:(?:\s*<br ?/?>)*\s*<\/(?:' . implode('|', $inline_elements) . ')>){0,3}';
+		}
+
+		$regex .= '(?:(?:\s*<br ?/?>)*\s*<\/(?:' . implode('|', $block_elements) . ')>)?';
+
+		return $regex;
 	}
 
 	/**
@@ -589,7 +635,7 @@ class PluginTag
 	public static function getRegexTags($tags, $include_no_attributes = true, $include_ending = true, $required_attributes = [])
 	{
 		$tags = ArrayHelper::toArray($tags);
-		$tags = count($tags) > 1 ? '(?:' . implode('|', $tags) . ')' : $tags['0'];
+		$tags = count($tags) > 1 ? '(?:' . implode('|', $tags) . ')' : $tags[0];
 
 		$value      = '(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[a-z0-9-_]+))?';
 		$attributes = '(?:\s+[a-z0-9-_]+' . $value . ')+';

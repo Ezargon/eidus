@@ -1,41 +1,47 @@
 <?php
 /**
- * copyright (C) 2008-2017 GWE Systems Ltd - All rights reserved
+ * copyright (C) 2008-2020 GWESystems Ltd - All rights reserved
  */
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * HTML View class for the module  frontend
  *
  * @static
  */
-include_once(JPATH_SITE."/modules/mod_jevents_latest/tmpl/default/latest.php");
+include_once(JPATH_SITE . "/modules/mod_jevents_latest/tmpl/default/latest.php");
 
 class FlatModLatestView extends DefaultModLatestView
 {
-	
-	function displayLatestEvents(){
 
-		$cfg = JEVConfig::getInstance();
+	function displayLatestEvents()
+	{
+
+		$cfg      = JEVConfig::getInstance();
 		$compname = JEV_COM_COMPONENT;
-	
-		$dispatcher	= JEventDispatcher::getInstance();
-		$datenow	= JEVHelper::getNow();
 
+		$datenow  = JEVHelper::getNow();
+
+		$app      = Factory::getApplication();
 		$this->getLatestEventsData();
 
 		$content = "";
 
-		if(isset($this->eventsByRelDay) && count($this->eventsByRelDay)){
+		if (isset($this->eventsByRelDay) && count($this->eventsByRelDay))
+		{
 
-			//ezequiel: $content .= $this->modparams->get("modlatest_templatetop") || $this->modparams->get("modlatest_templatebottom") ? $this->modparams->get("modlatest_templatetop") : '<table style="border:1px solid black;" class="mod_events_latest_table jevbootstrap" width="100%" border="0" cellspacing="0" cellpadding="0" align="center">';
-			$content .= '<ul class="category-module">';
+			$content .= $this->modparams->get("modlatest_templatetop") || $this->modparams->get("modlatest_templatebottom") ? $this->modparams->get("modlatest_templatetop") : '<table class="mod_events_latest_table jevbootstrap" width="100%" border="0" cellspacing="0" cellpadding="0" align="center">';
+
 			// Now to display these events, we just start at the smallest index of the $this->eventsByRelDay array
 			// and work our way up.
 
-			$firstTime=true;
+			$firstTime = true;
 
 			// initialize name of com_jevents module and task defined to view
 			// event detail.  Note that these could change in future com_event
@@ -48,91 +54,100 @@ class FlatModLatestView extends DefaultModLatestView
 
 			$this->processFormatString();
 
-			foreach($this->eventsByRelDay as $relDay => $daysEvents){
+			foreach ($this->eventsByRelDay as $relDay => $daysEvents)
+			{
 
 				reset($daysEvents);
 
 				// get all of the events for this day
-				foreach($daysEvents as $dayEvent){
+				foreach ($daysEvents as $dayEvent)
+				{
 
 					$eventcontent = "";
 
 					// generate output according custom string
-					foreach($this->splitCustomFormat as $condtoken) {
+					foreach ($this->splitCustomFormat as $condtoken)
+					{
 
-						if (isset($condtoken['cond'])) {
-							if ( $condtoken['cond'] == 'a'  && !$dayEvent->alldayevent()) continue;
-							else if ( $condtoken['cond'] == '!a' &&  $dayEvent->alldayevent()) continue;
-							else if ( $condtoken['cond'] == 'e'  && !($dayEvent->noendtime() || $dayEvent->alldayevent())) continue;
-							else if ( $condtoken['cond'] == '!e' &&  ($dayEvent->noendtime() || $dayEvent->alldayevent())) continue;							
-							else if ( $condtoken['cond'] == '!m' &&  $dayEvent->getUnixStartDate()!=$dayEvent->getUnixEndDate() ) continue;
-							else if ( $condtoken['cond'] == 'm' &&  $dayEvent->getUnixStartDate()==$dayEvent->getUnixEndDate() ) continue;
+						if (isset($condtoken['cond']))
+						{
+							if ($condtoken['cond'] == 'a' && !$dayEvent->alldayevent()) continue;
+							else if ($condtoken['cond'] == '!a' && $dayEvent->alldayevent()) continue;
+							else if ($condtoken['cond'] == 'e' && !($dayEvent->noendtime() || $dayEvent->alldayevent())) continue;
+							else if ($condtoken['cond'] == '!e' && ($dayEvent->noendtime() || $dayEvent->alldayevent())) continue;
+							else if ($condtoken['cond'] == '!m' && $dayEvent->getUnixStartDate() != $dayEvent->getUnixEndDate()) continue;
+							else if ($condtoken['cond'] == 'm' && $dayEvent->getUnixStartDate() == $dayEvent->getUnixEndDate()) continue;
 						}
-						foreach($condtoken['data'] as $token) {
+						foreach ($condtoken['data'] as $token)
+						{
 							unset($match);
 							unset($dateParm);
-							$dateParm="";
-							$match='';
-							if (is_array($token)) {
-								$match = $token['keyword'];
+							$dateParm = "";
+							$match    = '';
+							if (is_array($token))
+							{
+								$match    = $token['keyword'];
 								$dateParm = isset($token['dateParm']) ? trim($token['dateParm']) : "";
 							}
-							else if (strpos($token,'${')!==false){
+							else if (strpos($token, '${') !== false)
+							{
 								$match = $token;
-								
 							}
-							else {
+							else
+							{
 								$eventcontent .= $token;
 								continue;
 							}
+
 							$this->processMatch($eventcontent, $match, $dayEvent, $dateParm, $relDay);
-							//$this->processMatch($eventcontent, $match, $dayEvent, $dateParm, $relDay);
 						} // end of foreach
 					} // end of foreach
 
-					$dst = "border-color:".$dayEvent->bgcolor();
-					$eventrow = '<li><i class="fa fa-angle-right fa-2x pull-left" style="margin:10px 10px 20px 0px;"></i><div>%s'."</div></li>";
-					//ezequiel: else $eventrow = '<tr><td class="mod_events_latest" style="'.$dst.'">%s'."</td></tr>\n";
+					$dst = "border-color:" . $dayEvent->bgcolor();
+					if ($firstTime) $eventrow = '<tr><td class="mod_events_latest_first" style="' . $dst . '">%s' . "</td></tr>\n";
+					else $eventrow = '<tr><td class="mod_events_latest" style="' . $dst . '">%s' . "</td></tr>\n";
 
-					$templaterow = $this->modparams->get("modlatest_templaterow") ? $this->modparams->get("modlatest_templaterow")  : $eventrow;
-					$content .= str_replace("%s", $eventcontent , $templaterow);
-					//echo $eventcontent;
+					$templaterow = $this->modparams->get("modlatest_templaterow") ? $this->modparams->get("modlatest_templaterow") : $eventrow;
+					$content     .= str_replace("%s", $eventcontent, $templaterow);
 
-					//$firstTime=false;
+					$firstTime = false;
 				} // end of foreach
 			} // end of foreach
-			//ezequiel:$content .=$this->modparams->get("modlatest_templatebottom") || $this->modparams->get("modlatest_templatetop") ? $this->modparams->get("modlatest_templatebottom") : "</table>\n";
-			$content .='</ul>';
+			$content .= $this->modparams->get("modlatest_templatebottom") || $this->modparams->get("modlatest_templatetop") ? $this->modparams->get("modlatest_templatebottom") : "</table>\n";
 		}
-		else if ($this->modparams->get("modlatest_NoEvents", 1)){
-			$content .= $this->modparams->get("modlatest_templatetop") ? $this->modparams->get("modlatest_templatetop") : '<table class="mod_events_latest_table jevbootstrap" width="100%" border="0" cellspacing="0" cellpadding="0" align="center">';
-			$templaterow = $this->modparams->get("modlatest_templaterow") ? $this->modparams->get("modlatest_templaterow")  : '<tr><td class="mod_events_latest_noevents">%s</td></tr>' . "\n";
-			$content .= str_replace("%s", JText::_('JEV_NO_EVENTS') , $templaterow);
-			$content .=$this->modparams->get("modlatest_templatebottom") ? $this->modparams->get("modlatest_templatebottom") : "</table>\n";
+		else if ($this->modparams->get("modlatest_NoEvents", 1))
+		{
+			$content     .= $this->modparams->get("modlatest_templatetop") ? $this->modparams->get("modlatest_templatetop") : '<table class="mod_events_latest_table jevbootstrap" width="100%" border="0" cellspacing="0" cellpadding="0" align="center">';
+			$templaterow = $this->modparams->get("modlatest_templaterow") ? $this->modparams->get("modlatest_templaterow") : '<tr><td class="mod_events_latest_noevents">%s</td></tr>' . "\n";
+			$content     .= str_replace("%s", Text::_('JEV_NO_EVENTS'), $templaterow);
+			$content     .= $this->modparams->get("modlatest_templatebottom") ? $this->modparams->get("modlatest_templatebottom") : "</table>\n";
 		}
 
-		$callink_HTML = '<center><a class="boton-noticias sppb-btn sppb-btn-default sppb-btn-md" href="secretaria/calendario-academico">Ver calendario completo</a></center>';
+		$callink_HTML = '<div class="mod_events_latest_callink">'
+			. $this->getCalendarLink()
+			. '</div>';
 
 		if ($this->linkToCal == 1) $content = $callink_HTML . $content;
 		if ($this->linkToCal == 2) $content .= $callink_HTML;
 
-		if ($this->displayRSS){
-			$rssimg = JURI::root() . "media/system/images/livemarks.png";
+		if ($this->displayRSS)
+		{
+			$rssimg       = Uri::root() . "media/system/images/livemarks.png";
 			$callink_HTML = '<div class="mod_events_latest_rsslink">'
-			.'<a href="'.$this->rsslink.'" title="'.JText::_("RSS_FEED").'" target="_blank">'
-			.'<img src="'.$rssimg.'" alt="'.JText::_("RSS_FEED").'" />'
-			.JText::_("SUBSCRIBE_TO_RSS_FEED")
-			. '</a>'
-			. '</div>';
-			$content .= $callink_HTML;
+				. '<a href="' . $this->rsslink . '" title="' . Text::_("RSS_FEED") . '" target="_blank">'
+				. '<img src="' . $rssimg . '" alt="' . Text::_("RSS_FEED") . '" />'
+				. Text::_("SUBSCRIBE_TO_RSS_FEED")
+				. '</a>'
+				. '</div>';
+			$content      .= $callink_HTML;
 		}
-		if ($this->modparams->get("contentplugins", 0)){
-			$dispatcher = JEventDispatcher::getInstance();
-			$eventdata = new stdClass();
+		if ($this->modparams->get("contentplugins", 0))
+		{
+			$eventdata  = new stdClass();
 			//$eventdata->text = str_replace("{/toggle","{/toggle}",$content);
 			$eventdata->text = $content;
-			$dispatcher->trigger('onContentPrepare', array('com_jevents', &$eventdata, &$this->modparams, 0));
-			 $content = $eventdata->text;
+			$app->triggerEvent('onContentPrepare', array('com_jevents', &$eventdata, &$this->modparams, 0));
+			$content = $eventdata->text;
 		}
 
 		return $content;

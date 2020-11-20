@@ -4,7 +4,7 @@
  *
  * @package     Joomla
  * @subpackage  Fabrik
- * @copyright   Copyright (C) 2005-2016  Media A-Team, Inc. - All rights reserved.
+ * @copyright   Copyright (C) 2005-2020  Media A-Team, Inc. - All rights reserved.
  * @license     GNU/GPL http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -47,8 +47,8 @@ class FabrikViewList extends FabrikViewListBase
 		$table = $model->getTable();
 		$params = $model->getParams();
 		$rowId = $input->getString('rowid', '', 'string');
-		list($this->headings, $groupHeadings, $this->headingClass, $this->cellClass) = $this->get('Headings');
 		$data = $model->render();
+		list($this->headings, $groupHeadings, $this->headingClass, $this->cellClass) = $this->get('Headings');
 		$this->emptyDataMessage = $this->get('EmptyDataMsg');
 		$nav = $model->getPagination();
 		$form = $model->getFormModel();
@@ -118,14 +118,27 @@ class FabrikViewList extends FabrikViewListBase
 		$tmpl = $input->get('tmpl', $this->getTmpl());
 		$d['htmlnav'] = $params->get('show-table-nav', 1) ? $nav->getListFooter($model->getId(), $tmpl) : '';
 		$d['calculations'] = $model->getCalculations();
+		$d['hasFilters'] = $model->gotOptionalFilters();
+		$d['searchallvalue'] = $model->getFilterModel()->getSearchAllValue('html');
 
 		// $$$ hugh - see if we have a message to include, set by a list plugin
-		$context = 'com_' . $this->package . '.list' . $model->getRenderContext() . '.msg';
+		$context = 'com_' . $this->package . '.list' . $model->getRenderContext();
 
-		if ($this->session->has($context))
+		if ($this->session->has($context . '.msg'))
 		{
-			$d['msg'] = $this->session->get($context);
-			$this->session->clear($context);
+			$d['msg'] = $this->session->get($context . '.msg');
+
+			if ($this->session->has($context . '.showmsg'))
+			{
+                $d['showmsg'] = $this->session->get($context . '.showmsg');
+            }
+			else
+            {
+                $d['showmsg'] = true;
+            }
+
+			$this->session->clear($context . '.msg');
+            $this->session->clear($context . '.showmsg');
 		}
 
 		echo json_encode($d);

@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,39 +13,39 @@
 
 defined('_JEXEC') or die;
 
+use RegularLabs\Library\Cache as RL_Cache;
+
 if (is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 {
 	require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
 }
 
-use RegularLabs\Library\Cache as RL_Cache;
-
 class RLCache
 {
 	static $cache = [];
 
-	public static function has($hash)
+	public static function has($id)
 	{
-		return RL_Cache::has($hash);
+		return RL_Cache::has($id);
 	}
 
-	public static function get($hash)
+	public static function get($id)
 	{
-		return RL_Cache::get($hash);
+		return RL_Cache::get($id);
 	}
 
-	public static function set($hash, $data)
+	public static function set($id, $data)
 	{
-		return RL_Cache::set($hash, $data);
+		return RL_Cache::set($id, $data);
 	}
 
-	public static function read($hash)
+	public static function read($id)
 	{
-		return RL_Cache::read($hash);
+		return RL_Cache::read($id);
 	}
 
-	public static function write($hash, $data, $ttl = 0)
+	public static function write($id, $data, $ttl = 0)
 	{
-		return RL_Cache::write($hash, $data, $ttl);
+		return RL_Cache::write($id, $data, $ttl);
 	}
 }

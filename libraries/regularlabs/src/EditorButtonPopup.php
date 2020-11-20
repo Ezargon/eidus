@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -14,8 +14,7 @@ namespace RegularLabs\Library;
 defined('_JEXEC') or die;
 
 use Exception;
-use JHtml;
-use JText;
+use Joomla\CMS\Language\Text as JText;
 use ReflectionClass;
 
 /**
@@ -50,6 +49,9 @@ class EditorButtonPopup
 		$this->loadLibraryScriptsStyles();
 
 		$this->loadLanguages();
+
+		Document::style('regularlabs/popup.min.css');
+
 		$this->loadScripts();
 		$this->loadStyles();
 
@@ -77,11 +79,7 @@ class EditorButtonPopup
 
 	private function loadLibraryScriptsStyles()
 	{
-		JHtml::_('jquery.framework');
-
-		Document::script('regularlabs/script.min.js');
-		Document::style('regularlabs/popup.min.css');
-		Document::style('regularlabs/style.min.css');
+		Document::loadPopupDependencies();
 	}
 
 	private function renderTemplate()
@@ -96,6 +94,7 @@ class EditorButtonPopup
 
 	private function getDir()
 	{
+		// use static::class instead of get_class($this) after php 5.4 support is dropped
 		$rc = new ReflectionClass(get_class($this));
 
 		return dirname($rc->getFileName());

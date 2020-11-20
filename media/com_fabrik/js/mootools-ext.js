@@ -20,6 +20,18 @@ function CloneObject(what, recursive, asreference) {
 	return this;
 }
 
+/**
+ * Array.mfrom is needed to work round an issue with FusionCharts Pro, that overrides Array.from, in a way that
+ * breaks Mootools.  So we need to deploy a hacked version of Mootools for sites that need FC Pro, and use Array.mfrom()
+ * instead of Array.from()
+ */
+var slice = Array.prototype.slice;
+
+Array.mfrom = function(item){
+	if (item == null) return [];
+	return (Type.isEnumerable(item) && typeof item != 'string') ? (typeOf(item) == 'array') ? item : slice.call(item) : [item];
+};
+
 String.implement({
 
 	toObject: function ()
@@ -123,24 +135,24 @@ Element.implement({
 	 */
 
 	hide: function () {
-		if (Fabrik.bootstrapVersion('modal') === '3.x') {
+		if (Fabrik.bootstrapVersion('modal') >= 3) {
 			return;
 		}
-		if (this.hasClass("mootools-noconflict")) {
+		if (this.hasClass('mootools-noconflict')) {
 			return this;
 		}
 		mHide.apply(this, arguments);
 	},
 
 	show: function (v) {
-		if (this.hasClass("mootools-noconflict")) {
+		if (this.hasClass('mootools-noconflict')) {
 			return this;
 		}
 		mShow.apply(this, v);
 	},
 
 	slide: function (v) {
-		if (this.hasClass("mootools-noconflict")) {
+		if (this.hasClass('mootools-noconflict')) {
 			return this;
 		}
 		mSlide.apply(this, v);
@@ -152,8 +164,10 @@ Element.implement({
  * some common js include to put them in!
  */
 
+/*
 function fconsole(thing) {
 	if (typeof(window.console) !== "undefined") {
 		console.log(thing);
 	}
 }
+*/

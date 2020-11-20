@@ -1,20 +1,27 @@
 <?php
 /**
  * @package         NoNumber Framework
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Application\ApplicationHelper as JApplicationHelper;
+use Joomla\CMS\Factory as JFactory;
+
 if ( ! class_exists('PlgSystemNNFrameworkInstallerScript'))
 {
 	class PlgSystemNNFrameworkInstallerScript
 	{
+		public $name              = 'NoNumber Framework';
+		public $extname           = 'plg_system_nnframework';
+		public $installed_version = '';
+
 		public function preflight($route, JAdapterInstance $adapter)
 		{
 			if ( ! in_array($route, ['install', 'update']))

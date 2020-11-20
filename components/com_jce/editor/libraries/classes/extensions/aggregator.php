@@ -1,47 +1,50 @@
 <?php
 
 /**
- * @package   	JCE
- * @copyright 	Copyright (c) 2009-2017 Ryan Demmer. All rights reserved.
- * @license   	GNU/GPL 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * @copyright     Copyright (c) 2009-2020 Ryan Demmer. All rights reserved
+ * @license       GNU/GPL 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * JCE is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * other free or open source software licenses
  */
-defined('_JEXEC') or die('RESTRICTED');
+defined('JPATH_PLATFORM') or die;
 
-class WFAggregatorExtension extends WFExtension {
-
+class WFAggregatorExtension extends WFExtension
+{
     protected static $instance;
 
     /**
-     * Returns a reference to a plugin object
+     * Returns a reference to a plugin object.
      *
      * This method must be invoked as:
-     * 		<pre>  $advlink =AdvLink::getInstance();</pre>
+     *         <pre>  $advlink =AdvLink::getInstance();</pre>
      *
-     * @access	public
-     * @return	JCE  The editor object.
-     * @since	1.5
+     * @return JCE The editor object
+     *
+     * @since    1.5
      */
-    public static function getInstance($config = array()) {
+    public static function getInstance($config = array())
+    {
         if (!isset(self::$instance)) {
-            self::$instance = new WFAggregatorExtension($config);
+            self::$instance = new self($config);
         }
 
         return self::$instance;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->get('name');
     }
 
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->get('title');
     }
 
-    public function display() {
+    public function display()
+    {
         parent::display();
 
         $document = WFDocument::getInstance();
@@ -59,7 +62,8 @@ class WFAggregatorExtension extends WFExtension {
         }
     }
 
-    public function getAggregators() {
+    public function getAggregators()
+    {
         static $aggregators;
 
         if (!isset($aggregators)) {
@@ -81,7 +85,7 @@ class WFAggregatorExtension extends WFExtension {
             $files = JFolder::files($path, '\.php$', false, true);
 
             foreach ($files as $file) {
-                require_once ($file);
+                require_once $file;
 
                 $name = basename($file, '.php');
                 $classname = 'WFAggregatorExtension_' . ucfirst($name);
@@ -107,9 +111,11 @@ class WFAggregatorExtension extends WFExtension {
 
     /**
      * @param object $player
+     *
      * @return string
      */
-    public function loadTemplate($name, $tpl = '') {
+    public function loadTemplate($name, $tpl = '')
+    {
         $path = WF_EDITOR_EXTENSIONS . '/aggregator/' . $name;
 
         $output = '';
@@ -131,5 +137,4 @@ class WFAggregatorExtension extends WFExtension {
 
         return $output;
     }
-
 }

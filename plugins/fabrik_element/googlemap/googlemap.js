@@ -56,6 +56,7 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
             'zoomlevel'           : '13',
             'control'             : '',
             'maptypecontrol'      : false,
+            'maptypeids'          : false,
             'overviewcontrol'     : false,
             'scalecontrol'        : false,
             'drag'                : false,
@@ -80,15 +81,17 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
             'directionsFromLon'   : 0,
             'reverse_geocode_fields': {},
             'key'                 : false,
+            'language'            : '',
             'mapShown'            : true
         },
 
         loadScript: function () {
-            Fabrik.loadGoogleMap(this.options.key, 'googlemapload');
+            Fabrik.loadGoogleMap(this.options.key, 'googlemapload', this.options.language);
         },
 
         initialize: function (element, options) {
             this.mapMade = false;
+            this.redrawn = false;
             this.parent(element, options);
 
             if (!this.options.mapShown) {
@@ -98,9 +101,19 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
             this.loadFn = function () {
                 // experimental support for OSM rendering
                 this.mapTypeIds = [];
-                for (var type in google.maps.MapTypeId) {
-                    this.mapTypeIds.push(google.maps.MapTypeId[type]);
+
+                if (typeOf(this.options.maptypeids) !== 'array') {
+                    for (var type in google.maps.MapTypeId) {
+                        this.mapTypeIds.push(google.maps.MapTypeId[type]);
+                    }
                 }
+                else
+                {
+                    for (var type in this.options.maptypeids) {
+                        this.mapTypeIds.push(this.options.maptypeids[type]);
+                    }
+                }
+
                 this.mapTypeIds.push('OSM');
 
                 switch (this.options.maptype) {
@@ -209,12 +222,15 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                 var h = i.getStyle('height').toInt();
             }
 
+            this.center = new google.maps.LatLng(this.options.lat, this.options.lon);
+
             if (!this.options.staticmap) {
 
                 var zoomControlStyle = this.options.control === 'GSmallMapControl' ? google.maps.ZoomControlStyle.SMALL : google.maps.ZoomControlStyle.LARGE;
+				var vzoomControl = this.options.control !== 'none';
 
                 var mapOpts = {
-                    center               : new google.maps.LatLng(this.options.lat, this.options.lon),
+                    center               : this.center,
                     zoom                 : this.options.zoomlevel.toInt(),
                     mapTypeId            : this.options.maptype,
                     scaleControl         : this.options.scalecontrol,
@@ -222,7 +238,7 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                     overviewMapControl   : this.options.overviewcontrol,
                     scrollwheel          : this.options.scrollwheel,
                     streetViewControl    : this.options.streetView,
-                    zoomControl          : true,
+                    zoomControl          : vzoomControl,
                     zoomControlOptions   : {
                         style: zoomControlStyle
                     },
@@ -230,6 +246,7 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                         mapTypeIds: this.mapTypeIds
                     }
                 };
+
                 this.map = new google.maps.Map(document.id(this.element).getElement('.map'), mapOpts);
                 this.map.setOptions({'styles': this.options.styles});
 
@@ -254,10 +271,9 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                     trafficLayer.setMap(this.map);
                 }
 
-                var point = new google.maps.LatLng(this.options.lat, this.options.lon);
                 var opts = {
                     map     : this.map,
-                    position: point
+                    position: this.center
                 };
                 opts.draggable = this.options.drag;
 
@@ -304,7 +320,8 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
 
                 google.maps.event.addListener(this.marker, 'dragend', function () {
                     if (this.options.auto_center) {
-                        this.map.setCenter(this.marker.getPosition());
+                        this.center = this.marker.getPosition();
+                        this.map.setCenter(this.center);
                     }
                     this.field.value = this.marker.getPosition() + ':' + this.map.getZoom();
                     if (this.options.latlng === true) {
@@ -332,8 +349,9 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                     this.field.value = this.marker.getPosition() + ':' + this.map.getZoom();
                 }.bind(this));
 
-                if (this.options.auto_center && this.options.editable) {
-                    google.maps.event.addListener(this.map, 'center_changed', function () {
+                google.maps.event.addListener(this.map, 'center_changed', function () {
+                    this.center = this.map.getCenter();
+                    if (this.options.auto_center && this.options.editable) {
                         this.marker.setPosition(this.map.getCenter());
                         this.field.value = this.marker.getPosition() + ':' + this.map.getZoom();
                         if (this.options.latlng === true) {
@@ -344,13 +362,17 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                             this.element.getElement('.latdms').value = this.latDecToDMS();
                             this.element.getElement('.lngdms').value = this.lngDecToDMS();
                         }
-                    }.bind(this));
-                }
+                    }
+                }.bind(this));
             }
+
             this.watchTab();
+
             Fabrik.addEvent('fabrik.form.page.change.end', function (form) {
                 this.redraw();
             }.bind(this));
+
+            Fabrik.fireEvent('fabrik.map.make.end', this);
         },
 
         calcRoute: function () {
@@ -587,8 +609,19 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                 if (status !== google.maps.GeocoderStatus.OK || results.length === 0) {
                     fconsole(address + ' not found!');
                 } else {
+                    this.options.lat = results[0].geometry.location.lat();
+                    this.options.lon = results[0].geometry.location.lng();
                     this.marker.setPosition(results[0].geometry.location);
                     this.doSetCenter(results[0].geometry.location, this.map.getZoom(), false);
+
+                    if (this.options.reverse_geocode)
+                    {
+                        if (this.options.reverse_geocode_fields.formatted_address) {
+                            this.form.formElements.get(this.options.reverse_geocode_fields.formatted_address).update(
+                                results[0].formatted_address
+                            );
+                        }
+                    }
                 }
             }.bind(this));
         },
@@ -621,13 +654,30 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
                                 }.bind(this));
                             }
                             else {
-                                Fabrik.addEvent('fabrik.element.field.geocode', function(el) {
+                                Fabrik.addEvent('fabrik.element.field.geocode', function(el, results) {
                                    //fconsole('fired: ' + el.element.id);
                                     this.geoCode();
                                 }.bind(this));
                             }
                         }
                     }.bind(this));
+
+                    if (this.options.reverse_geocode_fields.formatted_address) {
+                        var el = this.form.formElements.get(this.options.reverse_geocode_fields.formatted_address);
+                        if (el.options.geocomplete) {
+                            Fabrik.addEvent('fabrik.element.field.geocode', function (el, result) {
+                                if (el.element.id === this.options.reverse_geocode_fields.formatted_address) {
+                                    var pnt = new google.maps.LatLng(
+                                        result.geometry.location.lat(),
+                                        result.geometry.location.lng()
+                                    );
+                                    this.marker.setPosition(pnt);
+                                    this.doSetCenter(pnt, this.map.getZoom(), false);
+                                    this.fillReverseGeocode(result);
+                                }
+                            }.bind(this));
+                        }
+                    }
                 } else {
                     if (this.options.geocode_event === 'button') {
                         this.element.getElement('.geocode').addEvent('click', function (e) {
@@ -730,70 +780,98 @@ define(['jquery', 'fab/element', 'lib/debounce/jquery.ba-throttle-debounce', 'fa
          */
         redraw: function () {
             google.maps.event.trigger(this.map, 'resize');
-            var center = new google.maps.LatLng(this.options.lat, this.options.lon);
-            this.map.setCenter(center);
-            this.map.setZoom(this.map.getZoom());
+            if (!this.redrawn) {
+                this.map.setCenter(this.center);
+                this.map.setZoom(this.map.getZoom());
+                this.redrawn = true;
+            }
+        },
+
+        fillReverseGeocode: function(result) {
+            if (this.options.reverse_geocode_fields.formatted_address) {
+                this.form.formElements.get(this.options.reverse_geocode_fields.formatted_address).update(result.formatted_address);
+            }
+
+            var streetAddress = '';
+            var streetNumber = '';
+            var streetRoute = '';
+
+            result.address_components.each(function (component) {
+                component.types.each(function (type) {
+                    if (type === 'street_number') {
+                        if (this.options.reverse_geocode_fields.street_number || this.options.reverse_geocode_fields.route) {
+                            streetNumber = component.long_name;
+                        }
+                    }
+                    else if (type === 'route') {
+                        if (this.options.reverse_geocode_fields.route) {
+                            streetRoute = component.long_name;
+                        }
+                    }
+                    else if (type === 'street_address') {
+                        if (this.options.reverse_geocode_fields.route) {
+                            streetAddress = component.long_name;
+                        }
+                    }
+                    else if (type === 'neighborhood') {
+                        if (this.options.reverse_geocode_fields.neighborhood) {
+                            this.form.formElements.get(this.options.reverse_geocode_fields.neighborhood).update(component.long_name);
+                        }
+                    }
+                    else if (type === 'locality') {
+                        if (this.options.reverse_geocode_fields.locality) {
+                            this.form.formElements.get(this.options.reverse_geocode_fields.locality).updateByLabel(component.long_name);
+                        }
+                    }
+                    else if (type === 'administrative_area_level_1') {
+                        if (this.options.reverse_geocode_fields.administrative_area_level_1) {
+                            this.form.formElements.get(this.options.reverse_geocode_fields.administrative_area_level_1).updateByLabel(component.long_name);
+                        }
+                    }
+                    else if (type === 'postal_code') {
+                        if (this.options.reverse_geocode_fields.postal_code) {
+                            this.form.formElements.get(this.options.reverse_geocode_fields.postal_code).updateByLabel(component.long_name);
+                        }
+                    }
+                    else if (type === 'country') {
+                        if (this.options.reverse_geocode_fields.country) {
+                            this.form.formElements.get(this.options.reverse_geocode_fields.country).updateByLabel(component.long_name);
+                        }
+                    }
+                }.bind(this));
+            }.bind(this));
+
+            if (this.options.reverse_geocode_fields.street_number) {
+                this.form.formElements.get(this.options.reverse_geocode_fields.street_number).update(streetNumber);
+                this.form.formElements.get(this.options.reverse_geocode_fields.route).update(streetRoute);            }
+            else if (this.options.reverse_geocode_fields.route) {
+                /**
+                 * Create the street address.  I'm really not sure what the difference between 'route'
+                 * and 'street_address' is in Google's component types, so for now just use 'street_address'
+                 * as the preference, use 'route' if no 'street_address', and prepend 'street_number'
+                 */
+                if (streetRoute !== '')
+                {
+                    if (streetAddress === '')
+                    {
+                        streetAddress = streetRoute;
+                    }
+                }
+
+                if (streetNumber !== '')
+                {
+                    streetAddress = streetNumber + ' ' + streetAddress;
+                }
+
+                this.form.formElements.get(this.options.reverse_geocode_fields.route).update(streetAddress);
+            }
         },
 
         reverseGeocode: function () {
             this.geocoder.geocode({'latLng': this.marker.getPosition()}, function (results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[0]) {
-                        if (this.options.reverse_geocode_fields.formatted_address) {
-                            this.form.formElements.get(this.options.reverse_geocode_fields.formatted_address).update(results[0].formatted_address);
-                        }
-                        results[0].address_components.each(function (component) {
-                            component.types.each(function (type) {
-                                if (type === 'street_number') {
-                                    if (this.options.reverse_geocode_fields.route) {
-                                        //document.id(this.options.reverse_geocode_fields.route).value = component.long_name + ' ';
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.route).update(component.long_name + ' ');
-                                    }
-                                }
-                                else if (type === 'route') {
-                                    if (this.options.reverse_geocode_fields.route) {
-                                        //document.id(this.options.reverse_geocode_fields.route).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.route).update(component.long_name);
-                                    }
-                                }
-                                else if (type === 'street_address') {
-                                    if (this.options.reverse_geocode_fields.route) {
-                                        //document.id(this.options.reverse_geocode_fields.route).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.route).update(component.long_name);
-                                    }
-                                }
-                                else if (type === 'neighborhood') {
-                                    if (this.options.reverse_geocode_fields.neighborhood) {
-                                        //document.id(this.options.reverse_geocode_fields.neighborhood).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.neighborhood).update(component.long_name);
-                                    }
-                                }
-                                else if (type === 'locality') {
-                                    if (this.options.reverse_geocode_fields.locality) {
-                                        //document.id(this.options.reverse_geocode_fields.locality).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.locality).updateByLabel(component.long_name);
-                                    }
-                                }
-                                else if (type === 'administrative_area_level_1') {
-                                    if (this.options.reverse_geocode_fields.administrative_area_level_1) {
-                                        //document.id(this.options.reverse_geocode_fields.state).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.administrative_area_level_1).updateByLabel(component.long_name);
-                                    }
-                                }
-                                else if (type === 'postal_code') {
-                                    if (this.options.reverse_geocode_fields.postal_code) {
-                                        //document.id(this.options.reverse_geocode_fields.zip).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.postal_code).updateByLabel(component.long_name);
-                                    }
-                                }
-                                else if (type === 'country') {
-                                    if (this.options.reverse_geocode_fields.country) {
-                                        //document.id(this.options.reverse_geocode_fields.country).value = component.long_name;
-                                        this.form.formElements.get(this.options.reverse_geocode_fields.country).updateByLabel(component.long_name);
-                                    }
-                                }
-                            }.bind(this));
-                        }.bind(this));
+                        this.fillReverseGeocode(results[0]);
                     }
                     else {
                         window.alert('No results found');

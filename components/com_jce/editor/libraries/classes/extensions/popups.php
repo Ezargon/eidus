@@ -1,30 +1,24 @@
 <?php
 
 /**
- * @package       JCE
- * @copyright     Copyright (c) 2009-2017 Ryan Demmer. All rights reserved.
+ * @copyright     Copyright (c) 2009-2020 Ryan Demmer. All rights reserved
  * @license       GNU/GPL 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * JCE is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * other free or open source software licenses
  */
-defined('_JEXEC') or die('RESTRICTED');
-
-wfimport('editor.libraries.classes.extensions');
+defined('JPATH_PLATFORM') or die;
 
 class WFPopupsExtension extends WFExtension
 {
-
     protected static $instance;
 
     private $_popups = array();
     private $_templates = array();
 
     /**
-     * Constructor activating the default information of the class
-     *
-     * @access  protected
+     * Constructor activating the default information of the class.
      */
     public function __construct($config = array())
     {
@@ -34,19 +28,19 @@ class WFPopupsExtension extends WFExtension
     }
 
     /**
-     * Returns a reference to a plugin object
+     * Returns a reference to a plugin object.
      *
      * This method must be invoked as:
      *    <pre>  $advlink =AdvLink::getInstance();</pre>
      *
-     * @access  public
-     * @return  JCE  The editor object.
+     * @return JCE The editor object
+     *
      * @since 1.5
      */
     public static function getInstance($config = array())
     {
         if (!isset(self::$instance)) {
-            self::$instance = new WFPopupsExtension($config);
+            self::$instance = new self($config);
         }
 
         return self::$instance;
@@ -128,10 +122,10 @@ class WFPopupsExtension extends WFExtension
     {
         $options = array();
 
-        $options[] = JHTML::_('select.option', '', '-- ' . WFText::_('WF_POPUP_TYPE_SELECT') . ' --');
+        $options[] = JHTML::_('select.option', '', '-- ' . JText::_('WF_POPUP_TYPE_SELECT') . ' --');
 
         foreach ($this->getPopups() as $popup) {
-            $options[] = JHTML::_('select.option', $popup->name, WFText::_('WF_POPUPS_' . strtoupper($popup->name) . '_TITLE'));
+            $options[] = JHTML::_('select.option', $popup->name, JText::_('WF_POPUPS_' . strtoupper($popup->name) . '_TITLE'));
         }
 
         return JHTML::_('select.genericlist', $options, 'popup_list', '', 'value', 'text', $this->get('default'));
@@ -148,7 +142,7 @@ class WFPopupsExtension extends WFExtension
             $output .= $view->loadTemplate($template);
         }
 
-        foreach ($this->getPopups() as $popup) {            
+        foreach ($this->getPopups() as $popup) {
             $view = new WFView(array(
                 'name' => $popup->name,
                 'base_path' => $popup->path,
@@ -173,5 +167,4 @@ class WFPopupsExtension extends WFExtension
 
         return $output;
     }
-
 }

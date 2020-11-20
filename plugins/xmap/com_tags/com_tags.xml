@@ -7,18 +7,22 @@
     <license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
     <authorEmail>branko.wilhelm@gmail.com</authorEmail>
     <authorUrl>www.z-index.net</authorUrl>
-    <version>rev 302</version>
+    <version>1.0.0</version>
     <description>PLG_XMAP_COM_TAGS_DESC</description>
     <files>
         <filename plugin="com_tags">com_tags.php</filename>
     </files>
     <scriptfile>script.installer.php</scriptfile>
     <updateservers>
-        <server type="collection" priority="1" name="z-index development">http://www.z-index.net/en/extensions.xml</server>
+        <server type="extension" priority="1" name="Xmap - Tags Integration">https://raw.githubusercontent.com/z-index-net/joomla-plugin-xmap-tags/master/updatestream.xml</server>
     </updateservers>
     <languages folder="language">
         <language tag="en-GB">en-GB/en-GB.plg_xmap_com_tags.ini</language>
         <language tag="en-GB">en-GB/en-GB.plg_xmap_com_tags.sys.ini</language>
+        <language tag="ru-RU">ru-RU/ru-RU.plg_xmap_com_tags.ini</language>
+        <language tag="ru-RU">ru-RU/ru-RU.plg_xmap_com_tags.sys.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.plg_xmap_com_tags.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.plg_xmap_com_tags.sys.ini</language>
     </languages>
     <config>
         <fields name="params">

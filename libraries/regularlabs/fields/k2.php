@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -19,7 +19,7 @@ if ( ! is_file(JPATH_LIBRARIES . '/regularlabs/autoload.php'))
 require_once JPATH_LIBRARIES . '/regularlabs/autoload.php';
 
 // If controller.php exists, assume this is K2 v3
-defined('RL_K2_VERSION') or define('RL_K2_VERSION', JFile::exists(JPATH_ADMINISTRATOR . '/components/com_k2/controller.php') ? 3 : 2);
+defined('RL_K2_VERSION') or define('RL_K2_VERSION', file_exists(JPATH_ADMINISTRATOR . '/components/com_k2/controller.php') ? 3 : 2);
 
 class JFormFieldRL_K2 extends \RegularLabs\Library\FieldGroup
 {
@@ -76,6 +76,8 @@ class JFormFieldRL_K2 extends \RegularLabs\Library\FieldGroup
 			->select('t.name as id, t.name as name')
 			->from('#__k2_tags AS t')
 			->where('t.' . $state_field . ' = 1')
+			->where('t.name != ' . $this->db->quote(''))
+			->group('t.name')
 			->order('t.name');
 		$this->db->setQuery($query);
 		$list = $this->db->loadObjectList();

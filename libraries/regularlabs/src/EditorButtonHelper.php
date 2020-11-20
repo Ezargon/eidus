@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,9 +13,9 @@ namespace RegularLabs\Library;
 
 defined('_JEXEC') or die;
 
-use JHtml;
-use JObject;
-use JText;
+use Joomla\CMS\HTML\HTMLHelper as JHtml;
+use Joomla\CMS\Language\Text as JText;
+use Joomla\CMS\Object\CMSObject as JObject;
 
 /**
  * Class EditorButtonHelper
@@ -64,7 +64,7 @@ class EditorButtonHelper
 		$button = new JObject;
 
 		$button->modal   = true;
-		$button->class   = 'btn';
+		$button->class   = 'btn rl_button_' . $this->_name;
 		$button->link    = $this->getPopupLink($editor_name);
 		$button->text    = $this->getButtonText();
 		$button->name    = $this->getIcon();

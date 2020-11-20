@@ -1,11 +1,11 @@
 <?php
 /**
  * @package         Regular Labs Library
- * @version         17.9.4890
+ * @version         20.9.11663
  * 
  * @author          Peter van Westen <info@regularlabs.com>
  * @link            http://www.regularlabs.com
- * @copyright       Copyright © 2017 Regular Labs All Rights Reserved
+ * @copyright       Copyright © 2020 Regular Labs All Rights Reserved
  * @license         http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,7 @@ namespace RegularLabs\Library\Condition;
 
 defined('_JEXEC') or die;
 
-use JModelLegacy;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel as JModel;
 
 /**
  * Class Content
@@ -36,7 +36,7 @@ abstract class Content
 			require_once JPATH_SITE . '/components/com_content/models/article.php';
 		}
 
-		$model = JModelLegacy::getInstance('article', 'contentModel');
+		$model = JModel::getInstance('article', 'contentModel');
 
 		if ( ! method_exists($model, 'getItem'))
 		{
