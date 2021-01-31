@@ -2,7 +2,7 @@
 /**
 * @package Helix3 Framework
 * @author JoomShaper http://www.joomshaper.com
-* @copyright Copyright (c) 2010 - 2018 JoomShaper
+* @copyright Copyright (c) 2010 - 2020 JoomShaper
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or Later
 */
 
@@ -86,7 +86,7 @@ class Helix3Menu {
 				case 'separator':
 				case 'heading':
 				// No further action needed.
-				continue;
+				break;
 
 				case 'url':
 				if ((strpos($item->link, 'index.php?') === 0) && (strpos($item->link, 'Itemid=') === false)) {
